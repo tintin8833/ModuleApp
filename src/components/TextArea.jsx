@@ -1,7 +1,7 @@
 
 import styles from '../styles/Fields.module.sass'
 
-const TextArea = ({label,disabled,rows,initailValue}) => {
+const TextArea = ({label,disabled,rows,initialValue}) => {
     return (
         <div className={styles.container}>
             <div className={styles.label}>{label}</div>
@@ -9,7 +9,7 @@ const TextArea = ({label,disabled,rows,initailValue}) => {
                 <textarea rows={rows}
                     className={`${disabled ? styles['disabled-style'] : ''}`}
                     disabled={disabled}
-                    value={initailValue}
+                    value={initialValue}
                 >
                 </textarea>
             </div>
