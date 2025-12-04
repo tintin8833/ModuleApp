@@ -1,7 +1,7 @@
 
 import styles from '../styles/Fields.module.sass'
 
-const TextField = ({label,disabled,initailValue}) => {
+const TextField = ({label,disabled,initialValue}) => {
     return (
         <div className={styles.container}>
             <div className={styles.label}>{label}</div>
@@ -9,7 +9,7 @@ const TextField = ({label,disabled,initailValue}) => {
                 <input
                     className={`${disabled ? styles['disabled-style'] : ''}`}
                     disabled={disabled}
-                    value={initailValue}
+                    value={initialValue}
                     type="text"
                 />
             </div>

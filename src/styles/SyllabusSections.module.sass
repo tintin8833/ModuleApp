@@ -16,15 +16,17 @@
 
 
 .return
-  padding: 10px 20px 10px 15px
+  padding: 10px 20px
   border-radius: 5px
-  border: 1px solid #8B999D
+  //border: 1px solid #8B999D
   display: flex
+  background: #8B999D
   align-items: center
   font-size: 14px
   font-weight: 500
   gap: 5px
   cursor: pointer
+  color: white
 
 .section-select
   border-radius: 5px
@@ -52,10 +54,16 @@
 .dynamic-sections
   width: 100%
   flex-grow: 1
+  min-height: 200px
   background: white
   padding: 20px 30px
-  overflow: scroll
   flex-direction: column
+
+.dynamic-sections section
+  width: 100%
+  height: 100%
+  display: flex
+  overflow: auto
 
 .draft
   padding: 10px 15px
@@ -91,9 +99,12 @@
 .form
   width: 100%
   flex-grow: 1
+  gap: 16px
+  display: flex
+  flex-direction: column
+
 
 .double-field
-  padding: 0
   display: flex
   flex-direction: row
 
@@ -102,4 +113,106 @@
   display: flex
   flex-direction: column
   padding: 0
+  gap: 16px
+
+.cpa-container
+  display: flex
+  width: 100%
+  height: 100%
+  flex-direction: column
+  overflow: auto
+
+.legend
+  width: 100%
+  height: auto
+  display: flex
+  flex-direction: row
+  gap: 15px
+  align-items: center
+
+.legend p
+  font-weight: 600
+  font-size: 16px
+.legend .legends
+  display: flex
+  flex-direction: row
+  gap: 10px
+
+.legends p
+  font-weight: 400
+  font-size: 14px
+
+
+.course-descrip
+  width: 505px
+
+.courseNo
+  align-content: center
+  width: 60px
+  font-weight: 500
+
+.courseDescripInput
+  width: 445px
+
+.dropdownOptions
+  width: 82px
+  display: flex
+  justify-content: center
+  //border-right: 1px solid #dadada
+
+.dropdownOptions select
+  width: 100%
+  border: 0
+  padding: 10px
+  outline: none
+  font-weight: 500
+  font-size: 14px
+  cursor: pointer
+
+.references-container
+  display: flex
+  width: 100%
+  height: 100%
+  flex-direction: column
+  overflow: auto
+
+.fill
+  flex-grow: 1
+  padding-right: 25px
+  display: flex
+  justify-content: end
+  align-items: center
+  gap: 5px
+  cursor: pointer
+  font-weight: 400
+
+.references-header
+  display: flex
+  width: 100%
+  align-items: center
+  gap: 15px
+  margin-bottom: 10px
+
+.topics-container
+  display: flex
+  width: 100%
+  height: 100%
+  flex-direction: column
+  overflow: auto
+
+.topics-header
+  display: flex
+  width: 100%
+  align-items: center
+  gap: 15px
+  margin-bottom: 10px
+
+.ilo-container
+  display: flex
+  width: 100%
+  height: 100%
+  flex-direction: column
+  overflow: auto
+
+
 

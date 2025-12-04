@@ -1,0 +1,66 @@
+
+.container
+  width: 100%
+  height: 100%
+  display: flex
+  flex-direction: column
+
+.logo
+  width: 100%
+  padding: 20px
+
+.logo img
+  width: 50px
+
+.nav-list
+  margin: 30px 20px 0 20px
+  height: 100%
+  overflow: hidden
+  display: flex
+  flex-direction: column
+  gap: 10px
+
+.list
+  padding: 10px 0 10px 12.5px
+  border-radius: 10px
+  gap: 20px
+  display: flex
+  overflow: hidden
+  justify-content: left
+  flex-direction: row
+  flex-wrap: nowrap
+  cursor: pointer
+  font-size: 16px
+  font-weight: 400
+
+.list:hover
+  background: #f2f3f6
+  transition: .3s ease
+
+.selected
+  background: #E5E7EB
+
+.list svg, .listB svg
+  flex-shrink: 0
+
+.listB
+  padding: 10px 0 10px 12.5px
+  border-radius: 10px
+  gap: 20px
+  display: flex
+  overflow: hidden
+  justify-content: left
+  flex-direction: row
+  cursor: pointer
+  flex-grow: 1
+  min-height: 100px
+  align-items: flex-end
+  margin-bottom: 50px
+  font-size: 16px
+  font-weight: 400
+  color: #F94545
+
+//.listB:hover
+//  color: white
+//  background: #F94545
+//  transition: .3s ease
