@@ -7,6 +7,7 @@ import TextField from "../components/TextField.jsx";
 import Dropdown from "../components/Dropdown.jsx";
 import TextArea from "../components/TextArea.jsx";
 import MultiSelect from "../components/MultiSelect.jsx";
+import SideNavigation from "../components/SideNavigation.jsx";
 
 const ILOForm = ({}) => {
     const navigate = useNavigate()
@@ -37,6 +38,7 @@ const ILOForm = ({}) => {
     return(
         <Skeleton
             header={<Header role={'Instructor'} name={'NORTON, MONICA'} />}
+            nav={<SideNavigation/> }
             content={
                 <div className={styles.container}>
                     <FormNavigation goBack={goBackHandler} />

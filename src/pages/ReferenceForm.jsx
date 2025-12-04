@@ -5,6 +5,7 @@ import styles from "../styles/Form.module.sass";
 import {useNavigate} from "react-router-dom";
 import TextField from "../components/TextField.jsx";
 import Dropdown from "../components/Dropdown.jsx";
+import SideNavigation from "../components/SideNavigation.jsx";
 
 const ReferenceForm = ({}) => {
     const navigate = useNavigate()
@@ -18,6 +19,7 @@ const ReferenceForm = ({}) => {
     return(
         <Skeleton
             header={<Header role={'Instructor'} name={'NORTON, MONICA'} />}
+            nav={<SideNavigation/> }
             content={
                 <div className={styles.container}>
                     <FormNavigation goBack={goBackHandler} />
