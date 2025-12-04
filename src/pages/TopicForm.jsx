@@ -9,6 +9,7 @@ import {useState} from "react";
 import {X} from "react-feather";
 import Duplicator from "../components/Duplicator.jsx";
 import TextArea from "../components/TextArea.jsx";
+import SideNavigation from "../components/SideNavigation.jsx";
 
 const ReferenceForm = ({}) => {
     const navigate = useNavigate()
@@ -61,6 +62,7 @@ const ReferenceForm = ({}) => {
     return(
         <Skeleton
             header={<Header role={'Instructor'} name={'NORTON, MONICA'} />}
+            nav={<SideNavigation/> }
             content={
                 <div className={styles.container}>
                     <FormNavigation goBack={goBackHandler} />
