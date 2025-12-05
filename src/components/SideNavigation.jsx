@@ -1,7 +1,7 @@
 import styles from '../styles/SideNavigation.module.sass'
 import unclogo from '../assets/unclogo.png';
 import {FileText} from "react-feather";
-import {useSearchParams} from "react-router-dom";
+import {Link, useSearchParams} from "react-router-dom";
 import {useState} from "react";
 import {LogOut} from "react-feather";
 
@@ -24,9 +24,14 @@ const SideNavigation = () => {
                 <div onClick={() => handlePageChange('Syllabus')} className={`${styles.list} ${selected === 'Syllabus' ? styles.selected: ''}`}>
                     <FileText size={24}/> Syllabus
                 </div>
-                <div onClick={() => handlePageChange('TOS')}  className={`${styles.list} ${selected === 'TOS' ? styles.selected: ''}`}>
-                    <FileText size={24}/> TOS
-                </div>
+                <Link className={'actionLink'} to={'/assignedtos'}>
+                    <div onClick={() => handlePageChange('TOS')}  className={`${styles.list} ${selected === 'TOS' ? styles.selected: ''}`}>
+                        <FileText size={24}/> TOS
+                    </div>
+                </Link>
+
+
+
                 <div className={styles.listB}>
                     <LogOut size={24} color={'#F94545'}/> Log Out
                 </div>

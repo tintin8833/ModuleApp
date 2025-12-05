@@ -7,6 +7,7 @@ import Syllabus from "./pages/Syllabus.jsx";
 import ReferenceForm from "./pages/ReferenceForm.jsx";
 import TopicForm from "./pages/TopicForm.jsx";
 import ILOForm from "./pages/ILOForm.jsx";
+import AssignedTOS from "./pages/AssignedTOS.jsx";
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
               <div className="appPage">
                   <Routes>
                       <Route path={'/'} element={<AssignedCourses />} />
+                      <Route path={'/assignedtos'} element={<AssignedTOS />} />
                       <Route path={'/courses/:name'} element={<Syllabus />} />
                       <Route path={'/references/form/:id'} element={<ReferenceForm />} />
                       <Route path={'/topics/form/:id'} element={<TopicForm />} />
