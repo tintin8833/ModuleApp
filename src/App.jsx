@@ -18,10 +18,12 @@ function App() {
                   <Routes>
                       <Route path={'/'} element={<AssignedCourses />} />
                       <Route path={'/assignedtos'} element={<AssignedTOS />} />
-                      <Route path={'/courses/:name'} element={<Syllabus />} />
+                      <Route path={'/courses/:code'} element={<Syllabus />} />
                       <Route path={'/references/form/:id'} element={<ReferenceForm />} />
+                      <Route path={'/references/form/:code/:refId'} element={<ReferenceForm />} />
                       <Route path={'/topics/form/:id'} element={<TopicForm />} />
-                      <Route path={'/ilos/form/:id'} element={<ILOForm />} />
+                      <Route path={'/topics/form/:code/:topicId'} element={<TopicForm />} />
+                      <Route path={'/ilos/form/:code/:iloId'} element={<ILOForm />} />
 
                   </Routes>
               </div>
