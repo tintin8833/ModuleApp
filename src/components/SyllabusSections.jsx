@@ -346,7 +346,7 @@ const syllabusSections = ({status}) => {
                                 <div className={'search-container'}>
                                     <div className={'search-bar'}>
                                         <Search size={18}/>
-                                        <input placeholder={"Search assessment name"} type="text"/>
+                                        <input placeholder={"Search TLA name"} type="text"/>
                                     </div>
                                 </div>
 
@@ -359,12 +359,6 @@ const syllabusSections = ({status}) => {
                                         <option value="Post-Class">Post-Class</option>
                                     </select>
                                 </div>
-
-                                <Link to={'/assessments/form/:id'}>
-                                    <div className={'add-button'}>
-                                        <Plus size={16} strokeWidth={3}/> Add Assessment
-                                    </div>
-                                </Link>
                             </div>
 
                             <table>
@@ -378,87 +372,21 @@ const syllabusSections = ({status}) => {
                                 </thead>
 
                                 <tbody>
-                                <tr>
-                                    <td width={400}>UI Evaluation Checklist</td>
-                                    <td width={400}>Interface Design Principles</td>
-                                    <td width={350}>Pre-Class</td>
-                                    <td className={styles.fill}>
-                                        Open <ChevronRight size={18}/>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td width={400}>Prototype Usability Test</td>
-                                    <td width={400}>Interface Design Principles</td>
-                                    <td width={350}>In-Class</td>
-                                    <td className={styles.fill}>
-                                        Open <ChevronRight size={18}/>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td width={400}>Redesign & Reflection Output</td>
-                                    <td width={400}>Interface Design Principles</td>
-                                    <td width={350}>Post-Class</td>
-                                    <td className={styles.fill}>
-                                        Open <ChevronRight size={18}/>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td width={400}>User Requirements Review</td>
-                                    <td width={400}>User-Centered Design</td>
-                                    <td width={350}>Pre-Class</td>
-                                    <td className={styles.fill}>
-                                        Open <ChevronRight size={18}/>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td width={400}>Persona & Scenario Workshop</td>
-                                    <td width={400}>User-Centered Design</td>
-                                    <td width={350}>In-Class</td>
-                                    <td className={styles.fill}>
-                                        Open <ChevronRight size={18}/>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td width={400}>Refined User Flow Output</td>
-                                    <td width={400}>User-Centered Design</td>
-                                    <td width={350}>Post-Class</td>
-                                    <td className={styles.fill}>
-                                        Open <ChevronRight size={18}/>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td width={400}>Intro to Heuristics Brief</td>
-                                    <td width={400}>Usability Principles</td>
-                                    <td width={350}>Pre-Class</td>
-                                    <td className={styles.fill}>
-                                        Open <ChevronRight size={18}/>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td width={400}>Heuristic Evaluation Activity</td>
-                                    <td width={400}>Usability Principles</td>
-                                    <td width={350}>In-Class</td>
-                                    <td className={styles.fill}>
-                                        Open <ChevronRight size={18}/>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td width={400}>Usability Issue Prioritization Report</td>
-                                    <td width={400}>Usability Principles</td>
-                                    <td width={350}>Post-Class</td>
-                                    <td className={styles.fill}>
-                                        Open <ChevronRight size={18}/>
-                                    </td>
-                                </tr>
-
+                                {syllabus.assessments.map((assessment) => (
+                                    <tr key={assessment.id}>
+                                        <td width={400}>{assessment.tlaName}</td>
+                                        <td width={400}>{assessment.topic}</td>
+                                        <td width={350}>{assessment.phase}</td>
+                                        <td className={styles.fill}>
+                                            <Link
+                                                className={'actionLink'}
+                                                to={`/assessments/form/${code}/${assessment.id}`}
+                                            >
+                                                Open <ChevronRight size={18}/>
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
                                 </tbody>
                             </table>
 
