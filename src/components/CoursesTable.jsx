@@ -2,6 +2,9 @@ import React, {use, useState} from 'react';
 import {Link} from 'react-router-dom'
 import styles from '../styles/CoursesTable.module.sass';
 import { ChevronRight } from 'react-feather';
+import { syllabiData } from '../data/syllabiData';
+
+
 const CoursesTable = ({}) => {
 
     const currentYear = new Date().getFullYear();
@@ -25,6 +28,8 @@ const CoursesTable = ({}) => {
         { code: 'BSCS341L', name: 'Artificial Intelligence', update: 'Nov 01, 2025', status: 'DRAFT', approved: '' },
         { code: 'BSCS351L', name: 'Cybersecurity Fundamentals', update: 'Nov 10, 2025', status: 'PENDING', approved: '' },
     ];
+
+
 
 
     const [selectedStatus, setSelectedStatus] = useState('DRAFT');
@@ -89,7 +94,7 @@ const CoursesTable = ({}) => {
 
                                     <td width={120}>{row.status}</td>
                                     <td className={styles.fill}>
-                                        <Link className={'actionLink'} to={`/courses/${row.name}`}>
+                                        <Link className={'actionLink'} to={`/courses/${row.code}`}>
                                             {row.status === 'DRAFT' ? 'Compose' : 'Open'}
                                             <ChevronRight size={18} />
                                         </Link>

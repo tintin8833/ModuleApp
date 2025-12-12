@@ -2,7 +2,7 @@ import Skeleton from "../layouts/Skeleton.jsx";
 import Header from "../components/Header.jsx";
 import FormNavigation from "../components/FormNavigation.jsx";
 import styles from "../styles/Form.module.sass";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import TextField from "../components/TextField.jsx";
 import Dropdown from "../components/Dropdown.jsx";
 import {useState} from "react";
@@ -10,8 +10,9 @@ import {X} from "react-feather";
 import Duplicator from "../components/Duplicator.jsx";
 import TextArea from "../components/TextArea.jsx";
 import SideNavigation from "../components/SideNavigation.jsx";
+import {getSyllabusByCode} from "../data/syllabiData.js";
 
-const ReferenceForm = ({}) => {
+const TopicForm = ({}) => {
     const navigate = useNavigate()
 
     const goBackHandler = () => {
@@ -22,9 +23,17 @@ const ReferenceForm = ({}) => {
 
 
 
-    const [tlas, setTlas] = useState([
-        {id: '1', classPhase: '', performedBy: '', tlaName: '', tlaDescription: ''},
-    ]);
+    const { code, topicId } = useParams();
+    const syllabus = getSyllabusByCode(code);
+    const topicData = syllabus?.topics.find(t => t.id === topicId) || {};
+
+    const [subtopics, setSubtopics] = useState(
+        topicData.subtopics || [{id: '1', value: ''}]
+    );
+
+    const [tlas, setTlas] = useState(
+        topicData.tlas || [{id: '1', classPhase: '', performedBy: '', tlaName: '', tlaDescription: ''}]
+    );
 
     const handleTlaAdd = () => {
         const newTla = {
@@ -40,10 +49,6 @@ const ReferenceForm = ({}) => {
         if (tlas.length === 1) return
         setTlas(tlas.filter((item) => item.id !== idToDelete))
     }
-
-    const [subtopics, setSubtopics] = useState([
-        {id: '1', value: ''},
-    ]);
 
     const handleSubtopicAdd = () => {
         const newSubtopic = {id: Date.now() + Math.random(), value: ''};
@@ -68,7 +73,7 @@ const ReferenceForm = ({}) => {
                     <FormNavigation goBack={goBackHandler} />
                     <div className={styles['form-container']}>
                         <h2>Core Topic</h2>
-                        <TextField  />
+                        <TextField initialValue={topicData.title || ''} />
                         <h2>Subtopic Lists</h2>
 
                         {subtopics.map((item) => (
@@ -86,24 +91,38 @@ const ReferenceForm = ({}) => {
                             <input checked={flipped} onClick={handleFlipped} type="checkbox"/> Flipped Approach
                         </div>
                         {tlas.map((item) => (
-                            <div className={styles.list}>
+                            <div className={styles.list} key={item.id}>
                                 <div className={styles.tlas}>
                                     <div className={styles.list}>
-                                        <Dropdown options={flipped === true ? classPhases : ['Asynchronous', 'Synchronous']} label={'Class Phase'} initialValue={''}/>
-                                        <Dropdown options={['Student','Instructor']} label={'Performed By'} initialValue={''}/>
+                                        <Dropdown
+                                            options={classPhases}
+                                            // options={flipped === true ? classPhases : ['Asynchronous', 'Synchronous']}
+                                            label={'Class Phase'}
+                                            initialValue={item.classPhase} // Bind data
+                                        />
+                                        <Dropdown
+                                            options={['Student','Instructor']}
+                                            label={'Performed By'}
+                                            initialValue={item.performedBy} // Bind data
+                                        />
                                     </div>
-
-                                    <TextField label={'TLA Name'} />
-                                    <TextArea label={'Text Description'} />
+                                    <TextField
+                                        label={'TLA Name'}
+                                        initialValue={item.tlaName} // Bind data
+                                    />
+                                    <TextArea
+                                        label={'Text Description'}
+                                        initialValue={item.tlaDescription} // Bind data
+                                    />
                                     <div className={'checkbox'}>
                                         <input type="checkbox"/> Laboratory
-                                    </div>
-
+                                    </div>                                </div>
+                                <div onClick={() => handleTlaDelete(item.id)} className={'x'}>
+                                    <X size={20} color={'white'}/>
                                 </div>
-                                <div onClick={() => handleTlaDelete(item.id)} className={'x'} > <X size={20} color={'white'}/> </div>
-
                             </div>
                         ))}
+
 
                         <Duplicator onAdd={handleTlaAdd}  name={'TLA'}/>
 
@@ -116,4 +135,4 @@ const ReferenceForm = ({}) => {
     )
 }
 
-export default ReferenceForm;
+export default TopicForm;
