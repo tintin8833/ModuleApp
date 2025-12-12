@@ -24,11 +24,9 @@ const SideNavigation = () => {
                 <div onClick={() => handlePageChange('Syllabus')} className={`${styles.list} ${selected === 'Syllabus' ? styles.selected: ''}`}>
                     <FileText size={24}/> Syllabus
                 </div>
-                <Link className={'actionLink'} to={'/assignedtos'}>
                     <div onClick={() => handlePageChange('TOS')}  className={`${styles.list} ${selected === 'TOS' ? styles.selected: ''}`}>
                         <FileText size={24}/> TOS
                     </div>
-                </Link>
 
 
 

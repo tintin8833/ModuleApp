@@ -5,7 +5,8 @@ import { Info } from 'react-feather';
 import React, {useState} from "react";
 import TextField from "./TextField.jsx";
 import TextArea from "./TextArea.jsx";
-import {Link, useSearchParams} from "react-router-dom";
+import {Link, useParams, useSearchParams} from "react-router-dom";
+import {getSyllabusByCode} from "../data/syllabiData.js";
 const syllabusSections = ({status}) => {
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -25,6 +26,10 @@ const syllabusSections = ({status}) => {
     ];
 
     const programOutcomes = ['PO1', 'PO2', 'PO3', 'PO4', 'PO5', 'PO6', 'PO7', 'PO8', 'PO9'];
+
+
+    const { code } = useParams();
+    const syllabus = getSyllabusByCode(code);
 
 
     return(
@@ -130,7 +135,7 @@ const syllabusSections = ({status}) => {
                                     'in UI/UX design.\n' +
                                     '\n'}
                                 disabled={false}
-                                label="Course Name"
+                                label="Course Descrption"
                                 rows={10}
                             />
                             <br/><br/><br/>
@@ -244,47 +249,17 @@ const syllabusSections = ({status}) => {
                                    </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td width={200}>OR1</td>
-                                        <td width={400}>UI PRINCIPLES</td>
-                                        <td className={styles.fill}>
-                                            Open
-                                            <ChevronRight size={18} />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td width={200}>OR2</td>
-                                        <td width={400}>Design Guidelines</td>
-                                        <td className={styles.fill}>
-                                            Open
-                                            <ChevronRight size={18} />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td width={200}>OR3</td>
-                                        <td width={400}>Imagery</td>
-                                        <td className={styles.fill}>
-                                            Open
-                                            <ChevronRight size={18} />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td width={200}>OE1</td>
-                                        <td width={400}>UI PRINCIPLES</td>
-                                        <td className={styles.fill}>
-                                            Open
-                                            <ChevronRight size={18} />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td width={200}>OE2</td>
-                                        <td width={400}>Introduction to Generative AI</td>
-                                        <td className={styles.fill}>
-                                            Open
-                                            <ChevronRight size={18} />
-                                        </td>
-                                    </tr>
-
+                                    {syllabus.references.map((ref) => (
+                                        <tr key={ref.id}>
+                                            <td width={200}>{ref.id}</td>
+                                            <td width={400}>{ref.title}</td>
+                                            <td className={styles.fill}>
+                                                <Link className={'actionLink'} to={`/references/form/${code}/${ref.id}`}>
+                                                    Open <ChevronRight size={18} />
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
 
@@ -318,22 +293,16 @@ const syllabusSections = ({status}) => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>HCI Models</td>
-                                        <td className={styles.fill}>Open <ChevronRight/></td>
+                                {syllabus.topics.map((topic) => (
+                                    <tr key={topic.id}>
+                                        <td>{topic.title}</td>
+                                        <td className={styles.fill}>
+                                            <Link className={'actionLink'} to={`/topics/form/${code}/${topic.id}`}>
+                                                Open <ChevronRight size={18}/>
+                                            </Link>
+                                        </td>
                                     </tr>
-                                    <tr>
-                                        <td>Introduction to HCI</td>
-                                        <td className={styles.fill}>Open <ChevronRight/></td>
-                                    </tr>
-                                    <tr>
-                                        <td>User Centered Design</td>
-                                        <td className={styles.fill}>Open <ChevronRight/></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Front End Prototyping</td>
-                                        <td className={styles.fill}>Open <ChevronRight/></td>
-                                    </tr>
+                                ))}
                                 </tbody>
                             </table>
 
@@ -352,62 +321,16 @@ const syllabusSections = ({status}) => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>CO0-ILO0</td>
-                                    <td className={styles.fill}>Open <ChevronRight/></td>
-                                </tr>
-                                <tr>
-                                    <td>CO1-ILO1</td>
-                                    <td className={styles.fill}>
-                                        <Link className={'actionLink'} to={'/ilos/form/:id'} >
-                                        Open <ChevronRight/>
-                                        </Link>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>CO1-ILO2</td>
-                                    <td className={styles.fill}>Open <ChevronRight/></td>
-                                </tr>
-                                <tr>
-                                    <td>CO1-ILO3</td>
-                                    <td className={styles.fill}>Open <ChevronRight/></td>
-                                </tr>
-                                <tr>
-                                    <td>CO2-ILO1</td>
-                                    <td className={styles.fill}>Open <ChevronRight/></td>
-                                </tr>
-                                <tr>
-                                    <td>CO2-ILO2</td>
-                                    <td className={styles.fill}>Open <ChevronRight/></td>
-                                </tr>
-                                <tr>
-                                    <td>CO2-ILO3</td>
-                                    <td className={styles.fill}>Open <ChevronRight/></td>
-                                </tr>
-                                <tr>
-                                    <td>CO3-ILO1</td>
-                                    <td className={styles.fill}>Open <ChevronRight/></td>
-                                </tr>
-                                <tr>
-                                    <td>CO3-ILO2</td>
-                                    <td className={styles.fill}>Open <ChevronRight/></td>
-                                </tr>
-                                <tr>
-                                    <td>CO3-ILO3</td>
-                                    <td className={styles.fill}>Open <ChevronRight/></td>
-                                </tr><tr>
-                                    <td>CO4-ILO1</td>
-                                    <td className={styles.fill}>Open <ChevronRight/></td>
-                                </tr>
-                                <tr>
-                                    <td>CO4-ILO2</td>
-                                    <td className={styles.fill}>Open <ChevronRight/></td>
-                                </tr>
-                                <tr>
-                                    <td>CO4-ILO3</td>
-                                    <td className={styles.fill}>Open <ChevronRight/></td>
-                                </tr>
-
+                                {syllabus.ilos.map((ilo) => (
+                                    <tr key={ilo.id}>
+                                        <td>{ilo.id}</td>
+                                        <td className={styles.fill}>
+                                            <Link className={'actionLink'} to={`/ilos/form/${code}/${ilo.id}`}>
+                                                Open <ChevronRight size={18}/>
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
                                 </tbody>
                             </table>
 
