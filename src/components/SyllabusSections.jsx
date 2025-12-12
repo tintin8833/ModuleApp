@@ -415,6 +415,135 @@ const syllabusSections = ({status}) => {
                     </section>
                 }
 
+                {selectedSection === 'Assessments' &&
+                    <section>
+                        <div className={styles['assessments-container']}>
+
+                            <div className={styles['assessments-header']}>
+                                <div className={'search-container'}>
+                                    <div className={'search-bar'}>
+                                        <Search size={18}/>
+                                        <input placeholder={"Search assessment name"} type="text"/>
+                                    </div>
+                                </div>
+
+                                <div className={'filter-container'}>
+                                    <p>Filter by <strong>Class Phase</strong>:</p>
+                                    <select name="phase">
+                                        <option value="">All</option>
+                                        <option value="Pre-Class">Pre-Class</option>
+                                        <option value="In-Class">In-Class</option>
+                                        <option value="Post-Class">Post-Class</option>
+                                    </select>
+                                </div>
+
+                                <Link to={'/assessments/form/:id'}>
+                                    <div className={'add-button'}>
+                                        <Plus size={16} strokeWidth={3}/> Add Assessment
+                                    </div>
+                                </Link>
+                            </div>
+
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th width={400}>TLA NAME</th>
+                                    <th width={400}>TOPIC</th>
+                                    <th width={350}>CLASS PHASE</th>
+                                    <th className={styles.fill}></th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr>
+                                    <td width={400}>UI Evaluation Checklist</td>
+                                    <td width={400}>Interface Design Principles</td>
+                                    <td width={350}>Pre-Class</td>
+                                    <td className={styles.fill}>
+                                        Open <ChevronRight size={18}/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td width={400}>Prototype Usability Test</td>
+                                    <td width={400}>Interface Design Principles</td>
+                                    <td width={350}>In-Class</td>
+                                    <td className={styles.fill}>
+                                        Open <ChevronRight size={18}/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td width={400}>Redesign & Reflection Output</td>
+                                    <td width={400}>Interface Design Principles</td>
+                                    <td width={350}>Post-Class</td>
+                                    <td className={styles.fill}>
+                                        Open <ChevronRight size={18}/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td width={400}>User Requirements Review</td>
+                                    <td width={400}>User-Centered Design</td>
+                                    <td width={350}>Pre-Class</td>
+                                    <td className={styles.fill}>
+                                        Open <ChevronRight size={18}/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td width={400}>Persona & Scenario Workshop</td>
+                                    <td width={400}>User-Centered Design</td>
+                                    <td width={350}>In-Class</td>
+                                    <td className={styles.fill}>
+                                        Open <ChevronRight size={18}/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td width={400}>Refined User Flow Output</td>
+                                    <td width={400}>User-Centered Design</td>
+                                    <td width={350}>Post-Class</td>
+                                    <td className={styles.fill}>
+                                        Open <ChevronRight size={18}/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td width={400}>Intro to Heuristics Brief</td>
+                                    <td width={400}>Usability Principles</td>
+                                    <td width={350}>Pre-Class</td>
+                                    <td className={styles.fill}>
+                                        Open <ChevronRight size={18}/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td width={400}>Heuristic Evaluation Activity</td>
+                                    <td width={400}>Usability Principles</td>
+                                    <td width={350}>In-Class</td>
+                                    <td className={styles.fill}>
+                                        Open <ChevronRight size={18}/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td width={400}>Usability Issue Prioritization Report</td>
+                                    <td width={400}>Usability Principles</td>
+                                    <td width={350}>Post-Class</td>
+                                    <td className={styles.fill}>
+                                        Open <ChevronRight size={18}/>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </section>
+                }
+
+
             </div>
         </div>
     )
