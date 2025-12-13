@@ -1,4 +1,4 @@
-import React, {use, useState} from 'react';
+import {useState} from 'react';
 import {Link} from 'react-router-dom'
 import styles from '../styles/CoursesTable.module.sass';
 import { ChevronRight } from 'react-feather';
