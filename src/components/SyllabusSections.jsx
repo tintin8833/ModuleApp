@@ -27,6 +27,7 @@ const syllabusSections = ({status}) => {
 
     const programOutcomes = ['PO1', 'PO2', 'PO3', 'PO4', 'PO5', 'PO6', 'PO7', 'PO8', 'PO9'];
 
+    const CriteriaForm = React.lazy(() => import('../pages/CriteriaForGradingForm.jsx'));
 
     const { code } = useParams();
     const syllabus = getSyllabusByCode(code);
@@ -393,8 +394,13 @@ const syllabusSections = ({status}) => {
                         </div>
                     </section>
                 }
-
-
+                {selectedSection === 'Criteria for Grading' && (
+                    <section>
+                        <React.Suspense fallback={<div>Loading...</div>}>
+                            <CriteriaForm syllabusCode={code} />
+                        </React.Suspense>
+                    </section>
+                )}
             </div>
         </div>
     )
