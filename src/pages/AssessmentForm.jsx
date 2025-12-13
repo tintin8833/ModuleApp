@@ -23,10 +23,18 @@ const AssessmentForm = () => {
     const [description, setDescription] = useState(assessmentData.assessmentDescription || '');
     const [rubric, setRubric] = useState(assessmentData.hasRubric || false);
 
+    const createEmptyRubricRows = (count = 3) =>
+        Array.from({ length: count }, () => ({
+            id: Date.now() + Math.random(),
+            criteria: '',
+            maxScore: '',
+            weight: ''
+        }));
+
     const [rubricRows, setRubricRows] = useState(
-        assessmentData.rubrics || [
-            { id: Date.now() + Math.random(), criteria: '', maxScore: '', weight: '' }
-        ]
+        assessmentData.rubrics && assessmentData.rubrics.length > 0
+            ? assessmentData.rubrics
+            : createEmptyRubricRows(3)
     );
 
     const handleRubricAdd = () => {
@@ -89,12 +97,12 @@ const AssessmentForm = () => {
                         {rubric && (
                             <>
                                 <h2>Rubric Criteria</h2>
-                                <div className={styles['tlas']}> {/* same styling as assessment box */}
+                                <div className={styles['rubrics']}>
                                     <div className={styles['rubric-header']}>
                                         <div className={styles['rubric-cell']}>Criteria</div>
                                         <div className={styles['rubric-cell']}>Max Score</div>
                                         <div className={styles['rubric-cell']}>Weight</div>
-                                        <div className={styles['rubric-cell']}></div> {/* for X */}
+                                        <div className={styles['rubric-cell']}></div>
                                     </div>
                                     {rubricRows.map((row) => (
                                         <div key={row.id} className={styles['rubric-row']}>
@@ -110,12 +118,14 @@ const AssessmentForm = () => {
                                                 initialValue={row.weight}
                                                 onChange={(val) => handleRubricChange(row.id, 'weight', val)}
                                             />
-                                            <div onClick={() => handleRubricDelete(row.id)} className={'x'}>
+                                            <div onClick={() => handleRubricDelete(row.id)} className={styles['x']}>
                                                 <X size={20} color={'white'}/>
                                             </div>
                                         </div>
                                     ))}
-                                    <Duplicator onAdd={handleRubricAdd} name={'Add Row'} />
+                                        <div className={styles['rubric-add']}>
+                                            <Duplicator onAdd={handleRubricAdd} name={'Add Row'} />
+                                        </div>
                                 </div>
                             </>
                         )}
