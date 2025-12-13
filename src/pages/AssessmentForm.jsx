@@ -63,17 +63,20 @@ const AssessmentForm = () => {
                         <h2>Topic</h2>
                         <TextField
                             initialValue={assessmentData.topic || 'No topic linked.'}
+                            disabled={true}
                             readOnly={true}
                         />
 
                         <h2>TLA Details</h2>
                         <TextField
                             label={'TLA Name'}
+                            disabled={true}
                             initialValue={assessmentData.tlaName || ''}
                             readOnly={true}
                         />
                         <TextArea
                             label={'TLA Description'}
+                            disabled={true}
                             initialValue={assessmentData.tlaDescription || 'No description available.'}
                             readOnly={true}
                         />
