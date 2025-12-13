@@ -60,6 +60,12 @@ const AssessmentForm = () => {
                     <FormNavigation goBack={goBackHandler} />
                     <div className={styles['form-container']}>
 
+                        <h2>Topic</h2>
+                        <TextField
+                            initialValue={assessmentData.topic || 'No topic linked.'}
+                            readOnly={true}
+                        />
+
                         <h2>TLA Details</h2>
                         <TextField
                             label={'TLA Name'}
