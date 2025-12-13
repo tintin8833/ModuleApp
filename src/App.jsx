@@ -7,9 +7,8 @@ import Syllabus from "./pages/Syllabus.jsx";
 import ReferenceForm from "./pages/ReferenceForm.jsx";
 import TopicForm from "./pages/TopicForm.jsx";
 import ILOForm from "./pages/ILOForm.jsx";
-import ProgramHead from "./pages/ProgramHead.jsx";
-import Dean from "./pages/Dean.jsx";
-import HRStaff from "./pages/HRStaff.jsx";
+import AssignedTOS from "./pages/AssignedTOS.jsx";
+import AssessmentForm from "./pages/AssessmentForm.jsx";
 
 
 function App() {
@@ -19,19 +18,15 @@ function App() {
               <div className="appPage">
                   <Routes>
                       <Route path={'/'} element={<AssignedCourses />} />
-                      <Route path={'/role/instructor'} element={<AssignedCourses />} />
+                      <Route path={'/assignedtos'} element={<AssignedTOS />} />
                       <Route path={'/courses/:code'} element={<Syllabus />} />
+                      <Route path={'/references/form/:id'} element={<ReferenceForm />} />
                       <Route path={'/references/form/:code/:refId'} element={<ReferenceForm />} />
                       <Route path={'/topics/form/:id'} element={<TopicForm />} />
                       <Route path={'/topics/form/:code/:topicId'} element={<TopicForm />} />
                       <Route path={'/ilos/form/:code/:iloId'} element={<ILOForm />} />
+                      <Route path={'/assessments/form/:code/:assessmentId'} element={<AssessmentForm />} />
 
-
-
-                      {/* Role pages */}
-                      <Route path={'/role/program-head'} element={<ProgramHead />} />
-                      <Route path={'/role/dean'} element={<Dean />} />
-                      <Route path={'/role/hr-staff'} element={<HRStaff />} />
 
                   </Routes>
               </div>

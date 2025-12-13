@@ -338,6 +338,63 @@ const syllabusSections = ({status}) => {
                     </section>
                 }
 
+                {selectedSection === 'Assessments' &&
+                    <section>
+                        <div className={styles['assessments-container']}>
+
+                            <div className={styles['assessments-header']}>
+                                <div className={'search-container'}>
+                                    <div className={'search-bar'}>
+                                        <Search size={18}/>
+                                        <input placeholder={"Search TLA name"} type="text"/>
+                                    </div>
+                                </div>
+
+                                <div className={'filter-container'}>
+                                    <p>Filter by <strong>Class Phase</strong>:</p>
+                                    <select name="phase">
+                                        <option value="">All</option>
+                                        <option value="Pre-Class">Pre-Class</option>
+                                        <option value="In-Class">In-Class</option>
+                                        <option value="Post-Class">Post-Class</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th width={400}>TLA NAME</th>
+                                    <th width={400}>TOPIC</th>
+                                    <th width={350}>CLASS PHASE</th>
+                                    <th className={styles.fill}></th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {syllabus.assessments.map((assessment) => (
+                                    <tr key={assessment.id}>
+                                        <td width={400}>{assessment.tlaName}</td>
+                                        <td width={400}>{assessment.topic}</td>
+                                        <td width={350}>{assessment.phase}</td>
+                                        <td className={styles.fill}>
+                                            <Link
+                                                className={'actionLink'}
+                                                to={`/assessments/form/${code}/${assessment.id}`}
+                                            >
+                                                Open <ChevronRight size={18}/>
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </section>
+                }
+
+
             </div>
         </div>
     )
