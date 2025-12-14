@@ -80,7 +80,7 @@ const CriteriaForGradingForm = ({ syllabusCode }) => {
         <div className={styles.container}>
             <h2>Criteria For Grading</h2>
 
-            <table className={styles.table}>
+            <table className={`${styles.table} ${styles.criteriaTable}`}>
                 <thead>
                 <tr>
                     <th>Course Outcome</th>

@@ -11,7 +11,7 @@
 
 .table
   width: 100%
-  table-layout: fixed
+  table-layout: auto
   border-collapse: separate
   border-spacing: 0
 
@@ -24,22 +24,24 @@
   td
     vertical-align: middle
 
-th:nth-child(1), td:nth-child(1)
-  width: 10%
+  &.criteriaTable
 
-th:nth-child(2), td:nth-child(2)
-  width: 10%
+    th:nth-child(1), td:nth-child(1)
+      width: 10%
 
-th:nth-child(3), td:nth-child(3)
-  width: 40%
+    th:nth-child(2), td:nth-child(2)
+      width: 10%
 
-th:nth-child(4), td:nth-child(4)
-  width: 30%
-  text-align: center
-  vertical-align: middle
+    th:nth-child(3), td:nth-child(3)
+      width: 40%
 
-th:nth-child(5), td:nth-child(5)
-  width: 10%
+    th:nth-child(4), td:nth-child(4)
+      width: 30%
+      text-align: center
+      vertical-align: middle
+
+    th:nth-child(5), td:nth-child(5)
+      width: 10%
 
 .cellBox
   width: 100%
@@ -127,6 +129,16 @@ th:nth-child(5), td:nth-child(5)
 .totalLabel
   font-weight: 500
 
+.totalRow td:first-child
+  display: flex
+  justify-content: center
+  align-items: center
+
+.totalRow .weightCell
+  display: grid
+  grid-template-columns: repeat(4, 1fr)
+  gap: 8px
+
 .options
   width: 100%
   border: 1px solid #DCE2F0
@@ -181,19 +193,6 @@ th:nth-child(5), td:nth-child(5)
 
   &:hover
     background: #F2F4F7
-
-.totalRow td
-  padding-top: 16px
-
-.totalRow td:first-child
-  display: flex
-  justify-content: center
-  align-items: center
-
-.totalRow .weightCell
-  display: grid
-  grid-template-columns: repeat(4, 1fr)
-  gap: 8px
 
 .headerCell
   width: 100%

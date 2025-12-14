@@ -132,7 +132,27 @@ const AssessmentForm = () => {
                                             </div>
                                         </div>
                                     ))}
-                                        <div className={styles['rubric-add']}>
+                                    <div className={styles['rubric-row']}>
+                                        <TextField
+                                            initialValue={'TOTAL'}
+                                            disabled={true}
+                                            readOnly={true}
+                                        />
+                                        <TextField
+                                            initialValue={rubricRows.reduce((sum, r) => sum + Number(r.maxScore || 0), 0)}
+                                            disabled={true}
+                                            readOnly={true}
+                                        />
+                                        <TextField
+                                            initialValue={rubricRows.reduce((sum, r) => sum + Number(r.weight || 0), 0)}
+                                            disabled={true}
+                                            readOnly={true}
+                                        />
+                                        <div className={styles['x']} style={{ visibility: 'hidden' }}>
+                                            <X size={20} color={'transparent'} />
+                                        </div>
+                                    </div>
+                                    <div className={styles['rubric-add']}>
                                             <Duplicator onAdd={handleRubricAdd} name={'Add Row'} />
                                         </div>
                                 </div>
