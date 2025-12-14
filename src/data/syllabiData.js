@@ -263,65 +263,141 @@ export const syllabiData = [
                 tlaName: 'UI Evaluation Checklist',
                 topic: 'Interface Design Principles',
                 phase: 'Pre-Class',
-                tlaDescription: 'Students review and analyze UI components against established interface design principles, identifying inconsistencies and potential usability issues before starting their own designs. This ensures familiarity with best practices in UI evaluation and prepares them for practical design tasks.'
+                tlaDescription:
+                    'Students review and analyze UI components against established interface design principles, identifying inconsistencies and potential usability issues before starting their own designs...',
+
+                assessmentMethod: 'Checklist-Based Evaluation',
+                assessmentDescription:
+                    'Students will evaluate existing UI samples using a structured checklist based on usability heuristics and interface design principles. The goal is to familiarize students with identifying issues and articulating UI flaws clearly.',
+                hasRubric: false
             },
             {
                 id: 'A2',
                 tlaName: 'Prototype Usability Test',
                 topic: 'Interface Design Principles',
                 phase: 'In-Class',
-                tlaDescription: 'Students conduct usability testing on prototypes, observing user interactions and documenting pain points and successes. They are guided to interpret results to improve interface design, learn practical testing methods, and refine their prototypes iteratively based on real feedback.'
+                tlaDescription:
+                    'Students conduct usability testing on prototypes, observing user interactions and documenting pain points and successes...',
+
+                assessmentMethod: 'Usability Testing Session',
+                assessmentDescription:
+                    'Students carry out structured usability tests, record user behavior, summarize findings, and identify key pain points. Observations will be used to propose improvements.',
+                hasRubric: false
             },
             {
                 id: 'A3',
                 tlaName: 'Redesign & Reflection Output',
                 topic: 'Interface Design Principles',
                 phase: 'Post-Class',
-                tlaDescription: 'After usability testing, students produce a redesigned version of the interface along with a detailed reflection report. They explain the changes made, reasoning behind design decisions, and how the feedback influenced their iterations, demonstrating critical thinking and application of usability principles.'
-            },
+                tlaDescription:
+                    'After usability testing, students produce a redesigned version of the interface along with a detailed reflection report...',
 
+                assessmentMethod: 'Redesign Project + Reflection Essay',
+                assessmentDescription:
+                    'Students improve their UI design based on usability test feedback and submit a reflection explaining all design changes and the reasoning behind them.',
+                hasRubric: true,
+                rubrics: [
+                    { id: 1, criteria: 'Quality of Redesigned Interface', maxScore: '20', weight: '50' },
+                    { id: 2, criteria: 'Justification of Design Decisions', maxScore: '10', weight: '30' },
+                    { id: 3, criteria: 'Reflection Depth', maxScore: '10', weight: '20' }
+                ]
+            },
             {
                 id: 'A4',
                 tlaName: 'User Requirements Review',
                 topic: 'User-Centered Design',
                 phase: 'Pre-Class',
-                tlaDescription: 'Students review the collected user requirements and analyze them to ensure clarity, completeness, and alignment with project goals. This task prepares them to effectively apply user-centered design principles during design and prototyping stages.'
+                tlaDescription:
+                    'Students review the collected user requirements and analyze them to ensure clarity and alignment with project goals...',
+
+                assessmentMethod: 'Requirements Analysis Task',
+                assessmentDescription:
+                    'Students analyze a set of user requirements, verify completeness, identify missing information, and check alignment with user goals and system constraints.',
+                hasRubric: false
             },
             {
                 id: 'A5',
                 tlaName: 'Persona & Scenario Workshop',
                 topic: 'User-Centered Design',
                 phase: 'In-Class',
-                tlaDescription: 'Students create detailed personas and scenarios to represent different user types. This hands-on activity enables them to empathize with users, predict challenges, and generate design ideas that are grounded in real user needs.'
+                tlaDescription:
+                    'Students create detailed personas and scenarios to represent different user types...',
+
+                assessmentMethod: 'Persona & Scenario Creation Activity',
+                assessmentDescription:
+                    'Students work individually or in groups to create realistic user personas and usage scenarios that reflect actual user needs and behaviors.',
+                hasRubric: true,
+                rubrics: [
+                    { id: 1, criteria: 'Persona Detail & Realism', maxScore: '15', weight: '40' },
+                    { id: 2, criteria: 'Scenario Completeness', maxScore: '10', weight: '15' },
+                    { id: 3, criteria: 'Correctness', maxScore: '10', weight: '20' },
+                    { id: 4, criteria: 'Presentation & Clarity', maxScore: '10', weight: '25' }
+
+                ]
             },
             {
                 id: 'A6',
                 tlaName: 'Refined User Flow Output',
                 topic: 'User-Centered Design',
                 phase: 'Post-Class',
-                tlaDescription: 'Students document and present a refined user flow that incorporates feedback from previous design iterations. The exercise emphasizes improving navigation, interaction clarity, and overall usability while reflecting on design decisions.'
+                tlaDescription: 'Students document and present a refined user flow that incorporates feedback from previous design iterations. The exercise emphasizes improving navigation, interaction clarity, and overall usability while reflecting on design decisions.',
+                assessmentMethod: 'User Flow Refinement Task',
+                assessmentDescription: 'Students produce an improved user flow based on collected feedback and usability findings. The submission must clearly highlight changes, demonstrate logical interaction paths, and explain improvements made for usability and user clarity.',
+                hasRubric: true,
+                rubrics: [
+                    { id: 1, criteria: 'Flow Clarity & Structure', maxScore: '15', weight: '40' },
+                    { id: 2, criteria: 'Integration of Feedback', maxScore: '10', weight: '35' },
+                    { id: 3, criteria: 'Consistency & Accuracy', maxScore: '10', weight: '25' }
+                ]
             },
-
             {
                 id: 'A7',
                 tlaName: 'Intro to Heuristics Brief',
                 topic: 'Usability Principles',
                 phase: 'Pre-Class',
-                tlaDescription: 'Students read and analyze heuristic evaluation guidelines, learning to identify common usability issues. They prepare notes and examples to apply these principles in subsequent evaluation exercises.'
+                tlaDescription: 'Students read and analyze heuristic evaluation guidelines, learning to identify common usability issues. They prepare notes and examples to apply these principles in subsequent evaluation exercises.',
+                assessmentMethod: 'Heuristic Principles Summary',
+                assessmentDescription: 'Students create a written brief summarizing key heuristic principles, including interpretations and examples. The output should reflect understanding of usability heuristics and their relevance to interface evaluation.',
+                hasRubric: false
             },
             {
                 id: 'A8',
                 tlaName: 'Heuristic Evaluation Activity',
                 topic: 'Usability Principles',
                 phase: 'In-Class',
-                tlaDescription: 'In a collaborative exercise, students perform heuristic evaluations on sample interfaces. They identify usability problems, categorize them by severity, and suggest actionable improvements, enhancing practical understanding of usability principles.'
+                tlaDescription:
+                    'In a collaborative exercise, students perform heuristic evaluations on sample interfaces...',
+                assessmentMethod: 'Heuristic Evaluation Submission',
+                assessmentDescription:
+                    'Students evaluate sample interfaces using standard heuristic principles. They document usability issues, classify them by severity, and propose actionable recommendations.',
+                hasRubric: true,
+                rubrics: [
+                    { id: 1, criteria: 'Correct Identification of Usability Issues', maxScore: '15', weight: '25' },
+                    { id: 2, criteria: 'Severity Rating Accuracy', maxScore: '10', weight: '20' },
+                    { id: 3, criteria: 'Quality of Recommendations', maxScore: '15', weight: '25' },
+                    { id: 4, criteria: 'Clarity & Organization of Report', maxScore: '10', weight: '15' },
+                    { id: 5, criteria: 'Application of Heuristic Principles', maxScore: '10', weight: '15' }
+                ]
             },
             {
                 id: 'A9',
                 tlaName: 'Usability Issue Prioritization Report',
                 topic: 'Usability Principles',
                 phase: 'Post-Class',
-                tlaDescription: 'Students compile all identified usability issues and prioritize them based on impact and feasibility. The report includes proposed solutions and justification for prioritization, emphasizing critical thinking and informed decision-making.'
+                tlaDescription:
+                    'Students compile all identified usability issues and prioritize them based on impact...',
+                assessmentMethod: 'Issue Prioritization Analysis Report',
+                assessmentDescription:
+                    'Students document usability issues, categorize them, justify prioritization levels, and propose feasible solutions supported by design reasoning.',
+                hasRubric: true,
+                rubrics: [
+                    { id: 1, criteria: 'Completeness of Identified Issues', maxScore: '10', weight: '15' },
+                    { id: 2, criteria: 'Accuracy of Prioritization Logic', maxScore: '15', weight: '25' },
+                    { id: 3, criteria: 'Quality & Feasibility of Proposed Solutions', maxScore: '15', weight: '25' },
+                    { id: 4, criteria: 'Justification & Critical Reasoning', maxScore: '10', weight: '15' },
+                    { id: 5, criteria: 'Report Structure & Organization', maxScore: '5', weight: '10' },
+                    { id: 6, criteria: 'Clarity & Professionalism of Writing', maxScore: '5', weight: '10' }
+                ]
             }
         ]
     },
