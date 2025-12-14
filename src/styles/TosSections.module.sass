@@ -13,6 +13,7 @@
 
   th
     text-align: center
+    justify-content: center
     font-weight: 500
     color: #333
     font-size: 16px
@@ -23,21 +24,24 @@
   &.criteriaTable
 
     th:nth-child(1), td:nth-child(1)
-      width: 10%
+      width: 15%
 
     th:nth-child(2), td:nth-child(2)
-      width: 10%
-
-    th:nth-child(3), td:nth-child(3)
       width: 40%
 
+    td:nth-child(2)
+      justify-content: left
+
+    th:nth-child(3), td:nth-child(3)
+      width: 15%
+
     th:nth-child(4), td:nth-child(4)
-      width: 30%
+      width: 15%
       text-align: center
       vertical-align: middle
 
     th:nth-child(5), td:nth-child(5)
-      width: 10%
+      width: 15%
 
 .cellBox
   width: 100%
@@ -58,7 +62,22 @@
 
   &.muted
     background: #F1F3F5
-    font-weight: 500
+
+  &.mutedBold
+    font-weight: 400
+    background: #F1F3F5
+
+  &.readable
+    justify-content: left
+    background: #F1F3F5
+    padding-left: 20px
+
+.blankCell
+  border: none
+  font-weight: 500
+
+.totalCoPoint
+  font-weight: 500
 
 .weightHeader
   width: 100%
@@ -75,7 +94,7 @@
   grid-template-columns: repeat(4, 1fr)
   gap: 0
   text-align: center
-  font-size: 14px
+  font-size: 12px
   color: #555
 
 .weightCell
@@ -92,26 +111,26 @@
   display: flex
   border-spacing: 10px
 
-  input
-    width: 100%
-    height: 100%
-    padding: 0 6px
-    border: none
-    text-align: center
-    background: transparent
-    font-size: 14px
+input
+  width: 100%
+  height: 100%
+  padding: 0 6px
+  border: none
+  text-align: center
+  background: transparent
+  font-size: 14px
 
-    &:disabled
-      background: #F1F3F5
-      color: #777
+  &:disabled
+    background: #F1F3F5
+    color: #777
 
-.cellBox.minPassing
+.cellBox.point
   min-height: 48px
   height: 48px
   padding: 0
   display: flex
 
-.minPassing input
+.point input
   height: 100%
   width: 100%
   border: none
@@ -134,18 +153,6 @@
   display: grid
   grid-template-columns: repeat(4, 1fr)
   gap: 8px
-
-.options
-  width: 100%
-  border: 1px solid #DCE2F0
-  border-top: none
-  background: white
-  padding: 8px
-  display: flex
-  flex-direction: column
-  gap: 6px
-  max-height: 160px
-  overflow-y: auto
 
 .multiSelect
   position: relative

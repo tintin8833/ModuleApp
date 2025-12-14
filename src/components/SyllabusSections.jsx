@@ -7,6 +7,7 @@ import TextField from "./TextField.jsx";
 import TextArea from "./TextArea.jsx";
 import {Link, useParams, useSearchParams} from "react-router-dom";
 import {getSyllabusByCode} from "../data/syllabiData.js";
+
 const syllabusSections = ({status}) => {
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -31,7 +32,6 @@ const syllabusSections = ({status}) => {
 
     const { code } = useParams();
     const syllabus = getSyllabusByCode(code);
-
 
     return(
         <div className={styles.container}>
@@ -390,13 +390,12 @@ const syllabusSections = ({status}) => {
                                 ))}
                                 </tbody>
                             </table>
-
                         </div>
                     </section>
                 }
                 {selectedSection === 'Criteria for Grading' && (
                     <section>
-                        <React.Suspense fallback={<div>Loading...</div>}>
+                        <React.Suspense fallback={<div></div>}>
                             <CriteriaForm syllabusCode={code} />
                         </React.Suspense>
                     </section>

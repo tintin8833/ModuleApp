@@ -1,18 +1,21 @@
 import styles from '../styles/SideNavigation.module.sass'
 import unclogo from '../assets/unclogo.png';
 import {FileText} from "react-feather";
-import {Link, useSearchParams} from "react-router-dom";
-import {useState} from "react";
+import {useNavigate, useLocation} from "react-router-dom";
 import {LogOut} from "react-feather";
 
 const SideNavigation = () => {
 
-    const [searchParams, setSearchParams] = useSearchParams();
-    const selected = searchParams.get('page') || 'Syllabus';
+    const navigate = useNavigate();
+    const location = useLocation();
+    const selected = location.pathname === '/assignedtos' ? 'TOS' : 'Syllabus';
 
     const handlePageChange = (page) => {
-        setSearchParams({ page: page })
-        console.log(selected)
+        if (page === 'TOS') {
+            navigate('/assignedtos');
+        } else {
+            navigate('/');
+        }
     }
 
     return(
@@ -24,9 +27,9 @@ const SideNavigation = () => {
                 <div onClick={() => handlePageChange('Syllabus')} className={`${styles.list} ${selected === 'Syllabus' ? styles.selected: ''}`}>
                     <FileText size={24}/> Syllabus
                 </div>
-                    <div onClick={() => handlePageChange('TOS')}  className={`${styles.list} ${selected === 'TOS' ? styles.selected: ''}`}>
-                        <FileText size={24}/> TOS
-                    </div>
+                <div onClick={() => handlePageChange('TOS')}  className={`${styles.list} ${selected === 'TOS' ? styles.selected: ''}`}>
+                    <FileText size={24}/> TOS
+                </div>
 
 
 

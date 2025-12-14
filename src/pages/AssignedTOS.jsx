@@ -1,12 +1,10 @@
 
 import Skeleton from "../layouts/Skeleton.jsx";
 import Header from "../components/Header.jsx";
-import CoursesTable from "../components/CoursesTable.jsx";
 import SideNavigation from "../components/SideNavigation.jsx";
 import TOSCoursesTable from "../components/TOSCoursesTable.jsx";
 
-const Syllabus = ({}) => {
-
+const TOS = ({}) => {
 
     return (
         <Skeleton
@@ -16,5 +14,5 @@ const Syllabus = ({}) => {
         />
     )
 }
-export default Syllabus;
+export default TOS;
 

@@ -15,16 +15,16 @@ const TOSCoursesTable = ({}) => {
     }
 
     const Courses = [
-        { code: 'BSCS313L', name: 'Human & Computer Interaction', update: 'Aug 01, 2025', status: 'DRAFT', approved: '' },
-        { code: 'BSCS212L', name: 'Web Development I', update: 'Sept 15, 2025', status: 'DRAFT', approved: '' },
-        { code: 'BSCS111L', name: 'Fundamentals of Programming', update: 'Aug 05, 2025', status: 'DRAFT', approved: '' },
+        { code: 'BSCS313L', name: 'Human & Computer Interaction', update: 'Sept 01, 2025', status: 'DRAFT', approved: '' },
+        { code: 'BSCS212L', name: 'Web Development I', update: 'Aug 15, 2025', status: 'DRAFT', approved: '' },
+        { code: 'BSCS111L', name: 'Fundamentals of Programming', update: 'Aug 25, 2025', status: 'DRAFT', approved: '' },
         { code: 'BSCS214L', name: 'Data Structures and Algorithms', update: 'Sept 20, 2025', status: 'PENDING', approved: '' },
         { code: 'BSCS315L', name: 'Operating Systems', update: 'Oct 02, 2025', status: 'APPROVED', approved: 'Oct 10, 2025' },
-        { code: 'BSCS321L', name: 'Database Management Systems', update: 'Oct 05, 2025', status: 'DRAFT', approved: '' },
-        { code: 'BSCS322L', name: 'Software Engineering', update: 'Oct 12, 2025', status: 'PENDING', approved: '' },
-        { code: 'BSCS331L', name: 'Computer Networks', update: 'Oct 18, 2025', status: 'APPROVED', approved: 'Oct 25, 2025' },
-        { code: 'BSCS341L', name: 'Artificial Intelligence', update: 'Nov 01, 2025', status: 'DRAFT', approved: '' },
-        { code: 'BSCS351L', name: 'Cybersecurity Fundamentals', update: 'Nov 10, 2025', status: 'PENDING', approved: '' },
+        { code: 'BSCS321L', name: 'Database Management Systems', update: 'Sept 05, 2025', status: 'DRAFT', approved: '' },
+        { code: 'BSCS322L', name: 'Software Engineering', update: 'Sept 12, 2025', status: 'PENDING', approved: '' },
+        { code: 'BSCS331L', name: 'Computer Networks', update: 'Sept 18, 2025', status: 'APPROVED', approved: 'Oct 25, 2025' },
+        { code: 'BSCS341L', name: 'Artificial Intelligence', update: 'Sept 01, 2025', status: 'DRAFT', approved: '' },
+        { code: 'BSCS351L', name: 'Cybersecurity Fundamentals', update: 'Sept 10, 2025', status: 'PENDING', approved: '' },
     ];
 
 
@@ -36,7 +36,7 @@ const TOSCoursesTable = ({}) => {
         <div className={styles['courses-table']}>
 
             <div className={styles.header}>
-                <h2>ASSIGNED COURSES</h2>
+                <h2>ASSIGNED TOS</h2>
                 <div className={styles.filterA}>
                     <select className={styles['header-select']}>
                         {yearOptions}
@@ -95,7 +95,7 @@ const TOSCoursesTable = ({}) => {
 
                                     <td width={120}>{row.status}</td>
                                     <td className={styles.fill}>
-                                        <Link className={'actionLink'} to={`/courses/${row.name}`}>
+                                        <Link className={'actionLink'} to={`/tos/${row.name}`}>
                                             {row.status === 'DRAFT' ? 'Compose' : 'Open'}
                                             <ChevronRight size={18} />
                                         </Link>

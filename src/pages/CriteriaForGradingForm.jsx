@@ -81,12 +81,12 @@ const CriteriaForGradingForm = ({ syllabusCode }) => {
             <table className={`${styles.table} ${styles.criteriaTable}`}>
                 <thead>
                 <tr>
-                    <th>Course Outcome</th>
+                    <th>COURSE OUTCOME</th>
                     <th className={styles.headerCell}>ILOs</th>
-                    <th className={styles.headerCell}>Assessments</th>
+                    <th className={styles.headerCell}>ASSESSMENTS</th>
                     <th>
                         <div className={styles.weightHeader}>
-                            Weight %
+                            WEIGHT %
                             <div className={styles.subheaders}>
                                 <span>Prelim</span>
                                 <span>Midterm</span>
@@ -95,7 +95,7 @@ const CriteriaForGradingForm = ({ syllabusCode }) => {
                             </div>
                         </div>
                     </th>
-                    <th>Minimum Passing %</th>
+                    <th>MINIMUM PASSING %</th>
                 </tr>
                 </thead>
 
