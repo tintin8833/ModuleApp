@@ -5,7 +5,7 @@ import FormNavigation from "../components/FormNavigation.jsx";
 import styles from "../styles/Form.module.sass";
 import { useNavigate, useParams } from "react-router-dom";
 import TextField from "../components/TextField.jsx";
-import Dropdown from "../components/Dropdown.jsx";
+import DropdownA from "../components/DropdownA.jsx";
 import { X, AlertCircle, CheckCircle } from "react-feather"; // Icons
 import Duplicator from "../components/Duplicator.jsx";
 import TextArea from "../components/TextArea.jsx";
@@ -219,14 +219,14 @@ const TopicForm = () => {
                             <div className={styles.list} key={item.id}>
                                 <div className={styles.tlas}>
                                     <div className={styles.list}>
-                                        <Dropdown
+                                        <DropdownA
                                             options={classPhases}
                                             label={'Class Phase'}
                                             value={item.classPhase}
                                             onChange={(val) => handleTlaChange(item.id, 'classPhase', val)}
                                             error={errors[`tla_${item.id}_classPhase`]}
                                         />
-                                        <Dropdown
+                                        <DropdownA
                                             options={['Student', 'Instructor']}
                                             label={'Performed By'}
                                             value={item.performedBy}

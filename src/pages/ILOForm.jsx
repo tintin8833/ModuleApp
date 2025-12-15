@@ -5,9 +5,9 @@ import FormNavigation from "../components/FormNavigation.jsx";
 import styles from "../styles/Form.module.sass";
 import { useNavigate, useParams } from "react-router-dom";
 import TextField from "../components/TextField.jsx"; // Not used in this form specifically but good to keep
-import Dropdown from "../components/Dropdown.jsx";
+import DropdownA from "../components/DropdownA.jsx";
 import TextArea from "../components/TextArea.jsx";
-import MultiSelect from "../components/MultiSelect.jsx";
+import MultiSelectA from "../components/MultiSelectA.jsx";
 import SideNavigation from "../components/SideNavigation.jsx";
 import { getSyllabusByCode } from "../data/syllabiData";
 import { X, AlertCircle, CheckCircle } from "react-feather"; // Import Icons
@@ -139,14 +139,14 @@ const ILOForm = () => {
                         />
 
                         <div className={styles.list}>
-                            <Dropdown
+                            <DropdownA
                                 label={'Delivery Week'}
                                 options={weeks()}
                                 value={deliveryWeek}
                                 onChange={(val) => handleTextChange(setDeliveryWeek, 'deliveryWeek', val)}
                                 error={errors.deliveryWeek}
                             />
-                            <Dropdown
+                            <DropdownA
                                 label={'Allocated Time'}
                                 options={['1 hour', '1.5 hours', '2 hours', '2.5 hours', '3 hours', '3.5 hours', '4 hours']}
                                 value={allocatedTime}
@@ -156,7 +156,7 @@ const ILOForm = () => {
                         </div>
 
                         <h2>Topics</h2>
-                        <MultiSelect
+                        <MultiSelectA
                             label={'Name(s)'}
                             options={availableTopics}
                             value={selectedTopics}
@@ -165,7 +165,7 @@ const ILOForm = () => {
                         />
 
                         <h2>References</h2>
-                        <MultiSelect
+                        <MultiSelectA
                             label={'Title(s)'}
                             options={availableReferences}
                             value={selectedReferences}
