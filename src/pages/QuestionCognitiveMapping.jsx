@@ -1,9 +1,10 @@
-import { useState, useRef } from "react";
+import {useState, useRef, useEffect} from "react";
 import { X, Upload } from "react-feather";
 import layout from "../styles/QuestionCognitiveMapping.module.sass";
 import Duplicator from "../components/Duplicator.jsx";
 
-const QuestionCognitiveMapping = ({ outcomeData }) => {
+
+const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
     const fileInputRef = useRef(null);
 
     const cognitiveLevels = [
@@ -24,7 +25,6 @@ const QuestionCognitiveMapping = ({ outcomeData }) => {
         cognitiveLevel: ''
     });
 
-    const [questions, setQuestions] = useState([createEmptyQuestion()]);
 
     const handleAddQuestion = () => {
         setQuestions([...questions, createEmptyQuestion()]);
@@ -112,8 +112,21 @@ const QuestionCognitiveMapping = ({ outcomeData }) => {
 
     const currentCounts = getCurrentPointCount();
 
+    const labelColPct = 18;   // width for first label column
+    const totalColPct = 10;   // width for Total column
+    const remainingPct = 100 - labelColPct - totalColPct;
+    const totalILOs = outcomeData.reduce((sum, co) => sum + co.ilos.length, 0) || 1;
+    const perIloPct = remainingPct / totalILOs;
+
+    useEffect(() => {
+        if (questions.length === 0) {
+            setQuestions([createEmptyQuestion()]);
+        }
+    }, [questions, setQuestions]);
+
+
     return (
-        <div className={layout.mainContainer}>
+        <div className={layout.container}>
             {/* Hidden file input */}
             <input
                 ref={fileInputRef}
@@ -123,79 +136,99 @@ const QuestionCognitiveMapping = ({ outcomeData }) => {
                 style={{ display: 'none' }}
             />
 
-            {/* Points Allocated Section */}
             <div className={layout.section}>
                 <h2>Points Allocated</h2>
 
-                <table className={`${layout.table} ${layout.TOSTable}`}>
+                <table className={`${layout.qctable} ${layout.TOSTable}`}>
                     <thead>
                     <tr>
-                        <th rowSpan="2">
-                            <div className={layout.cellBox}> </div>
+                        <th style={{ width: `${labelColPct}%` }}>
+                            <div className={`${layout.cellBox} ${layout.linedHeader}`}></div>
                         </th>
+
                         {outcomeData.map(co => (
-                            <th key={co.co} colSpan={co.ilos.length}>
-                                <div className={layout.cellBox}>{co.co}</div>
+                            <th
+                                key={co.co}
+                                style={{ width: `${co.ilos.length * perIloPct}%` }}
+                            >
+                                <div className={`${layout.cellBox} ${layout.upperHeader}`}>{co.co}</div>
                             </th>
                         ))}
-                        <th rowSpan="2">
-                            <div className={layout.cellBox}>Total</div>
+
+                        <th style={{ width: `${totalColPct}%` }}>
+                            <div className={`${layout.cellBox} ${layout.linedHeader3}`}>Total</div>
                         </th>
                     </tr>
+
                     <tr>
-                        {outcomeData.map(co => (
+                        {/* Empty cell to align with the first label column */}
+                        <th style={{ width: `${labelColPct}%` }}>
+                            <div className={`${layout.cellBox} ${layout.linedHeader2}`}></div>
+                        </th>
+
+                        {/* ILO subheaders (each gets perIloPct) */}
+                        {outcomeData.flatMap(co =>
                             co.ilos.map(ilo => (
-                                <th key={`${co.co}-${ilo.id}`}>
-                                    <div className={layout.cellBox}>{ilo.id}</div>
+                                <th
+                                    key={`${co.co}-${ilo.id}`}
+                                    style={{ width: `${perIloPct}%` }}
+                                >
+                                    <div className={`${layout.cellBox} ${layout.lowerHeader}`}>{ilo.id}</div>
                                 </th>
                             ))
-                        ))}
+                        )}
+
+                        {/* Empty cell to align under the Total column */}
+                        <th style={{ width: `${totalColPct}%` }}>
+                            <div className={`${layout.cellBox} ${layout.linedHeader4}`}></div>
+                        </th>
                     </tr>
                     </thead>
+
                     <tbody>
                     <tr>
-                        <td>
-                            <div className={layout.blankCell}>Points Needed</div>
+                        <td style={{ width: `${labelColPct}%` }}>
+                            <div>Points Needed</div>
                         </td>
-                        {outcomeData.map(co => (
-                            <>
-                                {co.ilos.map(ilo => (
-                                    <td key={`needed-${co.co}-${ilo.id}`}>
-                                        <div className={`${layout.cellBox} ${layout.muted}`}>
-                                            {ilo.points}
-                                        </div>
-                                    </td>
-                                ))}
-                            </>
-                        ))}
-                        <td>
-                            <div className={`${layout.cellBox} ${layout.mutedBold}`}>
+
+                        {outcomeData.flatMap(co =>
+                            co.ilos.map(ilo => (
+                                <td key={`needed-${co.co}-${ilo.id}`} style={{ width: `${perIloPct}%` }}>
+                                    <div className={`${layout.cellBox}`}>{ilo.points}</div>
+                                </td>
+                            ))
+                        )}
+
+                        <td style={{ width: `${totalColPct}%` }}>
+                            <div className={`${layout.cellBox} ${layout.totalReqPoint}`}>
                                 {outcomeData.reduce((sum, co) => sum + co.totalPoints, 0)}
                             </div>
                         </td>
                     </tr>
+
                     <tr>
-                        <td>
-                            <div className={layout.blankCell}>Current Point Count</div>
+                        <td style={{ width: `${labelColPct}%` }}>
+                            <div>Current Point Count</div>
                         </td>
-                        {outcomeData.map(co => (
-                            <>
-                                {co.ilos.map(ilo => (
-                                    <td key={`current-${co.co}-${ilo.id}`}>
-                                        <div className={`${layout.cellBox} ${layout.readable}`}>
-                                            {currentCounts[co.co]?.ilos[ilo.id] || 0}
-                                        </div>
-                                    </td>
-                                ))}
-                            </>
-                        ))}
-                        <td>
-                            <div className={`${layout.cellBox} ${layout.totalCoPoint}`}>
+
+                        {outcomeData.flatMap(co =>
+                            co.ilos.map(ilo => (
+                                <td key={`current-${co.co}-${ilo.id}`} style={{ width: `${perIloPct}%` }}>
+                                    <div className={`${layout.cellBox}`}>
+                                        {currentCounts[co.co]?.ilos[ilo.id] || 0}
+                                    </div>
+                                </td>
+                            ))
+                        )}
+
+                        <td style={{ width: `${totalColPct}%` }}>
+                            <div className={`${layout.cellBox} ${layout.totalCuPoint}`}>
                                 {Object.values(currentCounts).reduce((sum, co) => sum + co.total, 0)}
                             </div>
                         </td>
                     </tr>
                     </tbody>
+
                 </table>
             </div>
 

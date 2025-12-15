@@ -280,6 +280,8 @@ const syllabusSections = ({status}) => {
                                 </div>
 
                                 <Link to={'/topics/form/:id'}>
+
+                                    
                                     <div className={'add-button'}>
                                         <Plus size={16} strokeWidth={3}/> Add Topic
                                     </div>

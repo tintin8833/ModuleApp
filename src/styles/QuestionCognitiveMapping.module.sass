@@ -10,7 +10,7 @@
   display: flex
   flex-direction: column
   height: max-content
-  padding: 20px
+  padding: 20px 40px 20px 40px
   border-radius: 5px
   border: 1px solid #DDDFDF
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25)
@@ -37,9 +37,9 @@
   &:hover
     background: #2563EB
 
-.table
+.qctable
   width: 100%
-  table-layout: auto
+  table-layout: fixed
   border-collapse: collapse
   border-spacing: 0
 
@@ -57,20 +57,100 @@
 
   &.TOSTable
     th, td
-      padding: 4px
+      padding: 0px
+
+    .qctable
+  width: 100%
+  table-layout: fixed
+  border-collapse: collapse
+  border-spacing: 0
+
+  th
+    text-align: center
+    justify-content: center
+    font-weight: 500
+    color: #333
+    font-size: 14px
+    padding: 8px
+
+  td
+    vertical-align: middle
+    padding: 8px
+
+  &.TOSTable
+    th, td
+      padding: 0px
+
+    // Added for TOSSummary table alignment (7 columns)
+    th:nth-child(1), td:nth-child(1)
+      width: 20%  // Labels column (e.g., "no. of items")
+
+    th:nth-child(2), td:nth-child(2)
+      width: 13.33%  // Remembering
+
+    th:nth-child(3), td:nth-child(3)
+      width: 13.33%  // Understanding
+
+    th:nth-child(4), td:nth-child(4)
+      width: 13.33%  // Applying
+
+    th:nth-child(5), td:nth-child(5)
+      width: 13.33%  // Analyzing
+
+    th:nth-child(6), td:nth-child(6)
+      width: 13.33%  // Evaluating
+
+    th:nth-child(7), td:nth-child(7)
+      width: 13.33%  // Creating
+
+// Rest of your CSS remains the same...
 
 .cellBox
   width: 100%
   min-height: 45px
   padding: 10px
-  border-radius: 5px
-  border: 1px solid #DDDFDF
-  background: #FFFFFF
+  background: white
   display: flex
   justify-content: center
   align-items: center
   text-align: center
   font-size: 14px
+
+  &.upperHeader
+    background: #F1F3F5
+    border-top: 0.5px solid #DDDFDF
+    box-shadow: 0 1px 2px 0 #F1F3F5
+    font-size: 16px
+
+  &.linedHeader
+    background: #F1F3F5
+    border-top: 0.5px solid #DDDFDF
+    border-right: 1px solid #DDDFDF
+    font-size: 16px
+
+  &.linedHeader2
+    background: #F1F3F5
+    border-right: 0.5px solid #DDDFDF
+    border-bottom: 1px solid #DDDFDF
+    font-size: 16px
+
+  &.linedHeader3
+    background: #F1F3F5
+    border-top: 0.5px solid #DDDFDF
+    border-left: 1px solid #DDDFDF
+    font-size: 16px
+
+  &.linedHeader4
+    background: #F1F3F5
+    border-bottom: 0.5px solid #DDDFDF
+    border-left: 1px solid #DDDFDF
+    font-size: 16px
+
+  &.lowerHeader
+    background: #F1F3F5
+    border-bottom: 0.5px solid #DDDFDF
+    padding-top: 0px
+    font-weight: 300
 
   input, .dropdown
     pointer-events: auto
@@ -89,19 +169,18 @@
     border: 1px solid #E5E7EB
     font-weight: 500
 
-.blankCell
-  border: none
-  font-weight: 600
-  padding: 10px
-  text-align: right
-  padding-right: 20px
-  color: #333
+  &.rightAlign
+    justify-content: flex-end
+    text-align: right
 
-.totalCoPoint
+.totalCuPoint
   font-weight: 600
-  background: #EFF6FF
-  border: 1px solid #BFDBFE
-  color: #1E40AF
+  border: 1px solid red
+  color: red
+
+.totalReqPoint
+  font-weight: 600
+  color: black
 
 .tableHeader
   display: grid

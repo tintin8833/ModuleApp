@@ -8,6 +8,7 @@ import Duplicator from "../components/Duplicator.jsx";
 import {Link, useParams, useSearchParams} from "react-router-dom";
 import { getSyllabusByCode } from "../data/syllabiData.js";
 import layout from "../styles/TosSections.module.sass";
+import TOSSummary from "../pages/TosSummary.jsx";
 import QuestionCognitiveMapping from "../pages/QuestionCognitiveMapping.jsx";
 
 const tosSections = ({status}) => {
@@ -62,6 +63,8 @@ const tosSections = ({status}) => {
         setSearchParams({ section: e.target.value })
 
     }
+
+    const [questions, setQuestions] = useState([]);  // Lifted state for questions; starts empty
 
     const { code } = useParams();
     const syllabus = getSyllabusByCode(code);
@@ -187,7 +190,12 @@ const tosSections = ({status}) => {
                     }
                     {selectedSection === 'Question/Item-Cognitive Alignment' &&
                         <section>
-                            <QuestionCognitiveMapping outcomeData={rows} />
+                            <QuestionCognitiveMapping outcomeData={rows} questions={questions} setQuestions={setQuestions} />
+                        </section>
+                    }
+                    {selectedSection === 'TOS Summary' &&
+                        <section>
+                            <TOSSummary outcomeData={rows} questions={questions} />
                         </section>
                     }
                 </div>
