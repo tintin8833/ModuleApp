@@ -1,8 +1,7 @@
-import {useState, useRef, useEffect} from "react";
-import { X, Upload } from "react-feather";
+import { useState, useRef, useEffect } from "react";
+import { X, Upload, Trash2 } from "react-feather";  // Added Trash2 for the clear icon
 import layout from "../styles/QuestionCognitiveMapping.module.sass";
 import Duplicator from "../components/Duplicator.jsx";
-
 
 const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
     const fileInputRef = useRef(null);
@@ -24,7 +23,6 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
         points: '',
         cognitiveLevel: ''
     });
-
 
     const handleAddQuestion = () => {
         setQuestions([...questions, createEmptyQuestion()]);
@@ -86,6 +84,10 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
         fileInputRef.current?.click();
     };
 
+    const handleClearQuestions = () => {
+        setQuestions([]);  // Clear all questions; useEffect will add one back
+    };
+
     const getAvailableILOs = (coId) => {
         const co = outcomeData.find(c => c.co === coId);
         return co ? co.ilos : [];
@@ -124,7 +126,6 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
         }
     }, [questions, setQuestions]);
 
-
     return (
         <div className={layout.container}>
             {/* Hidden file input */}
@@ -143,7 +144,7 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
                     <thead>
                     <tr>
                         <th style={{ width: `${labelColPct}%` }}>
-                            <div className={`${layout.cellBox} ${layout.linedHeader}`}></div>
+                            <div className={`${layout.cellBox} ${layout.mainHeader}`}></div>
                         </th>
 
                         {outcomeData.map(co => (
@@ -151,19 +152,19 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
                                 key={co.co}
                                 style={{ width: `${co.ilos.length * perIloPct}%` }}
                             >
-                                <div className={`${layout.cellBox} ${layout.upperHeader}`}>{co.co}</div>
+                                <div className={`${layout.cellBox} ${layout.mainHeader}`}>{co.co}</div>
                             </th>
                         ))}
 
                         <th style={{ width: `${totalColPct}%` }}>
-                            <div className={`${layout.cellBox} ${layout.linedHeader3}`}>Total</div>
+                            <div className={`${layout.cellBox} ${layout.mainHeader}`}>Total</div>
                         </th>
                     </tr>
 
                     <tr>
                         {/* Empty cell to align with the first label column */}
                         <th style={{ width: `${labelColPct}%` }}>
-                            <div className={`${layout.cellBox} ${layout.linedHeader2}`}></div>
+                            <div className={`${layout.cellBox} ${layout.mainHeader}`}></div>
                         </th>
 
                         {/* ILO subheaders (each gets perIloPct) */}
@@ -173,14 +174,14 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
                                     key={`${co.co}-${ilo.id}`}
                                     style={{ width: `${perIloPct}%` }}
                                 >
-                                    <div className={`${layout.cellBox} ${layout.lowerHeader}`}>{ilo.id}</div>
+                                    <div className={`${layout.cellBox} ${layout.subHeader}`}>{ilo.id}</div>
                                 </th>
                             ))
                         )}
 
                         {/* Empty cell to align under the Total column */}
                         <th style={{ width: `${totalColPct}%` }}>
-                            <div className={`${layout.cellBox} ${layout.linedHeader4}`}></div>
+                            <div className={`${layout.cellBox} ${layout.mainHeader}`}></div>
                         </th>
                     </tr>
                     </thead>
@@ -188,7 +189,7 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
                     <tbody>
                     <tr>
                         <td style={{ width: `${labelColPct}%` }}>
-                            <div>Points Needed</div>
+                            <div className={layout.firstRow}>Points Needed</div>
                         </td>
 
                         {outcomeData.flatMap(co =>
@@ -208,7 +209,7 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
 
                     <tr>
                         <td style={{ width: `${labelColPct}%` }}>
-                            <div>Current Point Count</div>
+                            <div className={layout.firstRow}>Current Point Count</div>
                         </td>
 
                         {outcomeData.flatMap(co =>
@@ -238,13 +239,22 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
                     <h2>
                         Question-Cognitive Level Mapping
                     </h2>
-                    <button
-                        onClick={handleUploadClick}
-                        className={layout.uploadButton}
-                    >
-                        <Upload size={16} style={{ marginRight: '8px' }} />
-                        Upload Questions
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                            onClick={handleUploadClick}
+                            className={layout.uploadButton}
+                        >
+                            <Upload size={16} style={{ marginRight: '8px' }} />
+                            Upload Questions
+                        </button>
+                        <button
+                            onClick={handleClearQuestions}
+                            className={`${layout.uploadButton} ${layout.clearButton}`}
+                        >
+                            <Trash2 size={16} style={{ marginRight: '8px' }} />
+                            Clear
+                        </button>
+                    </div>
                 </div>
 
                 <div className={layout.tableHeader}>

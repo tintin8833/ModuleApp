@@ -19,6 +19,7 @@ const tosSections = ({status}) => {
     const courseOutlines = [
         {
             co: "CO1",
+            description: "Design and develop user-centered interfaces that emphasize usability, accessibility, and intuitive interaction. Students will also demonstrate the ability to incorporate feedback from usability testing into iterative design improvements.",
             totalHours: 12,
             totalPercentage: 100,
             totalPoints: 50,
@@ -30,6 +31,7 @@ const tosSections = ({status}) => {
         },
         {
             co: "CO2",
+            description: "Evaluate interactive systems using HCI methods, identify usability issues, and recommend improvements for better user experience. Students will further be able to communicate evaluation results effectively through structured reports and presentations\n",
             totalHours: 18,
             totalPercentage: 100,
             totalPoints: 40,
