@@ -22,7 +22,7 @@ const ReferenceForm = () => {
 
     // 2. Form State
     const [formData, setFormData] = useState({
-        type: referenceData.type ,
+        type: referenceData.type || 'Textbook',
         title: referenceData.title || '',
         authors: referenceData.authors || '',
         isbn: referenceData.isbn || '',
