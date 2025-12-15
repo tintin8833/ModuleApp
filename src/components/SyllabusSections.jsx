@@ -229,7 +229,7 @@ const syllabusSections = ({status}) => {
                         {selectedSection === 'References' &&
                             <section>
                                 <div className={styles['references-container']}>
-                                    {/* ... Header stays the same ... */}
+                                    {/* ... HeaderA stays the same ... */}
                                     <div className={styles['references-header']}>
                                         <div className={'search-container'}>
                                             <div className={'search-bar'}>
@@ -437,7 +437,7 @@ const syllabusSections = ({status}) => {
                                         ) : (
                                             /* EMPTY STATE */
                                             <tr className={styles.emptyRow}>
-                                                {/* colSpan is 4 because there are 4 table headers (TLA Name, Topic, Phase, Empty Header) */}
+                                                {/* colSpan is 4 because there are 4 table headers (TLA Name, Topic, Phase, Empty HeaderA) */}
                                                 <td colSpan={4}>
                                                     <div className={styles.emptyStateContainer}>
                                                         <Inbox size={40} strokeWidth={1} />

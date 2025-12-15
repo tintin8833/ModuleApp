@@ -1,12 +1,12 @@
 
-import Skeleton from "../layouts/Skeleton.jsx";
-import Header from "../components/Header.jsx";
+import SkeletonA from "../layouts/SkeletonA.jsx";
+import HeaderA from "../components/HeaderA.jsx";
 import SideNavigation from "../components/SideNavigation.jsx";
 
 const Dean = () => {
   return (
-    <Skeleton
-      header={<Header role="Dean" name="NORTON, MONICA" />}
+    <SkeletonA
+      header={<HeaderA role="Dean" name="NORTON, MONICA" />}
       nav={<SideNavigation />}
       content={
         <div style={{ padding: 20 }}>

@@ -1,6 +1,6 @@
-import styles from '../styles/MultiSelect.module.sass'
+import styles from '../styles/MultiSelectA.module.sass'
 
-const MultiSelect = ({ label, disabled, value, initialValue = [], options = [], onChange, error }) => {
+const MultiSelectA = ({ label, disabled, value, initialValue = [], options = [], onChange, error }) => {
 
     // Logic: Use 'value' if controlled, otherwise fallback to 'initialValue'
     const actualValue = value !== undefined ? value : initialValue;
@@ -54,4 +54,4 @@ const MultiSelect = ({ label, disabled, value, initialValue = [], options = [], 
     )
 }
 
-export default MultiSelect;
+export default MultiSelectA;

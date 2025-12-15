@@ -1,8 +1,8 @@
-import styles from '../styles/Dropdown.module.sass'
+import styles from '../styles/DropdownA.module.sass'
 
 
 
-const Dropdown = ({ label, disabled, value, initialValue, options, inline = false, onChange, error }) => {
+const DropdownA = ({ label, disabled, value, initialValue, options, inline = false, onChange, error }) => {
 
 
 
@@ -100,4 +100,4 @@ const Dropdown = ({ label, disabled, value, initialValue, options, inline = fals
 
 
 
-export default Dropdown;
+export default DropdownA;

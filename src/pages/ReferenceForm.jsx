@@ -1,11 +1,11 @@
 import React, { useState } from 'react'; // Removed useEffect as it wasn't used
-import Skeleton from "../layouts/Skeleton.jsx";
-import Header from "../components/Header.jsx";
+import SkeletonA from "../layouts/SkeletonA.jsx";
+import HeaderA from "../components/HeaderA.jsx";
 import FormNavigation from "../components/FormNavigation.jsx";
 import styles from "../styles/Form.module.sass";
 import { useNavigate, useParams } from "react-router-dom";
 import TextField from "../components/TextField.jsx";
-import Dropdown from "../components/Dropdown.jsx";
+import DropdownA from "../components/DropdownA.jsx";
 import SideNavigation from "../components/SideNavigation.jsx";
 import { getSyllabusByCode } from "../data/syllabiData.js";
 import { X, AlertCircle, CheckCircle } from 'react-feather';
@@ -107,8 +107,8 @@ const ReferenceForm = () => {
     };
 
     return(
-        <Skeleton
-            header={<Header role={'Instructor'} name={'NORTON, MONICA'} />}
+        <SkeletonA
+            header={<HeaderA role={'Instructor'} name={'NORTON, MONICA'} />}
             nav={<SideNavigation/> }
             content={
                 <div className={styles.container}>
@@ -122,7 +122,7 @@ const ReferenceForm = () => {
                     <div className={styles['form-container']}>
                         <h2>Reference Details</h2>
 
-                        <Dropdown
+                        <DropdownA
                             options={ReferenceTypes}
                             label={'Reference Type'}
                             initialValue={formData.type}

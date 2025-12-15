@@ -1,10 +1,10 @@
 
 import React from "react";
-import Skeleton from "../layouts/Skeleton.jsx";
-import Header from "../components/Header.jsx";
+import SkeletonA from "../layouts/SkeletonA.jsx";
+import HeaderA from "../components/HeaderA.jsx";
 import SideNavigation from "../components/SideNavigation.jsx";
 import DepartmentsTable from "../components/DepartmentsTable.jsx";
-import Dropdown from "../components/Dropdown.jsx";
+import DropdownA from "../components/DropdownA.jsx";
 import { Upload, Clock, X, Search, ArrowUp, ArrowDown } from "react-feather";
 
 const UploadButton = ({ onClick }) => (
@@ -49,8 +49,8 @@ const HRStaff = () => {
   };
 
   return (
-    <Skeleton
-      header={<Header role="HR Staff" name="NORTON, MONICA" />}
+    <SkeletonA
+      header={<HeaderA role="HR Staff" name="NORTON, MONICA" />}
       nav={<SideNavigation />}
       content={
         // Make the department page content area white while preserving the overall layout gap
@@ -95,9 +95,9 @@ const HRStaff = () => {
 
               {/* Right-side controls (Filter + Search) as one line */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 20, flex: 1, justifyContent: 'flex-end' }}>
-                {/* Instructor-styled Dropdown in compact inline mode */}
+                {/* Instructor-styled DropdownA in compact inline mode */}
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Dropdown
+                  <DropdownA
                     label="Filter by Department"
                     disabled={false}
                     initialValue={department}
