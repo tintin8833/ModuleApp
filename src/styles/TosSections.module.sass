@@ -21,7 +21,7 @@
   td
     vertical-align: middle
 
-  &.criteriaTable
+  &.TOSTable
 
     th:nth-child(1), td:nth-child(1)
       width: 15%
@@ -75,43 +75,12 @@
 .blankCell
   border: none
   font-weight: 500
+  padding: 20px
 
 .totalCoPoint
   font-weight: 500
 
-.weightHeader
-  width: 100%
-  display: flex
-  flex-direction: column
-  align-items: center
-  justify-content: center
-  text-align: center
-  gap: 6px
-
-.subheaders
-  width: 100%
-  display: grid
-  grid-template-columns: repeat(4, 1fr)
-  gap: 0
-  text-align: center
-  font-size: 12px
-  color: #555
-
-.weightCell
-  display: grid
-  grid-template-columns: repeat(4, 1fr)
-  gap: 8px
-
-.weightBox
-  height: 48px
-  border-radius: 5px
-  border: 1px solid #DDDFDF
-  background: #FFFFFF
-  padding: 0
-  display: flex
-  border-spacing: 10px
-
-input
+.input
   width: 100%
   height: 100%
   padding: 0 6px
@@ -138,75 +107,174 @@ input
   background: transparent
   text-align: center
 
-.totalRow td
-  padding-top: 16px
+.section
+  flex-grow: 1
+  display: flex
+  flex-direction: column
+  height: max-content
+  padding: 20px
+  border-radius: 5px
+  border: 1px solid #DDDFDF
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25)
 
-.totalLabel
+.sectionTitle
+  margin-bottom: 16px
+  font-size: 16px
+  font-weight: 600
+  margin-top: 0
+
+.sectionHeader
+  display: flex
+  justify-content: space-between
+  align-items: center
+  margin-bottom: 16px
+
+.uploadButton
+  padding: 8px 16px
+  background: #3B82F6
+  color: white
+  border: none
+  border-radius: 4px
+  cursor: pointer
+  font-size: 14px
   font-weight: 500
 
-.totalRow td:first-child
+  &:hover
+    background: #2563EB
+
+.pointsContainer
   display: flex
-  justify-content: center
+  flex-direction: column
+  gap: 16px
+
+.coPointsRow
+  display: flex
   align-items: center
+  gap: 16px
 
-.totalRow .weightCell
-  display: grid
-  grid-template-columns: repeat(4, 1fr)
-  gap: 8px
-
-.multiSelect
-  position: relative
-  width: 100%
-
-.dropdown
-  width: 100%
-  padding: 11px 10px
-  border: 1px solid #ffffff
+.coLabel
+  font-weight: 600
+  min-width: 60px
+  padding: 8px 12px
+  background: #F3F4F6
   border-radius: 4px
-  background: #fff
-  cursor: pointer
+
+.iloPoints
   display: flex
+  flex-direction: column
   align-items: center
+  gap: 4px
+
+.iloLabel
+  font-size: 12px
+  color: #6B7280
+
+.pointsBox
+  padding: 6px 12px
+  background: #F9FAFB
+  border: 1px solid #E5E7EB
+  border-radius: 4px
   font-size: 14px
-
-  &:hover
-    border-color: #98A2B3
-
-.dropdownMenu
-  position: absolute
-  top: calc(100% + 2px)
-  left: 0
-  width: 100%
-  background: white
-  border: 1px solid #D0D5DD
-  border-radius: 4px
-  box-shadow: 0 4px 12px rgba(0,0,0,.15)
-  z-index: 1000
-  padding: 8px
-  max-height: 180px
-  overflow-y: auto
-
-.option
-  cursor: pointer
-  width: 100%
-  padding: 6px 8px
-  display: flex
-  align-items: center
-  gap: 8px
-
-  &:hover
-    background: #F2F4F7
-
-.headerCell
-  width: 100%
-  display: flex
-  justify-content: center
-  align-items: center
+  font-weight: 500
+  min-width: 50px
   text-align: center
 
-.noPad
-  padding: 0 !important
-  justify-content: flex-start !important
-  align-items: center !important
-  text-align: left !important
+.summaryRow
+  margin-top: 16px
+  padding-top: 16px
+  border-top: 1px solid #E5E7EB
+  display: flex
+  gap: 24px
 
+.summaryItem
+  display: flex
+  flex-direction: column
+  gap: 4px
+
+.summaryLabel
+  font-size: 12px
+  color: #6B7280
+
+.summaryValue
+  padding: 8px 16px
+  background: #EFF6FF
+  border: 1px solid #BFDBFE
+  border-radius: 4px
+  font-size: 16px
+  font-weight: 600
+  color: #1E40AF
+
+  &.current
+    background: #F0FDF4
+    border: 1px solid #BBF7D0
+    color: #15803D
+
+.tableHeader
+  display: grid
+  grid-template-columns: 60px 2fr 1fr 1fr 1fr 1fr 60px
+  font-weight: 500
+  color: #333
+  margin-bottom: 8px
+
+.headerCell
+  padding-left: 20px
+
+.tableRow
+  display: grid
+  grid-template-columns: 60px 2fr 1fr 1fr 1fr 1fr 60px
+  align-items: center
+  margin-bottom: 15px
+
+.numberCell
+  display: flex
+  align-items: center
+  justify-content: center
+  font-weight: 500
+  color: #6B7280
+
+.questionInput
+  width: 100%
+  min-height: 45px
+  padding: 10px
+  border: 1px solid #DDDFDF
+  border-radius: 5px
+  font-size: 14px
+  resize: vertical
+  font-family: inherit
+
+.selectInput
+  width: 100%
+  padding: 10px
+  border: 1px solid #DDDFDF
+  border-radius: 5px
+  font-size: 14px
+  background: white
+
+  &.disabled
+    background: #F3F4F6
+
+.numberInput
+  width: 100%
+  padding: 10px
+  border: 1px solid #DDDFDF
+  border-radius: 5px
+  font-size: 14px
+  text-align: center
+
+.deleteButton
+  display: flex
+  height: 100%
+  background: #F94545
+  justify-content: center
+  align-items: center
+  padding: 0 10px
+  border-radius: 4px
+  cursor: pointer
+  margin-left: 20px
+  min-height: 45px
+
+  &:hover
+    background: #DC2626
+
+.addRow
+  margin-top: 16px

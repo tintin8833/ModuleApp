@@ -4,14 +4,16 @@ import { Info } from 'react-feather';
 import React, {useState} from "react";
 import TextField from "./TextField.jsx";
 import TextArea from "./TextArea.jsx";
+import Duplicator from "../components/Duplicator.jsx";
 import {Link, useParams, useSearchParams} from "react-router-dom";
 import { getSyllabusByCode } from "../data/syllabiData.js";
 import layout from "../styles/TosSections.module.sass";
+import QuestionCognitiveMapping from "../pages/QuestionCognitiveMapping.jsx";
 
 const tosSections = ({status}) => {
 
     const [searchParams, setSearchParams] = useSearchParams();
-    const selectedSection = searchParams.get('section') || 'TOS Overview';
+    const selectedSection = searchParams.get('section') || 'Outcome Overview';
 
     const courseOutlines = [
         {
@@ -64,130 +66,133 @@ const tosSections = ({status}) => {
     const { code } = useParams();
     const syllabus = getSyllabusByCode(code);
 
-    return(
+        return (
+            <div className={styles.container}>
+                <div className={styles.navi}>
+                    <Link to={`/`} className={'actionLink'}>
+                        <div className={styles.return}>
+                            <ChevronLeft size={22}/>
+                        </div>
+                    </Link>
 
-        <div className={styles.container}>
-            <div className={styles.navi}>
-                <Link  to={`/`} className={'actionLink'} >
-                    <div className={styles.return}>
-                        <ChevronLeft size={22}/>
+                    <div className={styles['section-select']}>
+                        <select value={selectedSection} onChange={handleSectionChange}>
+                            <option value="Outcome Overview">Outcome Overview</option>
+                            <option value="Question/Item-Cognitive Alignment">Question/Item-Cognitive Alignment</option>
+                            <option value="TOS Summary">TOS Summary</option>
+                        </select>
                     </div>
-                </Link>
 
-                <div className={styles['section-select']}>
-                    <select value={selectedSection} onChange={handleSectionChange}>
-                        <option value="TOS Overview">TOS Overview</option>
-                        <option value="Question/Item-Cognitive Level Mapping">Question/Item-Cognitive Level Mapping</option>
-                        <option value="TOS Summary">TOS Summary</option>
-                    </select>
+                    <div className={styles.draft}>Save as Draft</div>
+
+                    <div className={styles.submit}>Submit</div>
                 </div>
 
-                <div className={styles.draft}>Save as Draft</div>
+                <div className={styles['dynamic-sections']}>
+                    {selectedSection === 'Outcome Overview' &&
+                        <section>
+                            <table className={`${layout.table} ${layout.TOSTable}`}>
+                                <thead>
+                                <tr>
+                                    <th>ILOs</th>
+                                    <th>DESCRIPTION</th>
+                                    <th>NO. OF HOURS</th>
+                                    <th>%</th>
+                                    <th>NO. OF POINTS</th>
+                                </tr>
+                                </thead>
 
-                <div className={styles.submit}>Submit</div>
-            </div>
-
-            <div className={styles['dynamic-sections']}>
-                {selectedSection === 'TOS Overview' &&
-                    <section>
-                        <table className={`${layout.table} ${layout.criteriaTable}`}>
-                            <thead>
-                            <tr>
-                                <th>ILOs</th>
-                                <th>DESCRIPTION</th>
-                                <th>NO. OF HOURS</th>
-                                <th>%</th>
-                                <th>NO. OF POINTS</th>
-                            </tr>
-                            </thead>
-
-                            <tbody>
-                            {rows.map((co, coIndex) => (
-                                <>
-                                    {/* CO Header Row */}
-                                    <tr key={`${co.co}-header`}>
-                                        <td>
-                                            <div className={`${layout.cellBox} ${layout.blankCell}`}>
-                                                {co.co}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className={layout.blankCell}>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className={`${layout.cellBox} ${layout.blankCell}`}>
-                                                {co.totalHours}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className={`${layout.cellBox} ${layout.blankCell}`}>
-                                                {co.totalPercentage}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className={layout.cellBox}>
-                                                <input
-                                                    className={layout.totalCoPoint}
-                                                    type="number"
-                                                    value={co.totalPoints}
-                                                    onChange={(e) => handleTotalPointsChange(coIndex, e.target.value)}
-                                                />
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    {/* ILO Rows */}
-                                    {co.ilos.map((ilo, iloIndex) => (
-                                        <tr key={`${co.co}-${ilo.id}`}>
+                                <tbody>
+                                {rows.map((co, coIndex) => (
+                                    <>
+                                        {/* CO Header Row */}
+                                        <tr key={`${co.co}-header`}>
                                             <td>
-                                                <div className={`${layout.cellBox} ${layout.mutedBold}`}>
-                                                    {ilo.id}
+                                                <div className={`${layout.cellBox} ${layout.blankCell}`}>
+                                                    {co.co}
                                                 </div>
                                             </td>
                                             <td>
-                                                <div className={`${layout.cellBox} ${layout.readable}`}>
-                                                    {ilo.description}
+                                                <div className={layout.blankCell}>
                                                 </div>
                                             </td>
                                             <td>
-                                                <div className={`${layout.cellBox} ${layout.muted}`}>
-                                                    {ilo.hours}
+                                                <div className={`${layout.cellBox} ${layout.blankCell}`}>
+                                                    {co.totalHours}
                                                 </div>
                                             </td>
                                             <td>
-                                                <div className={`${layout.cellBox} ${layout.muted}`}>
-                                                    {ilo.percentage}
+                                                <div className={`${layout.cellBox} ${layout.blankCell}`}>
+                                                    {co.totalPercentage}
                                                 </div>
                                             </td>
                                             <td>
                                                 <div className={layout.cellBox}>
                                                     <input
-                                                        className={layout.point}
+                                                        className={`${layout.totalCoPoint} ${layout.input}`}
                                                         type="number"
-                                                        value={ilo.points}
-                                                        onChange={(e) => handlePointsChange(coIndex, iloIndex, e.target.value)}
+                                                        value={co.totalPoints}
+                                                        onChange={(e) => handleTotalPointsChange(coIndex, e.target.value)}
                                                     />
                                                 </div>
                                             </td>
                                         </tr>
-                                    ))}
+
+                                        {/* ILO Rows */}
+                                        {co.ilos.map((ilo, iloIndex) => (
+                                            <tr key={`${co.co}-${ilo.id}`}>
+                                                <td>
+                                                    <div className={`${layout.cellBox} ${layout.mutedBold}`}>
+                                                        {ilo.id}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className={`${layout.cellBox} ${layout.readable}`}>
+                                                        {ilo.description}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className={`${layout.cellBox} ${layout.muted}`}>
+                                                        {ilo.hours}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className={`${layout.cellBox} ${layout.muted}`}>
+                                                        {ilo.percentage}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className={layout.cellBox}>
+                                                        <input
+                                                            className={`${layout.point} ${layout.input}`}
+                                                            type="number"
+                                                            value={ilo.points}
+                                                            onChange={(e) => handlePointsChange(coIndex, iloIndex, e.target.value)}
+                                                        />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
 
 
-                                    {coIndex < rows.length - 1 && (
-                                        <tr key={`${co.co}-spacer`} style={{ height: '16px' }}>
-                                        </tr>
-                                    )}
-                                </>
-                            ))}
-                            </tbody>
-                        </table>
-                    </section>
-                }
+                                        {coIndex < rows.length - 1 && (
+                                            <tr key={`${co.co}-spacer`} style={{height: '16px'}}>
+                                            </tr>
+                                        )}
+                                    </>
+                                ))}
+                                </tbody>
+                            </table>
+                        </section>
+                    }
+                    {selectedSection === 'Question/Item-Cognitive Alignment' &&
+                        <section>
+                            <QuestionCognitiveMapping outcomeData={rows} />
+                        </section>
+                    }
+                </div>
             </div>
-        </div>
-    )
-
-}
+        )
+    }
 
 export default tosSections;
