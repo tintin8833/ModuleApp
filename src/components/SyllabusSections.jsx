@@ -34,10 +34,27 @@ const syllabusSections = ({status}) => {
 
     // COURSE AND PROGRAM OUTCOME ALIGNMENT
     const courseOutcomes = [
-        { id: 'CO1', description: 'Apply core concepts, theories, and principles of Human-Computer Interface (HCI) in proposing a User Interface (UI) design using Figma to translate a design brief into interactive screen layouts and UI components with a high-fidelity prototype demonstrating clarity, consistency, and appropriate use of visual hierarchy.' },
-        { id: 'CO2', description: 'User-Centered Design (UCD) principles and ISO 9241-210 standards with given user personas, contextual task flows, and feedback artifacts to develop a User Experience (UX) design that demonstrates user involvement, iterative refinement, and contextual understanding, as evaluated against established UX design criteria.' },
-        { id: 'CO3', description: 'Construct a front-end prototype for a proposed software application by applying HCI design principles, UI/UX laws, accessibility standards, and web accessibility guidelines that demonstrate compliance with best practices in usability, inclusivity, and user engagement.' },
-        { id: 'CO4', description: 'Justify the front-end prototype of a proposed software application based on usability testing results and user feedback by providing evidence-based rationale that addresses at least 80% of identified usability issues and aligns with user experience goals.' },
+        {
+            id: 'CO1',
+            description: 'Apply core concepts, theories, and principles of Human-Computer Interface (HCI) in proposing a User Interface (UI) design using Figma to translate a design brief into interactive screen layouts and UI components with a high-fidelity prototype demonstrating clarity, consistency, and appropriate use of visual hierarchy.',
+            // Mappings for columns 1-9
+            poMappings: ['E', '', 'I', '', '', 'E', '', '', 'I']
+        },
+        {
+            id: 'CO2',
+            description: 'User-Centered Design (UCD) principles and ISO 9241-210 standards with given user personas, contextual task flows, and feedback artifacts to develop a User Experience (UX) design that demonstrates user involvement, iterative refinement, and contextual understanding, as evaluated against established UX design criteria.',
+            poMappings: ['', 'E', '', '', '', 'E', '', 'I', '']
+        },
+        {
+            id: 'CO3',
+            description: 'Construct a front-end prototype for a proposed software application by applying HCI design principles, UI/UX laws, accessibility standards, and web accessibility guidelines that demonstrate compliance with best practices in usability, inclusivity, and user engagement.',
+            poMappings: ['', '', 'D', '', 'D', '', 'I', '', '']
+        },
+        {
+            id: 'CO4',
+            description: 'Justify the front-end prototype of a proposed software application based on usability testing results and user feedback by providing evidence-based rationale that addresses at least 80% of identified usability issues and aligns with user experience goals.',
+            poMappings: ['D', '', '', 'E', '', '', '', 'I', '']
+        },
     ];
 
     const programOutcomes = ['PO1', 'PO2', 'PO3', 'PO4', 'PO5', 'PO6', 'PO7', 'PO8', 'PO9'];
@@ -188,9 +205,8 @@ const syllabusSections = ({status}) => {
                                         </thead>
 
                                         <tbody>
-                                        {/* Loop over each item in the courseOutcomes array to create one row (<tr>) per outcome */}
+                                        {/* Loop over each item in the courseOutcomes array */}
                                         {courseOutcomes.map((co, coIndex) => (
-                                            // The key must be on the outermost element of the map (the <tr>)
                                             <tr key={co.id}>
 
                                                 {/* Column 1: Course Outcome ID */}
@@ -198,16 +214,18 @@ const syllabusSections = ({status}) => {
                                                     {co.id}
                                                 </td>
 
-                                                {/* Column 2: Description (using the data from the current 'co' object) */}
+                                                {/* Column 2: Description */}
                                                 <td className={styles.courseDescripInput}>
                                                     <TextArea initialValue={co.description} rows={8} />
                                                 </td>
 
                                                 {/* Columns 3 onwards: The 9 dropdown options */}
-                                                {/* We map over a fixed array [9] to generate the <td> elements */}
                                                 {[...Array(9)].map((_, poIndex) => (
                                                     <td className={styles.dropdownOptions} key={poIndex}>
-                                                        <select>
+                                                        {/* We use defaultValue set to the specific mapping index.
+                   If the data is undefined, it falls back to " "
+                */}
+                                                        <select defaultValue={co.poMappings[poIndex] || " "}>
                                                             <option value=" "></option>
                                                             <option value="I">I</option>
                                                             <option value="E">E</option>

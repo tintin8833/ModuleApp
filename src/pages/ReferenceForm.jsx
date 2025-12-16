@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // Removed useEffect as it wasn't used
+import React, { useState } from 'react';
 import SkeletonA from "../layouts/SkeletonA.jsx";
 import HeaderA from "../components/HeaderA.jsx";
 import FormNavigation from "../components/FormNavigation.jsx";
@@ -22,7 +22,8 @@ const ReferenceForm = () => {
 
     // 2. Form State
     const [formData, setFormData] = useState({
-        type: referenceData.type || 'Textbook',
+        // FIX: Ensure type defaults to empty string if undefined
+        type: referenceData.type || '',
         title: referenceData.title || '',
         authors: referenceData.authors || '',
         isbn: referenceData.isbn || '',
@@ -41,6 +42,7 @@ const ReferenceForm = () => {
 
     const handleChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
+        // Clear error immediately when user selects a value
         if (errors[field]) {
             setErrors(prev => ({ ...prev, [field]: null }));
         }
@@ -52,6 +54,12 @@ const ReferenceForm = () => {
 
     const validateForm = () => {
         let newErrors = {};
+
+        // FIX: Added Validation for Dropdown (Reference Type)
+        // Without this, the 'error' prop is never sent to the Dropdown
+        if (!formData.type) {
+            newErrors.type = "Please select a reference type.";
+        }
 
         // Rule 1: Title & Authors are always required
         if (!formData.title.trim()) newErrors.title = "Reference Title is required.";
@@ -125,8 +133,11 @@ const ReferenceForm = () => {
                         <DropdownA
                             options={ReferenceTypes}
                             label={'Reference Type'}
+                            // Use 'value' to control the component since formData is state
+                            value={formData.type}
                             initialValue={formData.type}
                             onChange={(val) => handleChange('type', val)}
+                            // This ensures the red border appears when validation fails
                             error={errors.type}
                         />
 
