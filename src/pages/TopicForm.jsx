@@ -6,7 +6,7 @@ import styles from "../styles/Form.module.sass";
 import { useNavigate, useParams } from "react-router-dom";
 import TextField from "../components/TextField.jsx";
 import DropdownA from "../components/DropdownA.jsx";
-import { X, AlertCircle, CheckCircle } from "react-feather"; // Icons
+import { X, AlertCircle, CheckCircle } from "react-feather";
 import Duplicator from "../components/Duplicator.jsx";
 import TextArea from "../components/TextArea.jsx";
 import SideNavigation from "../components/SideNavigation.jsx";
@@ -20,45 +20,50 @@ const TopicForm = () => {
         navigate(-1);
     };
 
-    const classPhases = ['Pre-class', 'In-class', 'Post-class'];
+    // --- CONSTANTS FOR OPTIONS ---
+    const FLIPPED_OPTIONS = ['Pre-class', 'In-class', 'Post-class'];
+    const STANDARD_OPTIONS = ['Asynchronous', 'Synchronous'];
 
     // 1. Get Data
     const syllabus = getSyllabusByCode(code);
     const topicData = syllabus?.topics.find(t => t.id === topicId) || {};
 
     // 2. Initialize State
-    // Core Topic Title
+
+    // Helper: Check if loaded data implies a Flipped state
+    const isInitiallyFlipped = () => {
+        if (topicData.tlas && topicData.tlas.length > 0) {
+            // If any TLA has a value belonging to the Flipped list, we initialize as TRUE.
+            return topicData.tlas.some(t => FLIPPED_OPTIONS.includes(t.classPhase));
+        }
+        return false;
+    };
+
+    const [flipped, setFlipped] = useState(isInitiallyFlipped);
+
     const [title, setTitle] = useState(topicData.title || '');
 
-    // Subtopics
     const [subtopics, setSubtopics] = useState(
         topicData.subtopics || [{ id: '1', value: '' }]
     );
 
-    // TLAs
     const [tlas, setTlas] = useState(
         topicData.tlas || [{ id: '1', classPhase: '', performedBy: '', tlaName: '', tlaDescription: '', laboratory: false }]
     );
 
-    const [flipped, setFlipped] = useState(false);
-
-    // Error State
+    // Error & Modal States
     const [errors, setErrors] = useState({});
-
-    // Modal State
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [showErrorModal, setShowErrorModal] = useState(false);
 
 
     // --- HANDLERS ---
 
-    // Title Handler
     const handleTitleChange = (val) => {
         setTitle(val);
         if (errors.title) setErrors(prev => ({ ...prev, title: null }));
     };
 
-    // Subtopic Handlers
     const handleSubtopicAdd = () => {
         const newSubtopic = { id: Date.now() + Math.random(), value: '' };
         setSubtopics([...subtopics, newSubtopic]);
@@ -67,7 +72,6 @@ const TopicForm = () => {
     const handleSubtopicDelete = (idToDelete) => {
         if (subtopics.length === 1) return;
         setSubtopics(subtopics.filter((item) => item.id !== idToDelete));
-        // Cleanup errors for deleted item
         const newErrors = { ...errors };
         delete newErrors[`subtopic_${idToDelete}`];
         setErrors(newErrors);
@@ -75,13 +79,24 @@ const TopicForm = () => {
 
     const handleSubtopicChange = (id, val) => {
         setSubtopics(prev => prev.map(item => item.id === id ? { ...item, value: val } : item));
-        // Clear error
         if (errors[`subtopic_${id}`]) {
             setErrors(prev => ({ ...prev, [`subtopic_${id}`]: null }));
         }
     };
 
-    // TLA Handlers
+    // --- UPDATED FLIPPED HANDLER ---
+    const handleFlippedChange = (e) => {
+        const isChecked = e.target.checked;
+        setFlipped(isChecked);
+
+        // Requirement: Clear all classPhase values when mode changes
+        // This forces the user to select again from the new valid options
+        setTlas(prevTlas => prevTlas.map(tla => ({
+            ...tla,
+            classPhase: ''
+        })));
+    };
+
     const handleTlaAdd = () => {
         const newTla = {
             id: Date.now() + Math.random(),
@@ -97,7 +112,6 @@ const TopicForm = () => {
     const handleTlaDelete = (idToDelete) => {
         if (tlas.length === 1) return;
         setTlas(tlas.filter((item) => item.id !== idToDelete));
-        // Cleanup errors for deleted item to avoid memory leaks/stale state
         const newErrors = { ...errors };
         Object.keys(newErrors).forEach(key => {
             if (key.startsWith(`tla_${idToDelete}`)) delete newErrors[key];
@@ -110,49 +124,26 @@ const TopicForm = () => {
             tla.id === id ? { ...tla, [field]: value } : tla
         ));
 
-        // Clear error for specific field
         const errorKey = `tla_${id}_${field}`;
         if (errors[errorKey]) {
             setErrors(prev => ({ ...prev, [errorKey]: null }));
         }
     };
 
-    const handleFlipped = (e) => { setFlipped(e.target.checked) };
-
-
-    // --- VALIDATION LOGIC ---
-
+    // --- VALIDATION & SAVE ---
     const validateForm = () => {
         let newErrors = {};
+        if (!title.trim()) newErrors.title = "Core Topic Title is required.";
 
-        // 1. Validate Topic Title
-        if (!title.trim()) {
-            newErrors.title = "Core Topic Title is required.";
-        }
-
-        // 2. Validate Subtopics
-        subtopics.forEach((sub, index) => {
-            if (!sub.value.trim()) {
-                newErrors[`subtopic_${sub.id}`] = "Subtopic cannot be empty.";
-            } else if (sub.value.length < 3) {
-                newErrors[`subtopic_${sub.id}`] = "Subtopic is too short.";
-            }
+        subtopics.forEach((sub) => {
+            if (!sub.value.trim()) newErrors[`subtopic_${sub.id}`] = "Subtopic cannot be empty.";
         });
 
-        // 3. Validate TLAs
-        tlas.forEach((tla, index) => {
+        tlas.forEach((tla) => {
             if (!tla.classPhase) newErrors[`tla_${tla.id}_classPhase`] = "Required";
             if (!tla.performedBy) newErrors[`tla_${tla.id}_performedBy`] = "Required";
-
-            if (!tla.tlaName.trim()) {
-                newErrors[`tla_${tla.id}_tlaName`] = "TLA Name is required.";
-            }
-
-            if (!tla.tlaDescription.trim()) {
-                newErrors[`tla_${tla.id}_tlaDescription`] = "Description is required.";
-            } else if (tla.tlaDescription.length < 10) {
-                newErrors[`tla_${tla.id}_tlaDescription`] = "Description is too short (min 10 chars).";
-            }
+            if (!tla.tlaName.trim()) newErrors[`tla_${tla.id}_tlaName`] = "TLA Name is required.";
+            if (!tla.tlaDescription.trim()) newErrors[`tla_${tla.id}_tlaDescription`] = "Description is required.";
         });
 
         setErrors(newErrors);
@@ -160,15 +151,11 @@ const TopicForm = () => {
     };
 
     const handleSaveClick = () => {
-        if (validateForm()) {
-            setShowConfirmModal(true);
-        } else {
-            setShowErrorModal(true);
-        }
+        if (validateForm()) setShowConfirmModal(true);
+        else setShowErrorModal(true);
     };
 
     const handleConfirmSave = () => {
-        // Logic to save data to backend/context would go here
         console.log("Saving Topic:", { title, subtopics, tlas, flipped });
         setShowConfirmModal(false);
         navigate(-1);
@@ -180,11 +167,9 @@ const TopicForm = () => {
             nav={<SideNavigation />}
             content={
                 <div className={styles.container}>
-                    {/* Pass handleSaveClick to Navigation */}
                     <FormNavigation goBack={goBackHandler} onSave={handleSaveClick} />
 
                     <div className={styles['form-container']}>
-
                         <h2>Core Topic</h2>
                         <TextField
                             value={title}
@@ -212,7 +197,13 @@ const TopicForm = () => {
                         <h2>Teaching & Learning Activities</h2>
 
                         <div className={'checkbox'}>
-                            <input checked={flipped} onChange={handleFlipped} type="checkbox" /> Flipped Approach
+                            <input
+                                checked={flipped}
+                                onChange={handleFlippedChange}
+                                type="checkbox"
+                                id="flippedCheck"
+                            />
+                            <label htmlFor="flippedCheck" style={{marginLeft: '8px'}}>Flipped Approach</label>
                         </div>
 
                         {tlas.map((item) => (
@@ -220,7 +211,10 @@ const TopicForm = () => {
                                 <div className={styles.tlas}>
                                     <div className={styles.list}>
                                         <DropdownA
-                                            options={classPhases}
+                                            // Conditional Options:
+                                            // If Flipped = TRUE -> Pre/In/Post
+                                            // If Flipped = FALSE -> Async/Sync
+                                            options={flipped ? FLIPPED_OPTIONS : STANDARD_OPTIONS}
                                             label={'Class Phase'}
                                             value={item.classPhase}
                                             onChange={(val) => handleTlaChange(item.id, 'classPhase', val)}
@@ -243,7 +237,6 @@ const TopicForm = () => {
                                         placeholder="e.g., Lecture, Group Activity..."
                                     />
 
-                                    {/* Assumes TextArea follows similar pattern to TextField */}
                                     <TextArea
                                         label={'Text Description'}
                                         value={item.tlaDescription}
@@ -268,12 +261,9 @@ const TopicForm = () => {
                         ))}
 
                         <Duplicator onAdd={handleTlaAdd} name={'TLA'} />
-
                     </div>
 
-                    {/* --- POPUPS / MODALS --- */}
-
-                    {/* 1. CONFIRMATION POPUP */}
+                    {/* MODALS */}
                     {showConfirmModal && (
                         <div className={styles.modalOverlay}>
                             <div className={styles.modal}>
@@ -292,45 +282,30 @@ const TopicForm = () => {
                         </div>
                     )}
 
-                    {/* 2. ERROR POPUP */}
                     {showErrorModal && (
                         <div className={styles.modalOverlay}>
                             <div className={styles.modal}>
                                 <div className={styles.modalHeader} style={{ borderBottomColor: '#FF5252' }}>
                                     <h3 style={{ color: '#FF5252' }}>Validation Error</h3>
-                                    <X
-                                        size={24}
-                                        className={styles.closeIcon}
-                                        onClick={() => setShowErrorModal(false)}
-                                    />
+                                    <X size={24} className={styles.closeIcon} onClick={() => setShowErrorModal(false)} />
                                 </div>
                                 <div className={styles.modalBody}>
                                     <AlertCircle size={40} color="#FF5252" style={{ marginBottom: '1rem' }} />
                                     <p>Please fix the highlighted issues before saving.</p>
-
-                                    {/* Optional: Summary of errors if you want to be specific,
-                                        otherwise just the general message above is enough given the field highlighting.
-                                        Here we limit the list height if there are many errors. */}
                                     <ul className={styles.errorList} style={{maxHeight: '150px', overflowY: 'auto'}}>
                                         {Object.entries(errors).map(([key, err], idx) => (
                                             <li key={idx}>
-                                                {/* Make the error message a bit more descriptive based on key */}
-                                                {key.includes('subtopic') ? `Subtopic: ${err}` :
-                                                    key.includes('tla') ? `Activity: ${err}` :
-                                                        `Topic: ${err}`}
+                                                {key.includes('subtopic') ? `Subtopic: ${err}` : key.includes('tla') ? `Activity: ${err}` : `Topic: ${err}`}
                                             </li>
                                         ))}
                                     </ul>
                                 </div>
                                 <div className={styles.modalActions}>
-                                    <button className={styles.confirmBtn} style={{ backgroundColor: '#FF5252' }} onClick={() => setShowErrorModal(false)}>
-                                        Okay, I'll fix it
-                                    </button>
+                                    <button className={styles.confirmBtn} style={{ backgroundColor: '#FF5252' }} onClick={() => setShowErrorModal(false)}>Okay</button>
                                 </div>
                             </div>
                         </div>
                     )}
-
                 </div>
             }
         />
