@@ -8,6 +8,7 @@ import Duplicator from "../components/Duplicator.jsx";
 import {Link, useParams, useSearchParams} from "react-router-dom";
 import { getSyllabusByCode } from "../data/syllabiData.js";
 import layout from "../styles/TosSections.module.sass";
+import TOSPreview from "../pages/TosPreview.jsx";
 import TOSSummary from "../pages/TosSummary.jsx";
 import QuestionCognitiveMapping from "../pages/QuestionCognitiveMapping.jsx";
 
@@ -68,10 +69,13 @@ const tosSections = ({status}) => {
 
     const [questions, setQuestions] = useState([]);  // Lifted state for questions; starts empty
 
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
     const { code } = useParams();
     const syllabus = getSyllabusByCode(code);
 
-        return (
+    return (
+        <>
             <div className={styles.container}>
                 <div className={styles.navi}>
                     <Link to={`/`} className={'actionLink'}>
@@ -90,7 +94,7 @@ const tosSections = ({status}) => {
 
                     <div className={styles.draft}>Save as Draft</div>
 
-                    <div className={styles.submit}>Submit</div>
+                    <div><button className={styles.submit} onClick={() => setIsPreviewOpen(true)}>Export</button></div>
                 </div>
 
                 <div className={styles['dynamic-sections']}>
@@ -179,7 +183,6 @@ const tosSections = ({status}) => {
                                             </tr>
                                         ))}
 
-
                                         {coIndex < rows.length - 1 && (
                                             <tr key={`${co.co}-spacer`} style={{height: '16px'}}>
                                             </tr>
@@ -202,7 +205,15 @@ const tosSections = ({status}) => {
                     }
                 </div>
             </div>
-        )
-    }
+
+            <TOSPreview
+                isOpen={isPreviewOpen}
+                onClose={() => setIsPreviewOpen(false)}
+                outcomeData={rows}
+                questions={questions}
+            />
+        </>
+    )
+}
 
 export default tosSections;

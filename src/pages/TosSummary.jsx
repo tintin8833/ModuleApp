@@ -144,7 +144,9 @@ const TOSSummary = ({ outcomeData, questions }) => {
                 </div>
             ))}
         </div>
+
     );
+
 };
 
 export default TOSSummary;

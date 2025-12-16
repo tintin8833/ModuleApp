@@ -1,5 +1,5 @@
 import React from "react";
-import layout from "../styles/QuestionCognitiveMapping.module.sass";
+import layout from "../styles/TOSPreview.module.sass";  // Dedicated SASS file for TOSPreview
 
 const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Human & Computer Interaction", semester = "1st Sem", schoolYear = "2024 - 2025" }) => {
     if (!isOpen) return null;
@@ -50,65 +50,78 @@ const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Hum
     });
 
     return (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <div className={layout.section} style={{ width: '90%', maxWidth: '1200px', maxHeight: '80vh', overflowY: 'auto' }}>
-                <h3>Preview</h3>
+        <div className={layout.modalOverlay}>
+            <div className={layout.modalContent}>
+                {/* Close Button */}
+                <button className={layout.closeButton} onClick={onClose}>×</button>
 
-                {/* Header Fields */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                    <div style={{ display: 'flex', gap: '16px' }}>
-                        <label>Course:</label>
-                        <input
-                            type="text"
-                            disabled
-                            value={courseName}
-                            className={layout.numberInput}
-                            style={{ width: '200px' }}
-                        />
-                        <label>Semester:</label>
-                        <input
-                            type="text"
-                            disabled
-                            value={semester}
-                            className={layout.numberInput}
-                            style={{ width: '100px' }}
-                        />
+                <h2 className={layout.previewTitle}>Preview</h2>
+
+                {/* Header Fields - Revised for Grid Alignment */}
+                <div className={layout.headerFields}>
+                    <div className={layout.topRow}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <label>Course:</label>
+                            <input
+                                type="text"
+                                disabled
+                                value={courseName}
+                                className={layout.numberInput}
+                                style={{ width: '70%' }}
+                            />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <label>
+                                <input type="checkbox" disabled /> Midterm
+                            </label>
+                            <label>
+                                <input type="checkbox" disabled /> Final
+                            </label>
+                        </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                        <label>
-                            <input type="checkbox" disabled /> Midterm
-                        </label>
-                        <label>
-                            <input type="checkbox" disabled /> Final
-                        </label>
-                        <label>School Year:</label>
-                        <input
-                            type="text"
-                            disabled
-                            value={schoolYear}
-                            className={layout.numberInput}
-                            style={{ width: '120px' }}
-                        />
+                    <div className={layout.bottomRow}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <label>Semester:</label>
+                            <input
+                                type="text"
+                                disabled
+                                value={semester}
+                                className={layout.numberInput}
+                                style={{ width: '65%' }}
+                            />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <label>School Year:</label>
+                            <input
+                                type="text"
+                                disabled
+                                value={schoolYear}
+                                className={layout.numberInput}
+                                style={{ width: '120px' }}
+                            />
+                        </div>
                     </div>
                 </div>
 
                 {/* Table */}
-                <table className={`${layout.qctable} ${layout.TOSTable}`}>
+                <table className={`${layout.qctable} ${layout.TOSTable}`} style={{ width: '100%', marginBottom: '20px' }}>
                     <thead>
                     <tr>
                         <th>COs & ILOs</th>
                         <th>No. of Hours</th>
                         <th>%</th>
                         <th>No. of Points</th>
-                        <th colSpan={cognitiveLevels.length}>Cognitive Levels</th>
+                        <th style={{justifyContent: "center", width: "800px"}}>
+                            Cognitive Levels
+                        </th>
                     </tr>
-                    <tr>
+                    <tr className={layout['sub-column']}>
                         <th></th>
                         <th></th>
                         <th></th>
                         <th></th>
                         {cognitiveLevels.map(level => (
-                            <th key={level}>{level}</th>
+                            <th key={level} className={layout.lighten}>{level}</th>
                         ))}
                     </tr>
                     </thead>
@@ -116,24 +129,21 @@ const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Hum
                     {outcomeData.map(co => (
                         <React.Fragment key={co.co}>
                             {/* CO Row */}
-                            <tr>
+                            <tr style={{background: "#F9FAFB"}}>
                                 <td>
-                                    <div className={layout.cellBox}>{co.co}</div>
+                                    <div className={layout.cellBox} style={{fontSize: '16px', fontWeight: "bold"}}>{co.co}</div>
                                 </td>
                                 <td>
-                                    <div className={layout.cellBox}>{co.totalHours || 0}</div>
+                                    <div className={layout.cellBox} style={{fontSize: '16px'}}>{co.totalHours || 0}</div>
                                 </td>
                                 <td>
-                                    <div className={layout.cellBox}>{co.totalPercentage || 0}</div>
+                                    <div className={layout.cellBox} style={{fontSize: '16px'}}>{co.totalPercentage || 0}</div>
                                 </td>
                                 <td>
-                                    <div className={layout.cellBox}>{co.totalPoints || 0}</div>
+                                    <div className={layout.cellBox} style={{fontSize: '16px'}}>{co.totalPoints || 0}</div>
                                 </td>
                                 {cognitiveLevels.map(level => (
                                     <td key={level}>
-                                        <div className={layout.cellBox}>
-                                            {co.ilos.reduce((sum, ilo) => sum + (aggregatedData[co.co][ilo.id][level].sumPoints || 0), 0)}
-                                        </div>
                                     </td>
                                 ))}
                             </tr>
@@ -186,9 +196,9 @@ const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Hum
                     </tbody>
                 </table>
 
-                {/* Export Button */}
-                <div style={{ marginTop: '16px', textAlign: 'center' }}>
-                    <button className={layout.uploadButton} onClick={onClose}>Export</button>  {/* Placeholder: Add actual export logic here */}
+                {/* Export Button - Sticky at Bottom */}
+                <div className={layout.exportButtonContainer}>
+                    <button className={layout.uploadButton} onClick={onClose}>Export</button>
                 </div>
             </div>
         </div>
