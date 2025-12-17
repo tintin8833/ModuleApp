@@ -1,8 +1,12 @@
 import React from "react";
-import layout from "../styles/TOSPreview.module.sass";  // Dedicated SASS file for TOSPreview
+import layout from "../styles/TOSPreview.module.sass";
+import {syllabiData} from "../data/syllabiData.js";  // Dedicated SASS file for TOSPreview
+import { useNavigate } from "react-router-dom";
 
 const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Human & Computer Interaction", semester = "1st Sem", schoolYear = "2024 - 2025" }) => {
     if (!isOpen) return null;
+
+const navigate = useNavigate();
 
     // Cognitive levels
     const cognitiveLevels = [
@@ -55,51 +59,41 @@ const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Hum
                 {/* Close Button */}
                 <button className={layout.closeButton} onClick={onClose}>×</button>
 
-                <h2 className={layout.previewTitle}>Preview</h2>
+                <h2 className={layout.previewTitle}>TOS Document Preview</h2>
 
                 {/* Header Fields - Revised for Grid Alignment */}
                 <div className={layout.headerFields}>
                     <div className={layout.topRow}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <label>Course:</label>
-                            <input
-                                type="text"
-                                disabled
-                                value={courseName}
-                                className={layout.numberInput}
-                                style={{ width: '70%' }}
-                            />
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <label>
-                                <input type="checkbox" disabled /> Midterm
-                            </label>
-                            <label>
-                                <input type="checkbox" disabled /> Final
-                            </label>
-                        </div>
+                        <label>Course:</label>
+                        <input
+                            type="text"
+                            disabled
+                            value={courseName}
+                            className={layout.numberInput}
+                        />
+                        <label>Exam:</label>
+                        <input
+                            type="text"
+                            disabled
+                            value="Midterm"
+                            className={layout.numberInput}
+                        />
                     </div>
                     <div className={layout.bottomRow}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <label>Semester:</label>
-                            <input
-                                type="text"
-                                disabled
-                                value={semester}
-                                className={layout.numberInput}
-                                style={{ width: '65%' }}
-                            />
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <label>School Year:</label>
-                            <input
-                                type="text"
-                                disabled
-                                value={schoolYear}
-                                className={layout.numberInput}
-                                style={{ width: '120px' }}
-                            />
-                        </div>
+                        <label>Semester:</label>
+                        <input
+                            type="text"
+                            disabled
+                            value={semester}
+                            className={layout.numberInput}
+                        />
+                        <label>School Year:</label>
+                        <input
+                            type="text"
+                            disabled
+                            value={schoolYear}
+                            className={layout.numberInput}
+                        />
                     </div>
                 </div>
 
@@ -129,7 +123,7 @@ const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Hum
                     {outcomeData.map(co => (
                         <React.Fragment key={co.co}>
                             {/* CO Row */}
-                            <tr style={{background: "#F9FAFB"}}>
+                            <tr style={{background: "#F9FAFB", height: '50px'}}>
                                 <td>
                                     <div className={layout.cellBox} style={{fontSize: '16px', fontWeight: "bold"}}>{co.co}</div>
                                 </td>
@@ -174,7 +168,7 @@ const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Hum
                         </React.Fragment>
                     ))}
                     {/* Total Row */}
-                    <tr>
+                    <tr style={{background: "#F9FAFB", height: '50px', fontWeight: '500'}} >
                         <td>
                             <div className={layout.cellBox}>Total</div>
                         </td>
@@ -182,7 +176,7 @@ const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Hum
                             <div className={layout.cellBox}>{totalHours}</div>
                         </td>
                         <td>
-                            <div className={layout.cellBox}>{totalPercentage}</div>
+                            <div className={layout.cellBox}>100</div>
                         </td>
                         <td>
                             <div className={layout.cellBox}>{totalPoints}</div>
@@ -198,7 +192,12 @@ const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Hum
 
                 {/* Export Button - Sticky at Bottom */}
                 <div className={layout.exportButtonContainer}>
-                    <button className={layout.uploadButton} onClick={onClose}>Export</button>
+                    <button
+                        className={layout.export}
+                        onClick={() => navigate("/assignedTOS")}
+                    >
+                        Export TOS
+                    </button>
                 </div>
             </div>
         </div>

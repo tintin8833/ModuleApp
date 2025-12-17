@@ -5,7 +5,7 @@ import React, {useState} from "react";
 import TextField from "./TextField.jsx";
 import TextArea from "./TextArea.jsx";
 import Duplicator from "../components/Duplicator.jsx";
-import {Link, useParams, useSearchParams} from "react-router-dom";
+import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import { getSyllabusByCode } from "../data/syllabiData.js";
 import layout from "../styles/TosSections.module.sass";
 import TOSPreview from "../pages/TosPreview.jsx";
@@ -13,6 +13,8 @@ import TOSSummary from "../pages/TosSummary.jsx";
 import QuestionCognitiveMapping from "../pages/QuestionCognitiveMapping.jsx";
 
 const tosSections = ({status}) => {
+
+    const navigate = useNavigate();
 
     const [searchParams, setSearchParams] = useSearchParams();
     const selectedSection = searchParams.get('section') || 'Outcome Overview';
@@ -25,21 +27,21 @@ const tosSections = ({status}) => {
             totalPercentage: 100,
             totalPoints: 50,
             ilos: [
-                { id: "ILO1", description: "Understanding basic HCI principles", hours: 3, percentage: 20, points: 10 },
+                { id: "ILO1", description: "Understanding basic HCI principles", hours: 3, percentage: 20, points: 5 },
                 { id: "ILO2", description: "Applying user-centered design methods", hours: 3, percentage: 30, points: 20 },
-                { id: "ILO3", description: "Evaluating interface usability", hours: 6, percentage: 50, points: 30 },
+                { id: "ILO3", description: "Evaluating interface usability", hours: 6, percentage: 50, points: 25 },
             ]
         },
         {
             co: "CO2",
             description: "Evaluate interactive systems using HCI methods, identify usability issues, and recommend improvements for better user experience. Students will further be able to communicate evaluation results effectively through structured reports and presentations\n",
-            totalHours: 18,
+            totalHours: 12,
             totalPercentage: 100,
             totalPoints: 40,
             ilos: [
-                { id: "ILO1", description: "Analyzing user requirements", hours: 3, percentage: 22, points: 5 },
-                { id: "ILO2", description: "Designing interactive prototypes", hours: 3, percentage: 33, points: 15 },
-                { id: "ILO3", description: "Implementing accessibility features", hours: 6, percentage: 28, points: 20 }
+                { id: "ILO1", description: "Analyzing user requirements", hours: 3, percentage: 20, points: 5 },
+                { id: "ILO2", description: "Designing interactive prototypes", hours: 3, percentage: 30, points: 15 },
+                { id: "ILO3", description: "Implementing accessibility features", hours: 6, percentage: 50, points: 20 }
             ]
         }
     ];
@@ -78,11 +80,12 @@ const tosSections = ({status}) => {
         <>
             <div className={styles.container}>
                 <div className={styles.navi}>
-                    <Link to={`/`} className={'actionLink'}>
-                        <div className={styles.return}>
-                            <ChevronLeft size={22}/>
-                        </div>
-                    </Link>
+                    <div
+                        className={styles.return}
+                        onClick={() => navigate('/assignedtos')}
+                    >
+                        <ChevronLeft size={22}/>
+                    </div>
 
                     <div className={styles['section-select']}>
                         <select value={selectedSection} onChange={handleSectionChange}>
@@ -92,7 +95,12 @@ const tosSections = ({status}) => {
                         </select>
                     </div>
 
-                    <div className={styles.draft}>Save as Draft</div>
+                    <div
+                        className={styles.draft}
+                        onClick={() => navigate('/assignedtos')}
+                    >
+                        Save as Draft
+                    </div>
 
                     <div><button className={styles.submit} onClick={() => setIsPreviewOpen(true)}>Export</button></div>
                 </div>

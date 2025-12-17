@@ -6,17 +6,23 @@ import {LogOut} from "react-feather";
 
 const SideNavigation = () => {
 
+
     const navigate = useNavigate();
     const location = useLocation();
-    const selected = location.pathname === '/assignedtos' ? 'TOS' : 'Syllabus';
+
+    let selected = 'Syllabus';
+
+    if (location.pathname.startsWith('/assignedtos')) {
+        selected = 'TOS';
+    }
+    else if (location.pathname.startsWith('/tos')) {
+        selected = 'TOS';
+    }
 
     const handlePageChange = (page) => {
-        if (page === 'TOS') {
-            navigate('/assignedtos');
-        } else {
-            navigate('/');
-        }
-    }
+        if (page === 'TOS') navigate('/assignedtos');
+        else navigate('/');
+    };
 
     return(
         <div className={styles.container}>
