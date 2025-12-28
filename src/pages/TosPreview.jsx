@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Human & Computer Interaction", semester = "1st Sem", schoolYear = "2024 - 2025" }) => {
     if (!isOpen) return null;
 
-const navigate = useNavigate();
+    const navigate = useNavigate();
 
     // Cognitive levels
     const cognitiveLevels = [

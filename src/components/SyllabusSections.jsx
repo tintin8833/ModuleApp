@@ -5,8 +5,10 @@ import { Info } from 'react-feather';
 import React, {useEffect, useState} from "react";
 import TextField from "./TextField.jsx";
 import TextArea from "./TextArea.jsx";
-import {Link, useParams, useSearchParams} from "react-router-dom";
+import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {getSyllabusByCode} from "../data/syllabiData.js";
+import TOSPreview from "../pages/TosPreview.jsx";
+import SyllabusPreview from "./SyllabusPreview.jsx";
 
 const syllabusSections = ({status}) => {
 
@@ -64,6 +66,9 @@ const syllabusSections = ({status}) => {
     const { code } = useParams();
     const syllabus = getSyllabusByCode(code);
 
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+
 
     return(
         <div className={styles.container}>
@@ -89,7 +94,7 @@ const syllabusSections = ({status}) => {
 
                 <div className={styles.draft}>Save as Draft</div>
 
-                <div className={styles.submit}>Submit</div>
+                <div onClick={() => setIsPreviewOpen(true)} className={styles.submit}>Submit</div>
             </div>
 
             <div className={styles['dynamic-sections']}>
@@ -192,15 +197,15 @@ const syllabusSections = ({status}) => {
                                         <thead>
                                         <tr>
                                             <th className={styles['course-descrip']}>After completing the course, the student should be  able to:</th>
-                                            <th width={82}>PO1 <Info strokeWidth={1.7}  size={18}/></th>
-                                            <th width={82}>PO2 <Info strokeWidth={1.7}  size={18}/></th>
-                                            <th width={82}>PO3 <Info strokeWidth={1.7}  size={18}/></th>
-                                            <th width={82}>PO4 <Info strokeWidth={1.7}  size={18}/></th>
-                                            <th width={82}>PO5 <Info strokeWidth={1.7}  size={18}/></th>
-                                            <th width={82}>PO6 <Info strokeWidth={1.7}  size={18}/></th>
-                                            <th width={82}>PO7 <Info strokeWidth={1.7}  size={18}/></th>
-                                            <th width={82}>PO8 <Info strokeWidth={1.7}  size={18}/></th>
-                                            <th width={82}>PO9 <Info strokeWidth={1.7}  size={18}/></th>
+                                            <th width={82}>PO1 </th>
+                                            <th width={82}>PO2 </th>
+                                            <th width={82}>PO3 </th>
+                                            <th width={82}>PO4 </th>
+                                            <th width={82}>PO5 </th>
+                                            <th width={82}>PO6 </th>
+                                            <th width={82}>PO7 </th>
+                                            <th width={82}>PO8 </th>
+                                            <th width={82}>PO9 </th>
                                         </tr>
                                         </thead>
 
@@ -260,6 +265,7 @@ const syllabusSections = ({status}) => {
                                             <p>Filter by <strong>Reference Type</strong>:</p>
                                             <select name="" >
                                                 <option value="">Textbook</option>
+                                                <option value="">Open Educational Resources</option>
                                                 <option value="">Online Resources</option>
                                             </select>
                                         </div>
@@ -476,6 +482,11 @@ const syllabusSections = ({status}) => {
                                 </React.Suspense>
                             </section>
                         )}
+
+                        <SyllabusPreview
+                            isOpen={isPreviewOpen}
+                            onClose={() => setIsPreviewOpen(false)}
+                        />
                     </>
                 )}
 
