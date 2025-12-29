@@ -471,7 +471,7 @@ const syllabusSections = ({status}) => {
                         }
                         {selectedSection === 'Criteria for Grading' && (
                             <section>
-                                <React.Suspense fallback={<div>Loading...</div>}>
+                                <React.Suspense fallback={<div></div>}>
                                     <CriteriaForm syllabusCode={code} />
                                 </React.Suspense>
                             </section>

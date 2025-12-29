@@ -1,7 +1,7 @@
 import styles from '../styles/SyllabusSections.module.sass'
 import {ChevronLeft, ChevronRight, Plus, Search} from 'react-feather';
 import { Info } from 'react-feather';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import TextField from "./TextField.jsx";
 import TextArea from "./TextArea.jsx";
 import Duplicator from "../components/Duplicator.jsx";
@@ -13,6 +13,13 @@ import TOSSummary from "../pages/TosSummary.jsx";
 import QuestionCognitiveMapping from "../pages/QuestionCognitiveMapping.jsx";
 
 const tosSections = ({status}) => {
+
+    const [questions, setQuestions] = useState([]);  // Lifted state for questions; starts empty
+
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+    const { code } = useParams();
+    const syllabus = getSyllabusByCode(code);
 
     const navigate = useNavigate();
 
@@ -65,16 +72,22 @@ const tosSections = ({status}) => {
     };
 
     const handleSectionChange = (e) => {
-        setSearchParams({ section: e.target.value })
+        setSearchParams({ section: e.target.value });
+    };
 
-    }
+// NEW: Loading State
+    const [isLoading, setIsLoading] = useState(false);
 
-    const [questions, setQuestions] = useState([]);  // Lifted state for questions; starts empty
+// NEW: Effect to trigger loading whenever selectedSection changes
+    useEffect(() => {
+        setIsLoading(true);
 
-    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 500);
 
-    const { code } = useParams();
-    const syllabus = getSyllabusByCode(code);
+        return () => clearTimeout(timer);
+    }, [selectedSection]);
 
     return (
         <>
@@ -106,6 +119,13 @@ const tosSections = ({status}) => {
                 </div>
 
                 <div className={styles['dynamic-sections']}>
+
+                    {isLoading ? (
+                        <div className={styles.loadingContainer}>
+                            <div className={styles.spinner}></div>
+                        </div>
+                    ) : (
+                    <>
                     {selectedSection === 'Outcome Overview' &&
                         <section>
                             <table className={`${layout.table} ${layout.TOSTable}`}>
@@ -211,6 +231,9 @@ const tosSections = ({status}) => {
                             <TOSSummary outcomeData={rows} questions={questions} />
                         </section>
                     }
+                    </>
+                )}
+
                 </div>
             </div>
 

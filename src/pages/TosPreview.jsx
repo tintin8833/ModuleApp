@@ -194,7 +194,7 @@ const navigate = useNavigate();
                 <div className={layout.exportButtonContainer}>
                     <button
                         className={layout.export}
-                        onClick={() => navigate("/assignedTOS")}
+                        onClick={() => navigate("/assignedtos")}
                     >
                         Export TOS
                     </button>

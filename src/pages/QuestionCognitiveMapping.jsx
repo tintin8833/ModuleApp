@@ -37,14 +37,27 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
         setQuestions(questions.map(q => {
             if (q.id === id) {
                 const updated = { ...q, [field]: value };
+
+                // If CO changes → reset ILO & Cognitive Level
                 if (field === 'co') {
                     updated.ilo = '';
+                    updated.cognitiveLevel = '';
                 }
+
+                // If ILO changes → reset Cognitive Level if it’s not allowed
+                if (field === 'ilo') {
+                    const allowed = getAllowedCognitiveLevels(value);
+                    if (!allowed.includes(updated.cognitiveLevel)) {
+                        updated.cognitiveLevel = '';
+                    }
+                }
+
                 return updated;
             }
             return q;
         }));
     };
+
 
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
@@ -125,6 +138,21 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
             setQuestions([createEmptyQuestion()]);
         }
     }, [questions, setQuestions]);
+
+    const getAllowedCognitiveLevels = (iloId) => {
+        if (!iloId) return [];
+
+        switch (iloId) {
+            case 'ILO1':
+                return ['Remembering', 'Understanding'];
+            case 'ILO2':
+                return ['Understanding', 'Applying', 'Analyzing', 'Evaluating'];
+            case 'ILO3':
+                return ['Applying', 'Analyzing', 'Evaluating', 'Creating'];
+            default:
+                return cognitiveLevels;
+        }
+    };
 
     return (
         <div className={layout.container}>
@@ -314,13 +342,16 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
                         <select
                             value={q.cognitiveLevel}
                             onChange={(e) => handleQuestionChange(q.id, 'cognitiveLevel', e.target.value)}
-                            className={layout.selectInput}
+                            disabled={!q.ilo}
+                            className={`${layout.selectInput} ${!q.ilo ? layout.disabled : ''}`}
                         >
                             <option value="">Select Level</option>
-                            {cognitiveLevels.map(level => (
+
+                            {getAllowedCognitiveLevels(q.ilo).map(level => (
                                 <option key={level} value={level}>{level}</option>
                             ))}
                         </select>
+
 
                         <div onClick={() => handleDeleteQuestion(q.id)} className={layout.deleteButton}>
                             <X size={20} color={'white'} />
