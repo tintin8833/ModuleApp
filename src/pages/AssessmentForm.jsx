@@ -30,9 +30,8 @@ const AssessmentForm = () => {
         Array.from({ length: count }, () => ({
             id: Date.now() + Math.random(),
             criteria: '',
-            maxScore: '',
-            weight: ''
-        }));
+            maxScore: ''
+        }))
 
     const [rubricRows, setRubricRows] = useState(
         assessmentData.rubrics && assessmentData.rubrics.length > 0
@@ -51,8 +50,24 @@ const AssessmentForm = () => {
     };
 
     const handleRubricChange = (id, field, value) => {
-        setRubricRows(rubricRows.map(row => row.id === id ? { ...row, [field]: value } : row));
-    };
+        let updated = rubricRows.map(r =>
+            r.id === id ? { ...r, [field]: value } : r
+        )
+
+        const total = updated.reduce((sum, r) => sum + Number(r.maxScore || 0), 0)
+
+        if (total > 0) {
+            updated = updated.map(r => {
+                const raw = (Number(r.maxScore || 0) / total) * 100
+                return {
+                    ...r,
+                    weight: formatPercent(raw)
+                }
+            })
+        }
+
+        setRubricRows(updated)
+    }
 
     const assessmentOptions = [
         "Observation Report",
@@ -81,6 +96,28 @@ const AssessmentForm = () => {
         document.addEventListener("pointerdown", handleClickOutside);
         return () => document.removeEventListener("pointerdown", handleClickOutside);
     }, []);
+
+    const allScoresFilled = rubricRows.every(
+        r => r.maxScore !== "" && Number(r.maxScore) > 0
+    )
+
+    const formatPercent = (num) => {
+        if (!isFinite(num)) return ""
+        return Number.isInteger(num) ? num : Number(num.toFixed(2))
+    }
+
+    const totalMaxScore = rubricRows.reduce(
+        (sum, r) => sum + Number(r.maxScore || 0),
+        0
+    )
+
+    const getWeight = score => {
+        if (!allScoresFilled) return ""
+        if (!totalMaxScore) return ""
+
+        const raw = (Number(score) / totalMaxScore) * 100
+        return Number.isInteger(raw) ? raw : raw.toFixed(2)
+    }
 
     return (
         <SkeletonA
@@ -195,8 +232,9 @@ const AssessmentForm = () => {
                                                 onChange={(val) => handleRubricChange(row.id, 'maxScore', val)}
                                             />
                                             <TextField
-                                                initialValue={row.weight}
-                                                onChange={(val) => handleRubricChange(row.id, 'weight', val)}
+                                                value={getWeight(row.maxScore)}
+                                                disabled
+                                                readOnly
                                             />
                                             <div onClick={() => handleRubricDelete(row.id)} className={styles['x']}>
                                                 <X size={20} color={'white'}/>
@@ -215,9 +253,9 @@ const AssessmentForm = () => {
                                             readOnly={true}
                                         />
                                         <TextField
-                                            initialValue={rubricRows.reduce((sum, r) => sum + Number(r.weight || 0), 0)}
-                                            disabled={true}
-                                            readOnly={true}
+                                            value={totalMaxScore ? "100%" : "0%"}
+                                            disabled
+                                            readOnly
                                         />
                                         <div className={styles['x']} style={{ visibility: 'hidden' }}>
                                             <X size={20} color={'transparent'} />

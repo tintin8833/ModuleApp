@@ -58,23 +58,53 @@ const CriteriaForGradingForm = ({ syllabusCode }) => {
         );
     };
 
-    const handleWeightChange = (rowId, field, value) => {
-        setRows((prev) =>
-            prev.map((r) =>
+    const handleWeightChange = (rowId, field, rawValue) => {
+        if (rawValue === "") {
+            setRows(prev =>
+                prev.map(r =>
+                    r.id === rowId
+                        ? { ...r, weight: { ...r.weight, [field]: "" } }
+                        : r
+                )
+            )
+            return
+        }
+
+        let value = Number(rawValue)
+
+        if (value > 100) value = 100
+        if (value < 0) value = 0
+
+        setRows(prev =>
+            prev.map(r =>
                 r.id === rowId
                     ? { ...r, weight: { ...r.weight, [field]: value } }
                     : r
             )
-        );
-    };
+        )
+    }
 
-    const handleMinPassingChange = (rowId, value) => {
-        setRows((prev) =>
-            prev.map((r) =>
+    const handleMinPassingChange = (rowId, rawValue) => {
+        if (rawValue === "") {
+            setRows(prev =>
+                prev.map(r =>
+                    r.id === rowId ? { ...r, minPassing: "" } : r
+                )
+            )
+            return
+        }
+
+        let value = Number(rawValue)
+
+        if (value > 100) value = 100
+        if (value < 0) value = 0
+
+        setRows(prev =>
+            prev.map(r =>
                 r.id === rowId ? { ...r, minPassing: value } : r
             )
-        );
-    };
+        )
+    }
 
     return (
         <div className={styles.container}>
@@ -159,12 +189,7 @@ const CriteriaForGradingForm = ({ syllabusCode }) => {
                                     <input
                                         type="number"
                                         value={row.minPassing}
-                                        onChange={(e) =>
-                                            handleMinPassingChange(
-                                                row.id,
-                                                e.target.value
-                                            )
-                                        }
+                                        onChange={e => handleMinPassingChange(row.id, e.target.value)}
                                     />
                                 </div>
                             </td>
