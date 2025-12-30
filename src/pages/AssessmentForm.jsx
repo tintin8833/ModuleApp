@@ -6,13 +6,10 @@ import {useNavigate, useParams} from "react-router-dom";
 import TextField from "../components/TextField.jsx";
 import TextArea from "../components/TextArea.jsx";
 import SideNavigation from "../components/SideNavigation.jsx";
-import {useEffect, useState} from "react";
-import {X} from "react-feather";
+import {useEffect, useState, useRef} from "react";
+import {X, ChevronDown} from "react-feather";
 import Duplicator from "../components/Duplicator.jsx";
 import {getSyllabusByCode} from "../data/syllabiData.js";
-import { useRef } from "react";
-import { ChevronDown } from 'react-feather'
-
 
 const AssessmentForm = () => {
     const navigate = useNavigate();
@@ -21,6 +18,34 @@ const AssessmentForm = () => {
     const { code, assessmentId } = useParams();
     const syllabus = getSyllabusByCode(code);
     const assessmentData = syllabus?.assessments.find(a => a.id === assessmentId) || {};
+
+    // --- UPDATED LOGIC: FIND TLA DETAILS ---
+    // We need to find the original TLA object inside the 'topics' array
+    // to get the Description and the Parent Topic Title.
+    let derivedTlaData = {
+        topicTitle: null,
+        tlaDescription: null
+    };
+
+    if (syllabus && syllabus.topics && assessmentData.tlaName) {
+        // Iterate through all topics
+        for (const topic of syllabus.topics) {
+            if (topic.tlas) {
+                // Check if this topic contains the TLA we are looking for
+                const foundTLA = topic.tlas.find(t => t.tlaName === assessmentData.tlaName);
+
+                if (foundTLA) {
+                    // Found it! Capture the data
+                    derivedTlaData = {
+                        topicTitle: topic.title,
+                        tlaDescription: foundTLA.tlaDescription
+                    };
+                    break; // Stop loop once found
+                }
+            }
+        }
+    }
+    // -----------------------------------------
 
     const [method, setMethod] = useState(assessmentData.assessmentMethod || '');
     const [description, setDescription] = useState(assessmentData.assessmentDescription || '');
@@ -81,25 +106,18 @@ const AssessmentForm = () => {
     ];
 
     const dropdownRef = useRef(null);
-
     const [showOptions, setShowOptions] = useState(false);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (!dropdownRef.current) return;
-
             if (!dropdownRef.current.contains(e.target)) {
                 setShowOptions(false);
             }
         };
-
         document.addEventListener("pointerdown", handleClickOutside);
         return () => document.removeEventListener("pointerdown", handleClickOutside);
     }, []);
-
-    const allScoresFilled = rubricRows.every(
-        r => r.maxScore !== "" && Number(r.maxScore) > 0
-    )
 
     const formatPercent = (num) => {
         if (!isFinite(num)) return ""
@@ -112,6 +130,7 @@ const AssessmentForm = () => {
     )
 
     const getWeight = score => {
+        const allScoresFilled = rubricRows.every(r => r.maxScore !== "" && Number(r.maxScore) > 0);
         if (!allScoresFilled) return ""
         if (!totalMaxScore) return ""
 
@@ -129,8 +148,9 @@ const AssessmentForm = () => {
                     <div className={styles['form-container']}>
 
                         <h2>Topic</h2>
+                        {/* 1. Use the derived Topic Title */}
                         <TextField
-                            initialValue={assessmentData.topic || 'No topic linked.'}
+                            initialValue={derivedTlaData.topicTitle || 'No topic linked.'}
                             disabled={true}
                             readOnly={true}
                         />
@@ -142,10 +162,11 @@ const AssessmentForm = () => {
                             initialValue={assessmentData.tlaName || ''}
                             readOnly={true}
                         />
+                        {/* 2. Use the derived TLA Description from the topics array */}
                         <TextArea
                             label={'TLA Description'}
                             disabled={true}
-                            initialValue={assessmentData.tlaDescription || 'No description available.'}
+                            initialValue={derivedTlaData.tlaDescription || 'No description available.'}
                             readOnly={true}
                         />
 
@@ -262,8 +283,8 @@ const AssessmentForm = () => {
                                         </div>
                                     </div>
                                     <div className={styles['rubric-add']}>
-                                            <Duplicator onAdd={handleRubricAdd} name={'Add Row'} />
-                                        </div>
+                                        <Duplicator onAdd={handleRubricAdd} name={'Add Row'} />
+                                    </div>
                                 </div>
                             </>
                         )}
