@@ -6,10 +6,13 @@ import {useNavigate, useParams} from "react-router-dom";
 import TextField from "../components/TextField.jsx";
 import TextArea from "../components/TextArea.jsx";
 import SideNavigation from "../components/SideNavigation.jsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {X} from "react-feather";
 import Duplicator from "../components/Duplicator.jsx";
 import {getSyllabusByCode} from "../data/syllabiData.js";
+import { useRef } from "react";
+import { ChevronDown } from 'react-feather'
+
 
 const AssessmentForm = () => {
     const navigate = useNavigate();
@@ -51,6 +54,34 @@ const AssessmentForm = () => {
         setRubricRows(rubricRows.map(row => row.id === id ? { ...row, [field]: value } : row));
     };
 
+    const assessmentOptions = [
+        "Observation Report",
+        "Interview Synthesis",
+        "Research Plan Document",
+        "Persona Creation",
+        "Information Architecture Map",
+        "Evaluation Report",
+        "High-Fidelity Prototype",
+        "Usability Test Log"
+    ];
+
+    const dropdownRef = useRef(null);
+
+    const [showOptions, setShowOptions] = useState(false);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (!dropdownRef.current) return;
+
+            if (!dropdownRef.current.contains(e.target)) {
+                setShowOptions(false);
+            }
+        };
+
+        document.addEventListener("pointerdown", handleClickOutside);
+        return () => document.removeEventListener("pointerdown", handleClickOutside);
+    }, []);
+
     return (
         <SkeletonA
             header={<HeaderA role={'Instructor'} name={'NORTON, MONICA'} />}
@@ -83,11 +114,51 @@ const AssessmentForm = () => {
 
                         <h2>Assessment Details</h2>
                         <div className={styles['tlas']}>
-                            <TextField
-                                label={'Assessment Method'}
-                                initialValue={method}
-                                onChange={(value) => setMethod(value)}
-                            />
+                            <div className={styles.assessmentField} ref={dropdownRef}>
+                                <label>Assessment Method</label>
+
+                                <div
+                                    className={`${styles.assessmentDropdown} ${
+                                        showOptions ? styles.open : ''
+                                    }`}
+                                    onClick={() => setShowOptions(v => !v)}
+                                >
+                                    <input
+                                        value={method}
+                                        onChange={e => {
+                                            setMethod(e.target.value)
+                                            setShowOptions(true)
+                                        }}
+                                        placeholder="Select or type…"
+                                    />
+
+                                    <ChevronDown className={styles.dropdownArrow} size={16} />
+
+                                </div>
+
+                                {showOptions && (
+                                    <div className={styles.assessmentOptions}>
+                                        {assessmentOptions
+                                            .filter(opt =>
+                                                opt.toLowerCase().includes(method.toLowerCase())
+                                            )
+                                            .map(opt => (
+                                                <div
+                                                    key={opt}
+                                                    className={styles.assessmentOption}
+                                                    onMouseDown={() => {
+                                                        setMethod(opt)
+                                                        setShowOptions(false)
+                                                    }}
+                                                >
+                                                    {opt}
+                                                </div>
+                                            ))}
+                                    </div>
+                                )}
+                            </div>
+
+
                             <TextArea
                                 label={'Assessment Description'}
                                 initialValue={description}
