@@ -271,6 +271,62 @@
     background: #F1F3F5
     color: #777
 
+.rubricHeader
+  display: flex
+  justify-content: space-between
+  align-items: center
+  margin-bottom: 12px
+
+.rubricTools
+  display: flex
+  align-items: center
+  gap: 10px
+
+.rubricSelectWrap
+  position: relative
+  display: flex
+  align-items: center
+  width: 240px
+
+  select
+    width: 100%
+    height: 40px
+    padding: 0 10px 0 12px   // space for arrow
+    border: 1px solid #DDDFDF
+    border-radius: 5px
+    font-size: 14px
+    appearance: none
+    background: white
+
+  option
+    font-size: 14px
+
+.dropdownArrow
+  position: absolute
+  right: 12px
+  pointer-events: none
+  color: #555
+
+.clearRubricBtn
+  height: 40px
+  width: 40px
+  border-radius: 5px
+  border: none
+  background: #F94545
+  color: white
+  display: flex
+  align-items: center
+  justify-content: center
+  cursor: pointer
+
+  &:hover
+    background: #DC2626
+
+.clearRubricIcon
+  width: 18px
+  height: 18px
+  stroke-width: 2.5
+  flex-shrink: 0
 
 //   &.upperHeader
 //    background: #F1F3F5
