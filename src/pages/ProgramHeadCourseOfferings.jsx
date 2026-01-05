@@ -272,7 +272,7 @@ const ProgramHeadCourseOfferings = () => {
                                 <span style={{ color: '#111827', fontWeight: 500 }}>Course Offerings</span>
                             </div>
                             <div style={{ width: '100%' }}>
-                                <DropdownMultiSelectE options={courses} initialValue={selectedCourse} onChange={setSelectedCourse} />
+                                {/*<DropdownMultiSelectE options={courses} initialValue={selectedCourse} onChange={setSelectedCourse} />*/}
                             </div>
                         </div>
 
