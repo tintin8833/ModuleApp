@@ -105,7 +105,7 @@ const SideNavigation = ({ mode = 'instructor' }) => {
     return (
         <div ref={navRef} className={styles.container}>
             <div className={styles.logo}>
-                <img src={unclogo} alt="" onClick={() => {
+                <img src={unclogo} alt="University Of Nueva Caceres Logo" onClick={() => {
                     setPinned(p => !p)
                     const target = navRef.current ? navRef.current.parentElement : null
                     if (target) { target.classList.toggle('expanded'); target.classList.toggle('expanded-left') }

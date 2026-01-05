@@ -36,6 +36,13 @@ const QuestionCognitiveMapping = ({   outcomeData, questions, setQuestions, asse
         setQuestions(prev => [...prev, createEmptyQuestion()]);
     };
 
+    const getIloStatus = (coId, iloId, required) => {
+        const current = currentCounts[coId]?.ilos[iloId] || 0;
+
+        if (current === required) return "ok";
+        if (current > required) return "over";
+        return "under";
+    };
 
     const handleDeleteQuestion = (id) => {
         if (questions.length === 1) return;
@@ -291,13 +298,29 @@ const QuestionCognitiveMapping = ({   outcomeData, questions, setQuestions, asse
                         </td>
 
                         {outcomeData.flatMap(co =>
-                            co.ilos.map(ilo => (
-                                <td key={`current-${co.co}-${ilo.id}`} style={{ width: `${perIloPct}%` }}>
-                                    <div className={`${layout.cellBox}`}>
-                                        {currentCounts[co.co]?.ilos[ilo.id] || 0}
-                                    </div>
-                                </td>
-                            ))
+                            co.ilos.map(ilo => {
+                                const status = getIloStatus(co.co, ilo.id, ilo.items);
+
+                                return (
+                                    <td key={`current-${co.co}-${ilo.id}`} style={{ width: `${perIloPct}%` }}>
+                                        <div
+                                            className={`${layout.cellBox} ${
+                                                status === "over" ? layout.over :
+                                                    status === "under" ? layout.under : ""
+                                            }`}
+                                            title={
+                                                status === "over"
+                                                    ? "Too many items assigned"
+                                                    : status === "under"
+                                                        ? "Not enough items assigned"
+                                                        : ""
+                                            }
+                                        >
+                                            {currentCounts[co.co]?.ilos[ilo.id] || 0}
+                                        </div>
+                                    </td>
+                                );
+                            })
                         )}
 
                         <td style={{ width: `${totalColPct}%` }}>
@@ -413,7 +436,6 @@ const QuestionCognitiveMapping = ({   outcomeData, questions, setQuestions, asse
                             }}
                             placeholder="0"
                             className={layout.numberInput}
-                            style={{ textAlign: q.points ? 'left' : 'center' }}
                         />
 
                         <select

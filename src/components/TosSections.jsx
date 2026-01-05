@@ -58,6 +58,9 @@ const tosSections = ({status}) => {
 
     const [rows, setRows] = useState(courseOutlines);
 
+    const [tosErrors, setTosErrors] = useState([]);
+    const [showTosErrorModal, setShowTosErrorModal] = useState(false);
+
     const handleAssessmentModeSelect = (mode) => {
         setIsAssessmentLoading(true);
 
@@ -77,6 +80,29 @@ const tosSections = ({status}) => {
         }, 600);
     };
 
+    // ✨ NEW: Calculate distributed items based on percentage
+    const getDistributedItems = (coIndex, totalItems) => {
+        if (!totalItems || totalItems === "") return rows[coIndex].ilos.map(ilo => ilo.items);
+
+        const total = Number(totalItems);
+        const co = rows[coIndex];
+
+        // Calculate items for each ILO based on percentage
+        const calculated = co.ilos.map(ilo => {
+            return Math.round((ilo.percentage / 100) * total);
+        });
+
+        // Adjust for rounding errors to match exact total
+        const sum = calculated.reduce((acc, val) => acc + val, 0);
+        const diff = total - sum;
+
+        if (diff !== 0) {
+            // Add/subtract difference to the largest allocation (usually the last one with 50%)
+            calculated[calculated.length - 1] += diff;
+        }
+
+        return calculated;
+    };
 
     const handleItemsChange = (coIndex, iloIndex, value) => {
         setRows(prev => {
@@ -90,8 +116,68 @@ const tosSections = ({status}) => {
         setRows(prev => {
             const updated = [...prev];
             updated[coIndex].totalItems = value === "" ? "" : Number(value);
+
+            // ✨ Auto-distribute to ILOs based on percentage
+            if (value !== "") {
+                const distributedItems = getDistributedItems(coIndex, value);
+                updated[coIndex].ilos.forEach((ilo, idx) => {
+                    ilo.items = distributedItems[idx];
+                });
+            }
+
             return updated;
         });
+    };
+
+    const validateTOS = () => {
+        const errors = [];
+
+        /* 1️⃣ Check allocation correctness */
+        const counts = {};
+        rows.forEach(co => {
+            counts[co.co] = { ilos: {} };
+            co.ilos.forEach(ilo => {
+                counts[co.co].ilos[ilo.id] = 0;
+            });
+        });
+
+        questions.forEach(q => {
+            if (q.co && q.ilo) {
+                counts[q.co].ilos[q.ilo] += 1;
+            }
+        });
+
+        rows.forEach(co => {
+            co.ilos.forEach(ilo => {
+                const required = ilo.items;
+                const actual = counts[co.co].ilos[ilo.id];
+
+                if (actual !== required) {
+                    errors.push(
+                        `${co.co}-${ilo.id}: requires ${required} items`
+                    );
+                }
+            });
+        });
+
+        /* 2️⃣ Check row completeness */
+        questions.forEach((q, i) => {
+            const row = i + 1;
+
+            if (assessmentMode === "question") {
+                if (!q.question) errors.push(`Question is empty: Row ${row}`);
+            }
+            if (assessmentMode === "rubric") {
+                if (!q.rubricItem) errors.push(`Rubric category missing: Row ${row}`);
+            }
+
+            if (!q.co) errors.push(`CO not selected: Row ${row}`);
+            if (!q.ilo) errors.push(`ILO not selected: Row ${row}`);
+            if (!q.points) errors.push(`Points missing: Row ${row}`);
+            if (!q.cognitiveLevel) errors.push(`Cognitive level missing: Row ${row}`);
+        });
+
+        return errors;
     };
 
     const handleSectionChange = (e) => {
@@ -138,7 +224,22 @@ const tosSections = ({status}) => {
                         Save as Draft
                     </div>
 
-                    <div><button className={styles.submit} onClick={() => setIsPreviewOpen(true)}>Export</button></div>
+                    <div>
+                        <button
+                            className={styles.submit}
+                            onClick={() => {
+                                const errors = validateTOS();
+                                if (errors.length > 0) {
+                                    setTosErrors(errors);
+                                    setShowTosErrorModal(true);
+                                } else {
+                                    setIsPreviewOpen(true);
+                                }
+                            }}
+                        >
+                            Export
+                        </button>
+                    </div>
                 </div>
 
                 <div className={styles['dynamic-sections']}>
@@ -244,9 +345,11 @@ const tosSections = ({status}) => {
                             </table>
                         </section>
                     }
-                        {selectedSection === 'Assessment Item-Cognitive Level Alignment' &&
+                        {selectedSection === 'Assessment Item-Cognitive Level Alignment' && (
                             <section>
-                                {!assessmentMode ? (
+
+                                {/* 1️⃣ Overlay */}
+                                {!assessmentMode && !isAssessmentLoading && (
                                     <div className={layout.modeOverlay}>
                                         <div className={layout.modeBox}>
                                             <h3>Select Assessment Type</h3>
@@ -261,21 +364,29 @@ const tosSections = ({status}) => {
                                             </div>
                                         </div>
                                     </div>
-                                ) : isAssessmentLoading ? (
+                                )}
+
+                                {/* 2️⃣ Spinner */}
+                                {isAssessmentLoading && (
                                     <div className={styles.loadingContainer}>
                                         <div className={styles.spinner}></div>
                                     </div>
-                                ) : (<QuestionCognitiveMapping
-                                    outcomeData={rows}
-                                    questions={questions}
-                                    setQuestions={setQuestions}
-                                    assessmentMode={assessmentMode}
-                                    rubricCategories={rubricCategories}
-                                    setRubricCategories={setRubricCategories}
-                                />
-                            )}
+                                )}
+
+                                {/* 3️⃣ Actual Mapping UI */}
+                                {assessmentMode && !isAssessmentLoading && (
+                                    <QuestionCognitiveMapping
+                                        outcomeData={rows}
+                                        questions={questions}
+                                        setQuestions={setQuestions}
+                                        assessmentMode={assessmentMode}
+                                        rubricCategories={rubricCategories}
+                                        setRubricCategories={setRubricCategories}
+                                    />
+                                )}
+
                             </section>
-                        }
+                        )}
                     {selectedSection === 'TOS Summary' &&
                         <section>
                             <TOSSummary outcomeData={rows} questions={questions} />
@@ -293,6 +404,52 @@ const tosSections = ({status}) => {
                 outcomeData={rows}
                 questions={questions}
             />
+
+            {showTosErrorModal && (
+                <div className={layout.modalOverlay}>
+                    <div className={layout.modal}>
+                        <div className={layout.modalHeader} style={{ borderBottomColor: "#FF5252" }}>
+                            <h3 style={{ color: "#FF5252" }}>TOS Validation Errors</h3>
+                            <span
+                                style={{ cursor: "pointer", fontSize: "20px" }}
+                                onClick={() => setShowTosErrorModal(false)}
+                            >
+          ×
+        </span>
+                        </div>
+
+                        <div className={layout.modalBody}>
+                            <p>Please fix the following before exporting:</p>
+                            <ul
+                                className={layout.errorList}
+                                style={{
+                                    listStyle: "none",
+                                    paddingLeft: 20,
+                                    margin: 0,
+                                    textAlign: "left"
+                                }}
+                            >
+                                {tosErrors.map((err, i) => (
+                                    <li key={i}>{err}</li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div className={layout.modalActions}>
+                            <button
+                                className={layout.confirmBtn}
+                                style={{
+                                    backgroundColor: "#FF5252"
+                                }}
+                                onClick={() => setShowTosErrorModal(false)}
+                            >
+                                Okay, I’ll fix it
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </>
     )
 }
