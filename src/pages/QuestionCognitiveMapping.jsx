@@ -3,7 +3,7 @@ import { X, Upload, Trash2 } from "react-feather";  // Added Trash2 for the clea
 import layout from "../styles/QuestionCognitiveMapping.module.sass";
 import Duplicator from "../components/Duplicator.jsx";
 
-const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
+const QuestionCognitiveMapping = ({   outcomeData, questions, setQuestions, assessmentMode, rubricCategories, setRubricCategories }) => {
     const fileInputRef = useRef(null);
 
     const cognitiveLevels = [
@@ -18,6 +18,7 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
     const createEmptyQuestion = () => ({
         id: Date.now() + Math.random(),
         question: '',
+        rubricItem: '',   // 👈 for rubric mode
         co: '',
         ilo: '',
         points: '',
@@ -71,7 +72,7 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
     };
 
     const handleClearQuestions = () => {
-        setQuestions([]);  // Clear all questions; useEffect will add one back
+        setQuestions([]);
     };
 
     const getAvailableILOs = (coId) => {
@@ -108,11 +109,16 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
     const perIloPct = remainingPct / totalILOs;
 
     useEffect(() => {
-        // Only ensure UI is not blank
-        if (questions.length === 0) {
+        if (questions.length === 0 && assessmentMode) {
             setQuestions([createEmptyQuestion()]);
         }
-    }, [questions.length]);
+    }, [questions.length, assessmentMode]);
+
+    useEffect(() => {
+        if (assessmentMode === "question") {
+            setRubricCategories([]);  // 🔥 force clear
+        }
+    }, [assessmentMode]);
 
 
     const getAllowedCognitiveLevels = (iloId) => {
@@ -140,43 +146,58 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
         const reader = new FileReader();
 
         reader.onload = (e) => {
-            try {
-                const content = e.target.result;
-                const lines = content.split('\n').filter(l => l.trim());
+            const content = e.target.result;
+            const max = getTotalRequiredItems();
 
-                const newQuestions = lines.map(line => ({
-                    id: Date.now() + Math.random(),
-                    question: line.trim(),
-                    co: '',
-                    ilo: '',
-                    points: '',
-                    cognitiveLevel: ''
+            if (assessmentMode === "rubric") {
+                const lines = content.split('\n').filter(l => l.trim());
+                const categories = lines.map(l => l.trim());
+                setRubricCategories(categories);
+
+                // 🔥 ALWAYS force rows = total TOS items
+                const total = getTotalRequiredItems();
+
+                const generated = Array.from({ length: total }, (_, i) => ({
+                    ...createEmptyQuestion(),
+                    rubricItem: categories[i] || ""   // auto‑fill if available
                 }));
 
-                const maxItems = getTotalRequiredItems();
-                const currentItems = questions.filter(q => q.co && q.ilo).length;
-                const available = maxItems - currentItems;
-
-                if (available <= 0) {
-                    alert("TOS is already full. No more items can be added.");
-                    return;
-                }
-
-                const accepted = newQuestions.slice(0, available);
-
-                setQuestions(prev => {
-                    const cleaned = prev.filter(q => q.co || q.ilo || q.question);
-                    return [...cleaned, ...accepted];
-                });
-
-                if (newQuestions.length > available) {
-                    alert(`Only ${available} items were accepted. TOS is already full.`);
-                }
-
-            } catch (err) {
-                console.error(err);
-                alert("Invalid file.");
+                setQuestions(generated);
+                return;
             }
+
+            // 👉 QUESTION MODE
+            const lines = content.split('\n').filter(l => l.trim());
+            const newQuestions = lines.map(line => ({
+                id: Date.now() + Math.random(),
+                question: line.trim(),
+                co: '',
+                ilo: '',
+                points: '',
+                cognitiveLevel: ''
+            }));
+
+            // ✅ Calculate how many slots are available
+            const currentCount = questions.filter(q => q.question || q.co || q.ilo).length;
+            const available = max - currentCount;
+
+            if (available <= 0) {
+                alert("TOS is already full. Cannot add more items.");
+                event.target.value = '';
+                return;
+            }
+
+            // ✅ Only accept up to available slots
+            const accepted = newQuestions.slice(0, available);
+
+            if (accepted.length < newQuestions.length) {
+                alert(`Only ${accepted.length} out of ${newQuestions.length} questions were added due to TOS limit.`);
+            }
+
+            setQuestions(prev => {
+                const cleaned = prev.filter(q => q.co || q.ilo || q.question);
+                return [...cleaned, ...accepted];
+            });
         };
 
         reader.readAsText(file);
@@ -316,7 +337,7 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
 
                 <div className={layout.tableHeader}>
                     <div className={layout.headerCell}>No.</div>
-                    <div className={layout.headerCell}>Question</div>
+                    <div className={layout.headerCell}>Item</div>
                     <div className={layout.headerCell}>CO</div>
                     <div className={layout.headerCell}>ILO</div>
                     <div className={layout.headerCell}>Points</div>
@@ -330,13 +351,30 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
                             {index + 1}
                         </div>
 
-                        <textarea
-                            value={q.question}
-                            onChange={(e) => handleQuestionChange(q.id, 'question', e.target.value)}
-                            placeholder="Enter question"
-                            className={layout.questionInput}
-                        />
+                        {assessmentMode === "rubric" && (
+                            <div className={layout.rubricContainer}>
+                                <div className={layout.rubricDropdown}>
+                                    <select
+                                        value={q.rubricItem || ""}
+                                        onChange={(e) => handleQuestionChange(q.id, "rubricItem", e.target.value)}
+                                    >
+                                        <option value="">Select Rubric Category</option>
+                                        {rubricCategories.map((cat, i) => (
+                                            <option key={i} value={cat}>{cat}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        )}
 
+                        {assessmentMode === "question" && (
+                            <textarea
+                                value={q.question}
+                                onChange={(e) => handleQuestionChange(q.id, 'question', e.target.value)}
+                                placeholder="Enter question text..."
+                                className={layout.questionInput}
+                            />
+                        )}
                         <select
                             value={q.co}
                             onChange={(e) => handleQuestionChange(q.id, 'co', e.target.value)}
@@ -359,13 +397,23 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
                                 <option key={ilo.id} value={ilo.id}>{ilo.id}</option>
                             ))}
                         </select>
-
                         <input
                             type="number"
                             value={q.points}
                             onChange={(e) => handleQuestionChange(q.id, 'points', e.target.value)}
+                            onFocus={(e) => {
+                                if (e.target.value === '') {
+                                    e.target.placeholder = '';
+                                }
+                            }}
+                            onBlur={(e) => {
+                                if (e.target.value === '') {
+                                    e.target.placeholder = '0';
+                                }
+                            }}
                             placeholder="0"
                             className={layout.numberInput}
+                            style={{ textAlign: q.points ? 'left' : 'center' }}
                         />
 
                         <select
@@ -388,7 +436,7 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
                     </div>
                 ))}
                 <div className={layout.addRow}>
-                    <Duplicator onAdd={handleAddQuestion} name={'Question'} />
+                    <Duplicator onAdd={handleAddQuestion} name={'Item'} />
                 </div>
             </div>
         </div>

@@ -21,6 +21,10 @@ const tosSections = ({status}) => {
     const { code } = useParams();
     const syllabus = getSyllabusByCode(code);
 
+    const [assessmentMode, setAssessmentMode] = useState(null);
+    const [isAssessmentLoading, setIsAssessmentLoading] = useState(false);
+    const [rubricCategories, setRubricCategories] = useState([]);
+
     const navigate = useNavigate();
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -53,6 +57,26 @@ const tosSections = ({status}) => {
     ];
 
     const [rows, setRows] = useState(courseOutlines);
+
+    const handleAssessmentModeSelect = (mode) => {
+        setIsAssessmentLoading(true);
+
+        setTimeout(() => {
+            setAssessmentMode(mode);
+
+            if (mode === "question") {
+                setRubricCategories([]);   // 🔥 wipe rubric data
+                setQuestions([]);          // optional: start clean
+            }
+
+            if (mode === "rubric") {
+                setQuestions([]);          // rubric will regenerate rows
+            }
+
+            setIsAssessmentLoading(false);
+        }, 600);
+    };
+
 
     const handleItemsChange = (coIndex, iloIndex, value) => {
         setRows(prev => {
@@ -220,11 +244,38 @@ const tosSections = ({status}) => {
                             </table>
                         </section>
                     }
-                    {selectedSection === 'Assessment Item-Cognitive Level Alignment' &&
-                        <section>
-                            <QuestionCognitiveMapping outcomeData={rows} questions={questions} setQuestions={setQuestions} />
-                        </section>
-                    }
+                        {selectedSection === 'Assessment Item-Cognitive Level Alignment' &&
+                            <section>
+                                {!assessmentMode ? (
+                                    <div className={layout.modeOverlay}>
+                                        <div className={layout.modeBox}>
+                                            <h3>Select Assessment Type</h3>
+                                            <p>What assessment will be mapped?</p>
+                                            <div className={layout.modeButtons}>
+                                                <button onClick={() => handleAssessmentModeSelect("question")}>
+                                                    Question Bank
+                                                </button>
+                                                <button onClick={() => handleAssessmentModeSelect("rubric")}>
+                                                    Rubric-Based
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : isAssessmentLoading ? (
+                                    <div className={styles.loadingContainer}>
+                                        <div className={styles.spinner}></div>
+                                    </div>
+                                ) : (<QuestionCognitiveMapping
+                                    outcomeData={rows}
+                                    questions={questions}
+                                    setQuestions={setQuestions}
+                                    assessmentMode={assessmentMode}
+                                    rubricCategories={rubricCategories}
+                                    setRubricCategories={setRubricCategories}
+                                />
+                            )}
+                            </section>
+                        }
                     {selectedSection === 'TOS Summary' &&
                         <section>
                             <TOSSummary outcomeData={rows} questions={questions} />
