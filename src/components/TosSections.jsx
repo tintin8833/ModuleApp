@@ -29,44 +29,43 @@ const tosSections = ({status}) => {
     const courseOutlines = [
         {
             co: "CO1",
-            description: "Design and develop user-centered interfaces that emphasize usability, accessibility, and intuitive interaction. Students will also demonstrate the ability to incorporate feedback from usability testing into iterative design improvements.",
+            description: "Apply core concepts, theories, and principles of Human-Computer Interface (HCI) in proposing a User Interface (UI) design using Figma to translate a design brief into interactive screen layouts and UI components with a high-fidelity prototype demonstrating clarity, consistency, and appropriate use of visual hierarchy.",
             totalHours: 12,
             totalPercentage: 100,
-            totalPoints: 50,
+            totalItems: 20,
             ilos: [
-                { id: "ILO1", description: "Understanding basic HCI principles", hours: 3, percentage: 20, points: 5 },
-                { id: "ILO2", description: "Applying user-centered design methods", hours: 3, percentage: 30, points: 20 },
-                { id: "ILO3", description: "Evaluating interface usability", hours: 6, percentage: 50, points: 25 },
+                { id: "ILO1", description: "Analyze the relationship between cognitive psychology and human-computer interaction.", hours: 3, percentage: 20, items: 4 },
+                { id: "ILO2", description: "Synthesize user research data into actionable user personas and empathy maps.", hours: 3, percentage: 30, items: 6 },
+                { id: "ILO3", description: "Structure information architecture effectively using card sorting techniques.", hours: 6, percentage: 50, items: 10 },
             ]
         },
         {
             co: "CO2",
-            description: "Evaluate interactive systems using HCI methods, identify usability issues, and recommend improvements for better user experience. Students will further be able to communicate evaluation results effectively through structured reports and presentations\n",
-            totalHours: 12,
+            description: "User-Centered Design (UCD) principles and ISO 9241-210 standards with given user personas, contextual task flows, and feedback artifacts to develop a User Experience (UX) design that demonstrates user involvement, iterative refinement, and contextual understanding, as evaluated against established UX design criteria.",         totalHours: 12,
             totalPercentage: 100,
-            totalPoints: 40,
+            totalItems: 30,
             ilos: [
-                { id: "ILO1", description: "Analyzing user requirements", hours: 3, percentage: 20, points: 5 },
-                { id: "ILO2", description: "Designing interactive prototypes", hours: 3, percentage: 30, points: 15 },
-                { id: "ILO3", description: "Implementing accessibility features", hours: 6, percentage: 50, points: 20 }
+                { id: "ILO1", description: "Apply Nielsen's 10 Usability Heuristics to critique existing interface designs.", hours: 3, percentage: 20, items: 6 },
+                { id: "ILO2", description: "Create low-fidelity wireframes that solve specific user pain points.", hours: 3, percentage: 30, items: 9 },
+                { id: "ILO3", description: "Apply Gestalt principles and color theory to enhance UI readability.", hours: 6, percentage: 50, items: 15 }
             ]
         }
     ];
 
     const [rows, setRows] = useState(courseOutlines);
 
-    const handlePointsChange = (coIndex, iloIndex, value) => {
+    const handleItemsChange = (coIndex, iloIndex, value) => {
         setRows(prev => {
             const updated = [...prev];
-            updated[coIndex].ilos[iloIndex].points = value === "" ? "" : Number(value);
+            updated[coIndex].ilos[iloIndex].items = value === "" ? "" : Number(value);
             return updated;
         });
     };
 
-    const handleTotalPointsChange = (coIndex, value) => {
+    const handleTotalItemsChange = (coIndex, value) => {
         setRows(prev => {
             const updated = [...prev];
-            updated[coIndex].totalPoints = value === "" ? "" : Number(value);
+            updated[coIndex].totalItems = value === "" ? "" : Number(value);
             return updated;
         });
     };
@@ -103,7 +102,7 @@ const tosSections = ({status}) => {
                     <div className={styles['section-select']}>
                         <select value={selectedSection} onChange={handleSectionChange}>
                             <option value="Outcome Overview">Outcome Overview</option>
-                            <option value="Question/Item-Cognitive Alignment">Question/Item-Cognitive Alignment</option>
+                            <option value="Assessment Item-Cognitive Level Alignment">Assessment Item-Cognitive Level Alignment</option>
                             <option value="TOS Summary">TOS Summary</option>
                         </select>
                     </div>
@@ -135,7 +134,7 @@ const tosSections = ({status}) => {
                                     <th>DESCRIPTION</th>
                                     <th>NO. OF HOURS</th>
                                     <th>%</th>
-                                    <th>NO. OF POINTS</th>
+                                    <th>NO. OF ITEMS</th>
                                 </tr>
                                 </thead>
 
@@ -168,8 +167,8 @@ const tosSections = ({status}) => {
                                                     <input
                                                         className={`${layout.totalCoPoint} ${layout.input}`}
                                                         type="number"
-                                                        value={co.totalPoints}
-                                                        onChange={(e) => handleTotalPointsChange(coIndex, e.target.value)}
+                                                        value={co.totalItems}
+                                                        onChange={(e) => handleTotalItemsChange(coIndex, e.target.value)}
                                                     />
                                                 </div>
                                             </td>
@@ -203,8 +202,8 @@ const tosSections = ({status}) => {
                                                         <input
                                                             className={`${layout.point} ${layout.input}`}
                                                             type="number"
-                                                            value={ilo.points}
-                                                            onChange={(e) => handlePointsChange(coIndex, iloIndex, e.target.value)}
+                                                            value={ilo.items}
+                                                            onChange={(e) => handleItemsChange(coIndex, iloIndex, e.target.value)}
                                                         />
                                                     </div>
                                                 </td>
@@ -221,7 +220,7 @@ const tosSections = ({status}) => {
                             </table>
                         </section>
                     }
-                    {selectedSection === 'Question/Item-Cognitive Alignment' &&
+                    {selectedSection === 'Assessment Item-Cognitive Level Alignment' &&
                         <section>
                             <QuestionCognitiveMapping outcomeData={rows} questions={questions} setQuestions={setQuestions} />
                         </section>

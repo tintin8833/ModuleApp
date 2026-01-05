@@ -25,8 +25,16 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
     });
 
     const handleAddQuestion = () => {
-        setQuestions([...questions, createEmptyQuestion()]);
+        const max = getTotalRequiredItems();
+
+        if (questions.length >= max) {
+            alert("TOS is already full.");
+            return;
+        }
+
+        setQuestions(prev => [...prev, createEmptyQuestion()]);
     };
+
 
     const handleDeleteQuestion = (id) => {
         if (questions.length === 1) return;
@@ -58,41 +66,6 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
         }));
     };
 
-
-    const handleFileUpload = (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const content = e.target.result;
-                // Parse text file - each line is a question
-                const lines = content.split('\n').filter(line => line.trim());
-
-                const newQuestions = lines.map(line => ({
-                    id: Date.now() + Math.random(),
-                    question: line.trim(),
-                    co: '',
-                    ilo: '',
-                    points: '',
-                    cognitiveLevel: ''
-                }));
-
-                if (newQuestions.length > 0) {
-                    setQuestions(newQuestions);
-                }
-            } catch (error) {
-                console.error('Error parsing file:', error);
-                alert('Error reading file. Please upload a valid text file with questions.');
-            }
-        };
-
-        reader.readAsText(file);
-        // Reset file input
-        event.target.value = '';
-    };
-
     const handleUploadClick = () => {
         fileInputRef.current?.click();
     };
@@ -106,8 +79,9 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
         return co ? co.ilos : [];
     };
 
-    const getCurrentPointCount = () => {
+    const getCurrentItemCount = () => {
         const counts = {};
+
         outcomeData.forEach(co => {
             counts[co.co] = { total: 0, ilos: {} };
             co.ilos.forEach(ilo => {
@@ -116,16 +90,16 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
         });
 
         questions.forEach(q => {
-            if (q.co && q.ilo && q.points) {
-                counts[q.co].total += Number(q.points);
-                counts[q.co].ilos[q.ilo] += Number(q.points);
+            if (q.co && q.ilo) {
+                counts[q.co].total += 1;
+                counts[q.co].ilos[q.ilo] += 1;
             }
         });
 
         return counts;
     };
 
-    const currentCounts = getCurrentPointCount();
+    const currentCounts = getCurrentItemCount();
 
     const labelColPct = 18;   // width for first label column
     const totalColPct = 10;   // width for Total column
@@ -134,10 +108,12 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
     const perIloPct = remainingPct / totalILOs;
 
     useEffect(() => {
+        // Only ensure UI is not blank
         if (questions.length === 0) {
             setQuestions([createEmptyQuestion()]);
         }
-    }, [questions, setQuestions]);
+    }, [questions.length]);
+
 
     const getAllowedCognitiveLevels = (iloId) => {
         if (!iloId) return [];
@@ -154,6 +130,59 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
         }
     };
 
+    const getTotalRequiredItems = () =>
+        outcomeData.reduce((sum, co) => sum + Number(co.totalItems || 0), 0);
+
+    const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            try {
+                const content = e.target.result;
+                const lines = content.split('\n').filter(l => l.trim());
+
+                const newQuestions = lines.map(line => ({
+                    id: Date.now() + Math.random(),
+                    question: line.trim(),
+                    co: '',
+                    ilo: '',
+                    points: '',
+                    cognitiveLevel: ''
+                }));
+
+                const maxItems = getTotalRequiredItems();
+                const currentItems = questions.filter(q => q.co && q.ilo).length;
+                const available = maxItems - currentItems;
+
+                if (available <= 0) {
+                    alert("TOS is already full. No more items can be added.");
+                    return;
+                }
+
+                const accepted = newQuestions.slice(0, available);
+
+                setQuestions(prev => {
+                    const cleaned = prev.filter(q => q.co || q.ilo || q.question);
+                    return [...cleaned, ...accepted];
+                });
+
+                if (newQuestions.length > available) {
+                    alert(`Only ${available} items were accepted. TOS is already full.`);
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Invalid file.");
+            }
+        };
+
+        reader.readAsText(file);
+        event.target.value = '';
+    };
+
     return (
         <div className={layout.container}>
             {/* Hidden file input */}
@@ -166,7 +195,7 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
             />
 
             <div className={layout.section}>
-                <h2>Points Allocated</h2>
+                <h2>Items Allocated</h2>
 
                 <table className={`${layout.qctable} ${layout.TOSTable}`}>
                     <thead>
@@ -217,27 +246,27 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
                     <tbody>
                     <tr>
                         <td style={{ width: `${labelColPct}%` }}>
-                            <div className={layout.firstRow}>Points Needed</div>
+                            <div className={layout.firstRow}>Items Needed</div>
                         </td>
 
                         {outcomeData.flatMap(co =>
                             co.ilos.map(ilo => (
                                 <td key={`needed-${co.co}-${ilo.id}`} style={{ width: `${perIloPct}%` }}>
-                                    <div className={`${layout.cellBox}`}>{ilo.points}</div>
+                                    <div className={`${layout.cellBox}`}>{ilo.items}</div>
                                 </td>
                             ))
                         )}
 
                         <td style={{ width: `${totalColPct}%` }}>
                             <div className={`${layout.cellBox} ${layout.totalReqPoint}`}>
-                                {outcomeData.reduce((sum, co) => sum + co.totalPoints, 0)}
+                                {outcomeData.reduce((sum, co) => sum + co.totalItems, 0)}
                             </div>
                         </td>
                     </tr>
 
                     <tr>
                         <td style={{ width: `${labelColPct}%` }}>
-                            <div className={layout.firstRow}>Current Point Count</div>
+                            <div className={layout.firstRow}>Current Item Count</div>
                         </td>
 
                         {outcomeData.flatMap(co =>
@@ -265,7 +294,7 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
             <div className={layout.section}>
                 <div className={layout.sectionHeader}>
                     <h2>
-                        Question-Cognitive Level Mapping
+                        Assessment Item-Cognitive Level Alignment
                     </h2>
                     <div style={{ display: 'flex', gap: '8px' }}>
                         <button
@@ -273,7 +302,7 @@ const QuestionCognitiveMapping = ({ outcomeData, questions, setQuestions }) => {
                             className={layout.uploadButton}
                         >
                             <Upload size={16} style={{ marginRight: '8px' }} />
-                            Upload Questions
+                            Upload File
                         </button>
                         <button
                             onClick={handleClearQuestions}
