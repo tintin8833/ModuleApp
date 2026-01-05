@@ -11,14 +11,36 @@ import {X, ChevronDown} from "react-feather";
 import Duplicator from "../components/Duplicator.jsx";
 import {getSyllabusByCode} from "../data/syllabiData.js";
 import layout from "../styles/QuestionCognitiveMapping.module.sass";
+import { AlertCircle, CheckCircle } from "react-feather";
+
 
 const AssessmentForm = () => {
     const navigate = useNavigate();
     const goBackHandler = () => navigate(-1);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [errors, setErrors] = useState({});
 
     const { code, assessmentId } = useParams();
     const syllabus = getSyllabusByCode(code);
     const assessmentData = syllabus?.assessments.find(a => a.id === assessmentId) || {};
+
+    const validateForm = () => {
+        let newErrors = {};
+
+        if (!method.trim()) newErrors.method = "Assessment Method is required.";
+        if (!description.trim()) newErrors.description = "Assessment Description is required.";
+
+        if (rubric) {
+            rubricRows.forEach((r, i) => {
+                if (!r.criteria.trim()) newErrors[`criteria-${i}`] = `Criteria is required: Row ${i + 1}`;
+                if (!r.maxScore || Number(r.maxScore) <= 0) newErrors[`score-${i}`] = `Max score must be greater than 0: Row ${i + 1}`;
+            });
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     // Find which CO a TLA belongs to
     const getCOByTlaName = (syllabus, tlaName) => {
@@ -193,13 +215,34 @@ const AssessmentForm = () => {
         return Number.isInteger(raw) ? raw : raw.toFixed(2)
     }
 
+    const handleConfirmSave = () => {
+        console.log("Saving assessment:", {
+            method,
+            description,
+            rubric,
+            rubricRows
+        });
+
+        setShowConfirmModal(false);
+        navigate(-1);
+    };
+
     return (
         <SkeletonA
             header={<HeaderA role={'Instructor'} name={'NORTON, MONICA'} />}
             nav={<SideNavigation />}
             content={
                 <div className={styles.container}>
-                    <FormNavigation goBack={goBackHandler} />
+                    <FormNavigation
+                        goBack={goBackHandler}
+                        onSave={() => {
+                            if (validateForm()) {
+                                setShowConfirmModal(true);
+                            } else {
+                                setShowErrorModal(true);
+                            }
+                        }}
+                    />
                     <div className={styles['form-container']}>
 
                         <h2>Topic</h2>
@@ -405,6 +448,58 @@ const AssessmentForm = () => {
                         )}
 
                     </div>
+                    {/* CONFIRMATION */}
+                    {showConfirmModal && (
+                        <div className={styles.modalOverlay}>
+                            <div className={styles.modal}>
+                                <div className={styles.modalHeader}>
+                                    <h3>Confirm Save</h3>
+                                </div>
+                                <div className={styles.modalBody}>
+                                    <CheckCircle size={40} color="#4CAF50" style={{ marginBottom: "1rem" }} />
+                                    <p>Are you sure you want to save this assessment?</p>
+                                </div>
+                                <div className={styles.modalActions}>
+                                    <button className={styles.cancelBtn} onClick={() => setShowConfirmModal(false)}>
+                                        No, Cancel
+                                    </button>
+                                    <button className={styles.confirmBtn} onClick={handleConfirmSave}>
+                                        Yes, Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ERROR */}
+                    {showErrorModal && (
+                        <div className={styles.modalOverlay}>
+                            <div className={styles.modal}>
+                                <div className={styles.modalHeader} style={{ borderBottomColor: "#FF5252" }}>
+                                    <h3 style={{ color: "#FF5252" }}>Validation Error</h3>
+                                    <X size={24} className={styles.closeIcon} onClick={() => setShowErrorModal(false)} />
+                                </div>
+                                <div className={styles.modalBody}>
+                                    <AlertCircle size={40} color="#FF5252" style={{ marginBottom: "1rem" }} />
+                                    <p>Please fix the following issues before saving:</p>
+                                    <ul className={styles.errorList}>
+                                        {Object.values(errors).map((err, idx) => (
+                                            <li key={idx}>{err}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className={styles.modalActions}>
+                                    <button
+                                        className={styles.confirmBtn}
+                                        style={{ backgroundColor: "#FF5252" }}
+                                        onClick={() => setShowErrorModal(false)}
+                                    >
+                                        Okay, I’ll fix it
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             }
         />
