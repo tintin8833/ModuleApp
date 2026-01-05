@@ -78,6 +78,30 @@ const tosSections = ({status}) => {
     };
 
 
+    // ✨ NEW: Calculate distributed items based on percentage
+    const getDistributedItems = (coIndex, totalItems) => {
+        if (!totalItems || totalItems === "") return rows[coIndex].ilos.map(ilo => ilo.items);
+
+        const total = Number(totalItems);
+        const co = rows[coIndex];
+
+        // Calculate items for each ILO based on percentage
+        const calculated = co.ilos.map(ilo => {
+            return Math.round((ilo.percentage / 100) * total);
+        });
+
+        // Adjust for rounding errors to match exact total
+        const sum = calculated.reduce((acc, val) => acc + val, 0);
+        const diff = total - sum;
+
+        if (diff !== 0) {
+            // Add/subtract difference to the largest allocation (usually the last one with 50%)
+            calculated[calculated.length - 1] += diff;
+        }
+
+        return calculated;
+    };
+
     const handleItemsChange = (coIndex, iloIndex, value) => {
         setRows(prev => {
             const updated = [...prev];
@@ -90,6 +114,15 @@ const tosSections = ({status}) => {
         setRows(prev => {
             const updated = [...prev];
             updated[coIndex].totalItems = value === "" ? "" : Number(value);
+
+            // ✨ Auto-distribute to ILOs based on percentage
+            if (value !== "") {
+                const distributedItems = getDistributedItems(coIndex, value);
+                updated[coIndex].ilos.forEach((ilo, idx) => {
+                    ilo.items = distributedItems[idx];
+                });
+            }
+
             return updated;
         });
     };
