@@ -1,23 +1,13 @@
 import styles from '../styles/SideNavigation.module.sass'
 import unclogo from '../assets/unclogo.png'
 import { FileText, LogOut, Users, BookOpen } from 'react-feather'
-import { useSearchParams, useNavigate, useLocation } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 
 const SideNavigation = ({ mode = 'instructor' }) => {
-    const navigate = useNavigate()
-    const location = useLocation()
     const [searchParams, setSearchParams] = useSearchParams()
-
-    // --- MERGED SELECTION LOGIC ---
-    // 1. Default to query param 'page'
-    let selected = searchParams.get('page') || 'Syllabus';
-
-    // 2. Override based on URL path (from your current code)
-    // This ensures highlighting works even if ?page=TOS is missing
-    if (location.pathname.startsWith('/assignedtos') || location.pathname.startsWith('/tos')) {
-        selected = 'TOS';
-    }
+    const selected = searchParams.get('page') || 'Syllabus'
+    const navigate = useNavigate()
 
     const [showPopup, setShowPopup] = useState(false)
     const logoutRef = useRef(null)
@@ -25,20 +15,7 @@ const SideNavigation = ({ mode = 'instructor' }) => {
     const [pinned, setPinned] = useState(false)
 
     const handlePageChange = (page) => {
-        // If clicking Syllabus, go to root (or approval table based on role)
-        if (page === 'Syllabus') {
-            if (mode === 'program-head') navigate('/role/program-head/approval-course-table?page=Syllabus');
-            else if (mode === 'dean') navigate('/role/dean?page=Syllabus'); // Assuming dean root
-            else navigate('/');
-        }
-        // If clicking TOS, go to assignedtos
-        else if (page === 'TOS') {
-            navigate('/assignedtos');
-        }
-        // Fallback for other roles/pages
-        else {
-            setSearchParams({ page });
-        }
+        setSearchParams({ page })
     }
 
     const onLogoutClick = () => setShowPopup((prev) => !prev)
@@ -48,7 +25,6 @@ const SideNavigation = ({ mode = 'instructor' }) => {
         navigate(path)
     }
 
-    // --- POPUP & SIDEBAR LOGIC (From Upcoming) ---
     useEffect(() => {
         const handler = (e) => {
             if (!showPopup) return
@@ -58,10 +34,12 @@ const SideNavigation = ({ mode = 'instructor' }) => {
         return () => document.removeEventListener('mousedown', handler)
     }, [showPopup])
 
+    // close popup when selected page changes
     useEffect(() => {
         if (showPopup) setShowPopup(false)
     }, [selected])
 
+    // close popup when sidenav is shrunk (watch width)
     useEffect(() => {
         if (!navRef.current) return
         let ro
@@ -73,28 +51,38 @@ const SideNavigation = ({ mode = 'instructor' }) => {
                 }
             })
             ro.observe(navRef.current)
-        } catch (e) {}
+        } catch (e) {
+            // ResizeObserver unsupported — ignore
+        }
         return () => { if (ro && navRef.current) ro.disconnect() }
     }, [showPopup])
 
+    // expand/collapse nearest sidebar ancestor on hover unless pinned
     useEffect(() => {
         const el = navRef.current
         if (!el) return
+
         const findSidebarAncestor = (node) => {
             let n = node.parentElement
             while (n && n !== document.body) {
                 try {
                     const w = window.getComputedStyle(n).width
                     const num = parseFloat(w)
+                    // heuristic: sidebar containers are narrow (~<=110px)
                     if (!isNaN(num) && num <= 110) return n
-                } catch (e) {}
+                } catch (e) {
+                    // ignore and continue
+                }
                 n = n.parentElement
             }
             return null
         }
+
         const target = findSidebarAncestor(el) || el.parentElement
+
         const enter = () => { if (target && !pinned) { target.classList.add('expanded'); target.classList.add('expanded-left') } }
         const leave = () => { if (target && !pinned) { target.classList.remove('expanded'); target.classList.remove('expanded-left') } }
+
         el.addEventListener('mouseenter', enter)
         el.addEventListener('mouseleave', leave)
         return () => {
@@ -117,17 +105,29 @@ const SideNavigation = ({ mode = 'instructor' }) => {
             <div className={styles['nav-list']}>
                 {mode !== 'hr-staff' && (
                     <div
-                        onClick={() => handlePageChange('Syllabus')}
+                        onClick={() => {
+                            if (mode === 'program-head') {
+                                navigate('/role/program-head/approval-course-table?page=Syllabus')
+                            } else if (mode === 'dean') {
+                                handlePageChange('Syllabus')
+                            } else {
+                                handlePageChange('Syllabus')
+                            }
+                        }}
                         className={`${styles.list} ${selected === 'Syllabus' ? styles.selected : ''}`}
                     >
                         <FileText size={24} /> Syllabus
                     </div>
                 )}
 
-                {/* TOS: Visible only for instructor mode */}
+                {/* TOS is back, visible only for instructor mode */}
                 {mode === 'instructor' && (
                     <div
-                        onClick={() => handlePageChange('TOS')}
+                        onClick={() => {
+                            // navigate to the instructor TOS page and mark selected
+                            navigate('/assignedtos')
+                            setSearchParams({ page: 'TOS' })
+                        }}
                         className={`${styles.list} ${selected === 'TOS' ? styles.selected : ''}`}
                     >
                         <FileText size={24} /> TOS
