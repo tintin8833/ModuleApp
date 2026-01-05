@@ -1,5 +1,5 @@
 import React from "react";
-import layout from "../styles/TOSPreview.module.sass";
+import layout from "../styles/TosPreview.module.sass";
 import {syllabiData} from "../data/syllabiData.js";  // Dedicated SASS file for TOSPreview
 import { useNavigate } from "react-router-dom";
 

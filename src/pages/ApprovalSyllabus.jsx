@@ -25,7 +25,8 @@ const ApprovalSyllabus = () => {
   const { approver, courseName } = useParams(); // courseName will be encoded code/name
 
   const formattedRole = approver ? (roleNames[approver] || approver.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')) : 'Approver';
-  const approverName = approver ? (approverDisplayNames[approver] || 'Approver') : 'Approver';
+  const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+  const approverName = storedUser?.name || (approver ? (approverDisplayNames[approver] || 'NORTON, MONICA') : 'Approver');
 
   // normalized role key (pass to SideNavigation and sections)
   const roleKey = approver || 'program-head';

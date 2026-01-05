@@ -241,7 +241,7 @@ const ApprovalSyllabusSections = ({ status = 'pending', currentRole = '', course
 
           {/* approval controls */}
           <div className={styles.actions} style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            {effectiveStatus !== 'approved' && (
+            {effectiveStatus !== 'approved' && roleKey !== 'instructor' && (
               <div className={styles.approvalButtons}>
                 <button className={styles.requestRevision} onClick={openComment}>Add Comment</button>
                 <button className={styles.approve}>Approve</button>
@@ -684,6 +684,7 @@ const ApprovalSyllabusSections = ({ status = 'pending', currentRole = '', course
           onSubmit={handleSubmitComment}
           courseOutcomes={courseOutcomes}
           ilos={sampleILOs}
+          approverRole={currentRole}
         />
       </div>
     </div>

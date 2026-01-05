@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styles from '../styles/ApprovalCommentBox.module.sass'
 
-const ApprovalCommentBox = ({ show = false, onClose, onSubmit, courseOutcomes = [], ilos = [] }) => {
+const ApprovalCommentBox = ({ show = false, onClose, onSubmit, courseOutcomes = [], ilos = [], approverRole = null }) => {
   const storageKey = 'approval_comments_v1'
 
   const defaultComment = () => ({
@@ -39,18 +39,51 @@ const ApprovalCommentBox = ({ show = false, onClose, onSubmit, courseOutcomes = 
   const resolvedIlosAll = Array.from(new Set([].concat(...Object.values(coToIlos))))
   const resolvedIlos = (ilos && ilos.length) ? ilos : resolvedIlosAll
 
-  // Get current approver identity from localStorage
-  const getApproverIdentity = () => {
+  // Hard-coded seed data for reviewers
+  const reviewerSeeds = [
+    { name: 'NORTON, MONICA', role: 'Director of Libraries' },
+    { name: 'JOHNSON, DEAN', role: 'Dean' },
+    { name: 'SMITH, DR. ROBERT', role: 'Program Head' },
+    { name: 'LEE, CONSULTANT', role: 'Industry Consultant' },
+  ]
+
+  // Map approver URL param to reviewer data
+  const getReviewerByRole = (role) => {
+    const roleMap = {
+      'director-of-libraries': reviewerSeeds[0], // NORTON, MONICA
+      'dean': reviewerSeeds[1], // JOHNSON, DEAN
+      'program-head': reviewerSeeds[2], // SMITH, DR. ROBERT
+      'industry-consultant': reviewerSeeds[3], // LEE, CONSULTANT
+    }
+    return roleMap[role] || reviewerSeeds[0]
+  }
+
+  const getReviewerSeedData = (index = 0) => {
+    return reviewerSeeds[index % reviewerSeeds.length]
+  }
+
+  // Get current approver identity based on approverRole or fallback
+  const getApproverIdentity = (index = 0) => {
     try {
-      const name = localStorage.getItem('approver_name') || 'Unnamed Reviewer'
-      const role = localStorage.getItem('approver_role') || 'Role'
+      // If approverRole is provided, use its mapping
+      if (approverRole) {
+        return getReviewerByRole(approverRole)
+      }
+
+      // Otherwise try localStorage
+      const storedUser = JSON.parse(localStorage.getItem('user') || 'null')
+      const seedData = getReviewerSeedData(index)
+      
+      const name = storedUser?.name || localStorage.getItem('approver_name') || seedData.name
+      const role = storedUser?.role || localStorage.getItem('approver_role') || seedData.role
       return { name, role }
     } catch (e) {
-      return { name: 'Unnamed Reviewer', role: 'Role' }
+      const seedData = getReviewerSeedData(index)
+      return { name: seedData.name, role: seedData.role }
     }
   }
 
-  // Load persisted comments and normalize reviewer/role
+  // Load persisted comments and normalize reviewer/role with seed fallback
   useEffect(() => {
     try {
       const raw = localStorage.getItem(storageKey)
@@ -59,11 +92,12 @@ const ApprovalCommentBox = ({ show = false, onClose, onSubmit, courseOutcomes = 
       const parsed = JSON.parse(raw)
       if (!Array.isArray(parsed) || parsed.length === 0) return
 
-      const approver = getApproverIdentity()
+      const approver = approverRole ? getReviewerByRole(approverRole) : null
 
-      const normalized = parsed.map(c => {
-        const reviewer = c.reviewer || approver.name || ''
-        const role = c.role || approver.role || ''
+      const normalized = parsed.map((c, idx) => {
+        const seedData = approver || getReviewerSeedData(idx)
+        const reviewer = c.reviewer || seedData.name || ''
+        const role = c.role || seedData.role || ''
 
         return {
           ...defaultComment(),
@@ -79,23 +113,27 @@ const ApprovalCommentBox = ({ show = false, onClose, onSubmit, courseOutcomes = 
     } catch (e) {
       // ignore parse errors
     }
-  }, [])
+  }, [approverRole])
 
   // Persist comments whenever they change
   useEffect(() => {
     try {
-      const normalized = comments.map(c => ({
-        ...c,
-        comment: c.comment || c.text || '',
-        createdAt: c.createdAt || new Date().toISOString(),
-        reviewer: c.reviewer || getApproverIdentity().name,
-        role: c.role || getApproverIdentity().role
-      }))
+      const approver = approverRole ? getReviewerByRole(approverRole) : null
+      const normalized = comments.map((c, idx) => {
+        const seedData = approver || getReviewerSeedData(idx)
+        return {
+          ...c,
+          comment: c.comment || c.text || '',
+          createdAt: c.createdAt || new Date().toISOString(),
+          reviewer: c.reviewer || seedData.name,
+          role: c.role || seedData.role
+        }
+      })
       localStorage.setItem(storageKey, JSON.stringify(normalized))
     } catch (e) {
       // ignore
     }
-  }, [comments])
+  }, [comments, approverRole])
 
   const toggleCommentComponent = (commentId, key) => {
     setComments((prev) =>
@@ -127,14 +165,14 @@ const ApprovalCommentBox = ({ show = false, onClose, onSubmit, courseOutcomes = 
   }
 
   const addCommentSection = () => {
-    const approver = getApproverIdentity()
+    const seedData = approverRole ? getReviewerByRole(approverRole) : getReviewerSeedData(comments.length)
     setComments((prev) => [
       ...prev,
       {
         ...defaultComment(),
         id: Date.now() + Math.random(),
-        reviewer: approver.name,
-        role: approver.role
+        reviewer: seedData.name,
+        role: seedData.role
       }
     ])
   }
@@ -144,20 +182,31 @@ const ApprovalCommentBox = ({ show = false, onClose, onSubmit, courseOutcomes = 
   }
 
   const handleSubmit = () => {
-    const filledComments = comments.filter((c) => {
-      if (!c.text || !c.text.trim()) return false
-      
+    // Check if ALL comments are valid (either completely empty or fully filled with component selection)
+    const hasInvalidComments = comments.some((c) => {
+      const hasText = c.text && c.text.trim()
       const comps = c.components || {}
       const courseCoverageChecked = !!(comps.topics || comps.assessments || comps.tlas)
+      const referencesChecked = !!comps.references
+      const gradingChecked = !!comps.grading
+      const hasComponent = courseCoverageChecked || referencesChecked || gradingChecked
       
-      // If course coverage is checked, must have either (courseOutcome + ilo) OR coverageType
+      // If has text but no component, it's invalid
+      if (hasText && !hasComponent) return true
+      
+      // If has course coverage but no course data (CO+ILO or coverage type), it's invalid
       if (courseCoverageChecked) {
         const hasValidCourseData = c.courseOutcome ? !!c.ilo : !!c.coverageType
-        if (!hasValidCourseData) return false
+        if (!hasValidCourseData) return true
       }
       
-      return true
+      return false
     })
+    
+    if (hasInvalidComments) return
+    
+    // Get only the comments with text
+    const filledComments = comments.filter((c) => c.text && c.text.trim())
     
     if (filledComments.length === 0) return
     
@@ -173,24 +222,30 @@ const ApprovalCommentBox = ({ show = false, onClose, onSubmit, courseOutcomes = 
 
   if (!show) return null
 
-  const filledCommentsForSave = comments.filter((c) => {
-    if (!c.text || !c.text.trim()) return false
-    
+  // Stricter validation: ALL comments with text must have components selected
+  const commentsWithText = comments.filter((c) => c.text && c.text.trim())
+  
+  const allCommentsValid = commentsWithText.length > 0 && !comments.some((c) => {
+    const hasText = c.text && c.text.trim()
     const comps = c.components || {}
     const courseCoverageChecked = !!(comps.topics || comps.assessments || comps.tlas)
+    const referencesChecked = !!comps.references
+    const gradingChecked = !!comps.grading
+    const hasComponent = courseCoverageChecked || referencesChecked || gradingChecked
     
-    // If course coverage is checked, must have either (courseOutcome + ilo) OR coverageType
+    // If has text but no component, it's invalid
+    if (hasText && !hasComponent) return true
+    
+    // If has course coverage but no course data, it's invalid
     if (courseCoverageChecked) {
       const hasValidCourseData = c.courseOutcome ? !!c.ilo : !!c.coverageType
-      if (!hasValidCourseData) return false
+      if (!hasValidCourseData) return true
     }
     
-    return true
+    return false
   })
-
-  const allFilledValid = filledCommentsForSave.length > 0
-
-  const saveDisabled = !allFilledValid
+  
+  const saveDisabled = !allCommentsValid
 
   return (
     <div role="dialog" aria-modal="true" aria-label="Comments" className={styles.overlay}>
@@ -211,9 +266,6 @@ const ApprovalCommentBox = ({ show = false, onClose, onSubmit, courseOutcomes = 
                   <div key={c.id} className={styles.commentItem}>
                     <div className={styles.commentHeader}>
                       <div>Comment {idx + 1}</div>
-                      {c.reviewer && c.role && c.reviewer !== 'Unnamed Reviewer' && c.role !== 'Role' && (
-                        <div>{c.reviewer} — {c.role}</div>
-                      )}
                       <div className={styles.commentControls}>
                         <button className={styles.removeBtn} onClick={() => removeCommentSection(c.id)} aria-label="Delete comment" title="Delete comment">
                           ✕
@@ -223,10 +275,11 @@ const ApprovalCommentBox = ({ show = false, onClose, onSubmit, courseOutcomes = 
 
                     <div className={styles.commentBody}>
                       <div className={styles.componentsRow} style={{ marginBottom: 8 }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: 8, opacity: (c.components.references || c.components.grading) ? 0.5 : 1, cursor: (c.components.references || c.components.grading) ? 'not-allowed' : 'pointer' }}>
                           <input
                             type="checkbox"
                             checked={courseCoverageSelected}
+                            disabled={c.components.references || c.components.grading}
                             onChange={() =>
                               setComments((prev) =>
                                 prev.map((item) =>
@@ -237,7 +290,8 @@ const ApprovalCommentBox = ({ show = false, onClose, onSubmit, courseOutcomes = 
                                         return {
                                           ...item,
                                           components: {
-                                            ...item.components,
+                                            references: false,
+                                            grading: false,
                                             topics: target,
                                             assessments: target,
                                             tlas: target
@@ -249,16 +303,62 @@ const ApprovalCommentBox = ({ show = false, onClose, onSubmit, courseOutcomes = 
                               )
                             }
                           />
-                          <span>Course Coverage (Topics / Assessments / T&LA)</span>
+                          <span>Course Coverage</span>
                         </label>
 
-                        <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <input type="checkbox" checked={c.components.references} onChange={() => toggleCommentComponent(c.id, 'references')} />
+                        <label style={{ display: 'flex', alignItems: 'center', gap: 8, opacity: courseCoverageSelected || c.components.grading ? 0.5 : 1, cursor: courseCoverageSelected || c.components.grading ? 'not-allowed' : 'pointer' }}>
+                          <input 
+                            type="checkbox" 
+                            checked={c.components.references} 
+                            disabled={courseCoverageSelected || c.components.grading}
+                            onChange={() => {
+                              setComments((prev) =>
+                                prev.map((item) =>
+                                  item.id === c.id
+                                    ? {
+                                        ...item,
+                                        components: {
+                                          ...item.components,
+                                          references: !item.components.references,
+                                          topics: false,
+                                          assessments: false,
+                                          tlas: false,
+                                          grading: false
+                                        }
+                                      }
+                                    : item
+                                )
+                              )
+                            }}
+                          />
                           <span>References</span>
                         </label>
 
-                        <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <input type="checkbox" checked={c.components.grading} onChange={() => toggleCommentComponent(c.id, 'grading')} />
+                        <label style={{ display: 'flex', alignItems: 'center', gap: 8, opacity: courseCoverageSelected || c.components.references ? 0.5 : 1, cursor: courseCoverageSelected || c.components.references ? 'not-allowed' : 'pointer' }}>
+                          <input 
+                            type="checkbox" 
+                            checked={c.components.grading} 
+                            disabled={courseCoverageSelected || c.components.references}
+                            onChange={() => {
+                              setComments((prev) =>
+                                prev.map((item) =>
+                                  item.id === c.id
+                                    ? {
+                                        ...item,
+                                        components: {
+                                          ...item.components,
+                                          grading: !item.components.grading,
+                                          topics: false,
+                                          assessments: false,
+                                          tlas: false,
+                                          references: false
+                                        }
+                                      }
+                                    : item
+                                )
+                              )
+                            }}
+                          />
                           <span>Grading Criteria</span>
                         </label>
                       </div>
