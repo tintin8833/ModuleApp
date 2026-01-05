@@ -373,7 +373,11 @@ const SyllabusRevisionsSections = ({status}) => {
                                                     </select>
                                                 </div>
 
-                                                {/* Add Reference button removed per request */}
+                                                <Link to={'/references/form/:id'}>
+                                                    <div className={'add-button'}>
+                                                        <Plus size={16} strokeWidth={3}/> Add Reference
+                                                    </div>
+                                                </Link>
                                             </div>
 
                                             <table>
@@ -424,6 +428,11 @@ const SyllabusRevisionsSections = ({status}) => {
                                                     </div>
                                                 </div>
 
+                                                <Link to={'/topics/form/:id'}>
+                                                    <div className={'add-button'}>
+                                                        <Plus size={16} strokeWidth={3}/> Add Topic
+                                                    </div>
+                                                </Link>
                                             </div>
 
                                             <table>
