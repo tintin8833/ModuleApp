@@ -10,32 +10,27 @@ const SideNavigation = ({ mode = 'instructor' }) => {
     const [searchParams, setSearchParams] = useSearchParams()
 
     // --- MERGED SELECTION LOGIC ---
-    // 1. Default to query param 'page'
     let selected = searchParams.get('page') || 'Syllabus';
 
-    // 2. Override based on URL path (from your current code)
-    // This ensures highlighting works even if ?page=TOS is missing
     if (location.pathname.startsWith('/assignedtos') || location.pathname.startsWith('/tos')) {
         selected = 'TOS';
     }
 
     const [showPopup, setShowPopup] = useState(false)
+    const [isExpanded, setIsExpanded] = useState(false)
     const logoutRef = useRef(null)
     const navRef = useRef(null)
     const [pinned, setPinned] = useState(false)
 
     const handlePageChange = (page) => {
-        // If clicking Syllabus, go to root (or approval table based on role)
         if (page === 'Syllabus') {
             if (mode === 'program-head') navigate('/role/program-head/approval-course-table?page=Syllabus');
-            else if (mode === 'dean') navigate('/role/dean?page=Syllabus'); // Assuming dean root
+            else if (mode === 'dean') navigate('/role/dean?page=Syllabus');
             else navigate('/');
         }
-        // If clicking TOS, go to assignedtos
         else if (page === 'TOS') {
             navigate('/assignedtos');
         }
-        // Fallback for other roles/pages
         else {
             setSearchParams({ page });
         }
@@ -48,7 +43,7 @@ const SideNavigation = ({ mode = 'instructor' }) => {
         navigate(path)
     }
 
-    // --- POPUP & SIDEBAR LOGIC (From Upcoming) ---
+    // --- POPUP & RESIZE LOGIC ---
     useEffect(() => {
         const handler = (e) => {
             if (!showPopup) return
@@ -69,7 +64,10 @@ const SideNavigation = ({ mode = 'instructor' }) => {
             ro = new ResizeObserver((entries) => {
                 for (const entry of entries) {
                     const w = entry.contentRect.width
-                    if (w < 90 && showPopup) setShowPopup(false)
+                    setIsExpanded(w > 120)
+                    if (w < 100 && showPopup) {
+                        setShowPopup(false)
+                    }
                 }
             })
             ro.observe(navRef.current)
@@ -114,64 +112,74 @@ const SideNavigation = ({ mode = 'instructor' }) => {
                 }} style={{ cursor: 'pointer' }} />
             </div>
 
+            {/* Dynamic Title with 3-line format */}
+            <div className={styles.lpms}>
+                {isExpanded ? (
+                    <>
+                        Learning Plan<br />
+                        Management System
+                    </>
+                ) : (
+                    "LPMS"
+                )}
+            </div>
+
             <div className={styles['nav-list']}>
                 {mode !== 'hr-staff' && (
                     <div
                         onClick={() => handlePageChange('Syllabus')}
                         className={`${styles.list} ${selected === 'Syllabus' ? styles.selected : ''}`}
                     >
-                        <FileText size={24} /> Syllabus
+                        <FileText size={24} />
+                        <span className={styles.listText}>Syllabus</span>
                     </div>
                 )}
 
-                {/* TOS: Visible only for instructor mode */}
                 {mode === 'instructor' && (
                     <div
                         onClick={() => handlePageChange('TOS')}
                         className={`${styles.list} ${selected === 'TOS' ? styles.selected : ''}`}
                     >
-                        <FileText size={24} /> TOS
+                        <FileText size={24} />
+                        <span className={styles.listText}>TOS</span>
                     </div>
                 )}
 
-                {/* Program Head additional options */}
                 {mode === 'program-head' && (
                     <>
                         <div onClick={() => { navigate('/role/program-head/industry-consultant?page=Industry%20Consultant') }} className={`${styles.list} ${selected === 'Industry Consultant' ? styles.selected : ''}`}>
-                            <Users size={24} /> Industry Consultant
+                            <Users size={24} /> <span className={styles.listText}>Industry Consultant</span>
                         </div>
 
                         <div onClick={() => { navigate('/role/program-head/course-offerings?page=Course%20Offerings') }} className={`${styles.list} ${selected === 'Course Offerings' ? styles.selected : ''}`}>
-                            <BookOpen size={24} /> Course Offerings
+                            <BookOpen size={24} /> <span className={styles.listText}>Course Offerings</span>
                         </div>
                     </>
                 )}
 
-                {/* Dean additional options */}
                 {mode === 'dean' && (
                     <>
                         <div onClick={() => { navigate('/role/dean?page=Faculty') }} className={`${styles.list} ${selected === 'Faculty' ? styles.selected : ''}`}>
-                            <Users size={24} /> Faculty
+                            <Users size={24} /> <span className={styles.listText}>Faculty</span>
                         </div>
 
                         <div onClick={() => { navigate('/role/dean?page=Programs') }} className={`${styles.list} ${selected === 'Programs' ? styles.selected : ''}`}>
-                            <BookOpen size={24} /> Programs
+                            <BookOpen size={24} /> <span className={styles.listText}>Programs</span>
                         </div>
                     </>
                 )}
 
-                {/* HR Staff additional options */}
                 {mode === 'hr-staff' && (
                     <>
                         <div onClick={() => { navigate('/role/hr-staff?page=Departments') }} className={`${styles.list} ${selected === 'Departments' ? styles.selected : ''}`}>
-                            <Users size={24} /> Departments
+                            <Users size={24} /> <span className={styles.listText}>Departments</span>
                         </div>
                     </>
                 )}
 
                 <div className={styles.logoutWrapper} ref={logoutRef}>
                     <div className={styles.listB} onClick={onLogoutClick}>
-                        <LogOut size={24} color={'#F94545'} /> Log Out
+                        <LogOut size={24} color={'#F94545'} /> <span className={styles.listText}>Log Out</span>
                     </div>
 
                     {showPopup && (
