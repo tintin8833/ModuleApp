@@ -12,6 +12,13 @@ const TOSSummary = ({ outcomeData, questions }) => {
         'Creating'
     ];
 
+    const getCoComputedTotal = (coId) => {
+        return questions
+            .filter(q => q.co === coId && q.points)
+            .reduce((sum, q) => sum + Number(q.points), 0);
+    };
+
+
     // Aggregate data from questions: For each CO-ILO-cognitive level, get count (no. of items) and sumPoints (equi points/total)
     const getAggregatedData = () => {
         const data = {};
@@ -49,7 +56,7 @@ const TOSSummary = ({ outcomeData, questions }) => {
                             <input
                                 type="text"
                                 disabled
-                                value={co.totalPoints || 0}
+                                value={getCoComputedTotal(co.co)}
                                 className={layout.numberInput}
                                 style={{ width: '50px', textAlign: 'center', fontWeight: '500', backgroundColor: '#FFFFFF', color: '#000000' }}  // Improved readability: white background, black text
                             />

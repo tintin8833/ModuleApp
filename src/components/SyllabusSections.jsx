@@ -68,7 +68,25 @@ const syllabusSections = ({status}) => {
 
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
+    const getTopicByTlaName = (tlaName) => {
+        for (const topic of syllabus.topics) {
+            const found = topic.tlas.find(tla => tla.tlaName === tlaName);
+            if (found) return topic.title;
+        }
+        return "—";
+    };
 
+    const getCoIloByTlaName = (tlaName) => {
+        const topic = syllabus.topics
+            .find(t => t.tlas.some(tla => tla.tlaName === tlaName));
+
+        if (!topic) return "—";
+
+        const ilo = syllabus.ilos
+            .find(i => i.topics.includes(topic.title));
+
+        return ilo?.id || "—";
+    };
 
     return(
         <div className={styles.container}>
@@ -436,9 +454,10 @@ const syllabusSections = ({status}) => {
                                     <table>
                                         <thead>
                                         <tr>
-                                            <th width={400}>TLA NAME</th>
-                                            <th width={400}>TOPIC</th>
-                                            <th width={350}>CLASS PHASE</th>
+                                            <th width={150}>CO‑ILO</th>
+                                            <th width={350}>TLA NAME</th>
+                                            <th width={450}>TOPIC</th>
+                                            <th width={200}>CLASS PHASE</th>
                                             <th className={styles.fill}></th>
                                         </tr>
                                         </thead>
@@ -448,9 +467,12 @@ const syllabusSections = ({status}) => {
                                         {syllabus.assessments && syllabus.assessments.length > 0 ? (
                                             syllabus.assessments.map((assessment) => (
                                                 <tr key={assessment.id}>
-                                                    <td width={400}>{assessment.tlaName}</td>
-                                                    <td width={400}>{assessment.topic}</td>
-                                                    <td width={350}>{assessment.phase}</td>
+                                                    <td width={150}>{getCoIloByTlaName(assessment.tlaName)}</td>
+                                                    <td width={350}>{assessment.tlaName}</td>
+                                                    <td width={450}>
+                                                        {getTopicByTlaName(assessment.tlaName)}
+                                                    </td>
+                                                    <td width={300}>{assessment.phase}</td>
                                                     <td className={styles.fill}>
                                                         <Link className={'actionLink'} to={`/assessments/form/${code}/${assessment.id}`}>
                                                             Open <ChevronRight size={18}/>

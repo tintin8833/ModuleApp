@@ -601,99 +601,212 @@ export const syllabiData = [
                 ]
             }
         ],
+
+        coAssessmentMethodSets: {
+            CO1: [
+                {
+                    value: "Observation Report",
+                    description: "Students observe interfaces or environments and document how cognitive and design principles are applied or violated."
+                },
+                {
+                    value: "Interview Synthesis",
+                    description: "Students analyze and synthesize interview data into meaningful insights about user behavior and needs."
+                },
+                {
+                    value: "Persona Creation",
+                    description: "Students convert research data into representative user personas and empathy profiles."
+                }
+            ],
+
+            CO2: [
+                {
+                    value: "Heuristic Evaluation",
+                    description: "Students evaluate interfaces using Nielsen’s usability heuristics to identify usability problems."
+                },
+                {
+                    value: "Wireframe Output",
+                    description: "Students produce low‑fidelity wireframes that solve identified user and usability problems."
+                },
+                {
+                    value: "UX Critique",
+                    description: "Students justify design decisions using UX principles and user‑centered design standards."
+                }
+            ],
+
+            CO3: [
+                {
+                    value: "High‑Fidelity Prototype",
+                    description: "Students construct interactive high‑fidelity UI prototypes using professional design tools."
+                },
+                {
+                    value: "Usability Test Log",
+                    description: "Students record, categorize, and interpret usability testing observations and issues."
+                },
+                {
+                    value: "Interaction Demo",
+                    description: "Students demonstrate interactive UI behavior including feedback, micro‑interactions, and transitions."
+                }
+            ],
+
+            CO4: [
+                {
+                    value: "Evaluation Report",
+                    description: "Students analyze usability test results and justify design quality using evidence."
+                },
+                {
+                    value: "Redesign Proposal",
+                    description: "Students propose interface improvements based on usability findings and UX principles."
+                },
+                {
+                    value: "Reflection Paper",
+                    description: "Students critically reflect on design, testing, and iteration decisions using UX frameworks."
+                }
+            ]
+        },
         assessments: [
             {
                 id: 'A1',
                 tlaName: 'Bad Design Hunt',
                 phase: 'In-class',
                 assessmentMethod: 'Observation Report',
-                assessmentDescription: 'Students document "bad design" examples and present an analysis of violated cognitive principles (affordance, signifiers, mapping).',
+                assessmentDescription:
+                    'Students document "bad design" examples and present an analysis of violated cognitive principles (affordance, signifiers, mapping).',
                 hasRubric: false
             },
+
             {
                 id: 'A2',
                 tlaName: 'Mock Interview Session',
                 phase: 'In-class',
                 assessmentMethod: 'Interview Synthesis',
-                assessmentDescription: 'Students summarize the interview findings and reflect on the effectiveness of their non-leading questioning technique.',
+                assessmentDescription:
+                    'Students summarize the interview findings and reflect on the effectiveness of their non-leading questioning technique.',
                 hasRubric: false
             },
+
             {
                 id: 'A3',
                 tlaName: 'Research Plan Proposal',
                 phase: 'Post-class',
                 assessmentMethod: 'Research Plan Document',
-                assessmentDescription: 'Submission of a formal research plan including objectives, methodology, and screener questions.',
+                assessmentDescription:
+                    'Submission of a formal research plan including objectives, methodology, and screener questions.',
                 hasRubric: true,
-                rubrics: [{ id: 1, criteria: 'Methodology Alignment', maxScore: '20', weight: '50' }]
+                rubrics: [
+                    { id: 1, criteria: 'Clarity of research objectives', maxScore: '25' },
+                    { id: 2, criteria: 'Appropriateness of methodology', maxScore: '25' },
+                    { id: 3, criteria: 'Quality of participant screener', maxScore: '10' },
+                    { id: 4, criteria: 'Ethical considerations addressed', maxScore: '10' },
+                    { id: 5, criteria: 'Organization and completeness', maxScore: '30' }
+                ]
             },
+
             {
                 id: 'A4',
                 tlaName: 'Persona Workshop',
                 phase: 'In-class',
                 assessmentMethod: 'Persona Creation',
-                assessmentDescription: 'Group submission of three distinct user personas (Primary, Secondary, Negative) based on research data.',
+                assessmentDescription:
+                    'Group submission of three distinct user personas (Primary, Secondary, Negative) based on research data.',
                 hasRubric: true,
-                rubrics: [{ id: 1, criteria: 'Persona Realism', maxScore: '15', weight: '100' }]
+                rubrics: [
+                    { id: 1, criteria: 'Accuracy of persona data', maxScore: '10' },
+                    { id: 2, criteria: 'Behavioral realism', maxScore: '10' },
+                    { id: 3, criteria: 'Use of research evidence', maxScore: '15' },
+                    { id: 4, criteria: 'Clarity of goals and pain points', maxScore: '15' },
+                    { id: 5, criteria: 'Professional presentation', maxScore: '20' }
+                ]
             },
+
             {
                 id: 'A5',
                 tlaName: 'Card Sorting Exercise',
                 phase: 'In-class',
                 assessmentMethod: 'Information Architecture Map',
-                assessmentDescription: 'Proposed site map for an e-commerce application derived from the card sorting activity.',
+                assessmentDescription:
+                    'Proposed site map for an e-commerce application derived from the card sorting activity.',
                 hasRubric: false
             },
+
             {
                 id: 'A6',
                 tlaName: 'Heuristic Evaluation Report',
                 phase: 'Post-class',
                 assessmentMethod: 'Evaluation Report',
-                assessmentDescription: 'Document detailing at least 5 major usability issues in a selected app with severity ratings.',
+                assessmentDescription:
+                    'Document detailing at least 5 major usability issues in a selected app with severity ratings.',
                 hasRubric: true,
-                rubrics: [{ id: 1, criteria: 'Issue Identification', maxScore: '20', weight: '100' }]
+                rubrics: [
+                    { id: 1, criteria: 'Correct use of heuristics', maxScore: '25' },
+                    { id: 2, criteria: 'Quality of issue identification', maxScore: '5' },
+                    { id: 3, criteria: 'Severity rating accuracy', maxScore: '10' },
+                    { id: 4, criteria: 'Clarity of explanations', maxScore: '40' },
+                    { id: 5, criteria: 'Report structure and readability', maxScore: '20' }
+                ]
             },
+
             {
                 id: 'A7',
                 tlaName: 'UI Component Audit',
                 phase: 'In-class',
                 assessmentMethod: 'Audit Checklist',
-                assessmentDescription: 'Analysis of atomic, molecular, and organism components within a chosen design system.',
+                assessmentDescription:
+                    'Analysis of atomic, molecular, and organism components within a chosen design system.',
                 hasRubric: false
             },
+
             {
                 id: 'A8',
                 tlaName: 'Crazy 8s Sketching',
                 phase: 'In-class',
                 assessmentMethod: 'Sketch Output',
-                assessmentDescription: 'Submission of 8 distinct interface layout sketches generated during the rapid ideation session.',
+                assessmentDescription:
+                    'Submission of 8 distinct interface layout sketches generated during the rapid ideation session.',
                 hasRubric: false
             },
+
             {
                 id: 'A9',
                 tlaName: 'Clickable Prototype Build',
                 phase: 'Post-class',
                 assessmentMethod: 'High-Fidelity Prototype',
-                assessmentDescription: 'Fully functional high-fidelity prototype with linked screens submitted via Figma link.',
+                assessmentDescription:
+                    'Fully functional high-fidelity prototype with linked screens submitted via Figma link.',
                 hasRubric: true,
-                rubrics: [{ id: 1, criteria: 'Interactivity', maxScore: '50', weight: '100' }]
+                rubrics: [
+                    { id: 1, criteria: 'Screen completeness', maxScore: '20' },
+                    { id: 2, criteria: 'Navigation and flow', maxScore: '20' },
+                    { id: 3, criteria: 'Visual consistency', maxScore: '20' },
+                    { id: 4, criteria: 'Interaction quality', maxScore: '20' },
+                    { id: 5, criteria: 'Prototype fidelity', maxScore: '20' }
+                ]
             },
+
             {
                 id: 'A10',
                 tlaName: 'Live Usability Test',
                 phase: 'In-class',
                 assessmentMethod: 'Usability Test Log',
-                assessmentDescription: 'Record of observations and critical incidents captured during the moderated testing session.',
+                assessmentDescription:
+                    'Record of observations and critical incidents captured during the moderated testing session.',
                 hasRubric: false
             },
+
             {
                 id: 'A11',
                 tlaName: 'Accessibility Audit',
                 phase: 'In-class',
                 assessmentMethod: 'Audit Report',
-                assessmentDescription: 'Report highlighting accessibility violations found using automated tools and manual checks.',
+                assessmentDescription:
+                    'Report highlighting accessibility violations found using automated tools and manual checks.',
                 hasRubric: true,
-                rubrics: [{ id: 1, criteria: 'Violation Accuracy', maxScore: '30', weight: '100' }]
+                rubrics: [
+                    { id: 1, criteria: 'Correct WCAG identification', maxScore: '25' },
+                    { id: 2, criteria: 'Accuracy of violations', maxScore: '15' },
+                    { id: 3, criteria: 'Use of testing tools', maxScore: '30' },
+                    { id: 4, criteria: 'Clarity of explanations', maxScore: '10' },
+                    { id: 5, criteria: 'Quality of recommendations', maxScore: '20' }
+                ]
             }
         ],
         gradingSystem: [

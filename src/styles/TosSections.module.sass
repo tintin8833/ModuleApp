@@ -45,7 +45,7 @@
 
 .cellBox
   width: 100%
-  min-height: 45px
+  min-height: 65px
   padding: 10px
   border-radius: 5px
   border: 1px solid #DDDFDF
@@ -68,9 +68,12 @@
     background: #F1F3F5
 
   &.readable
-    justify-content: left
+    justify-content: flex-start
+    align-items: flex-start
+    text-align: left
     background: #F1F3F5
     padding-left: 20px
+
 
 .blankCell
   border: none
@@ -278,3 +281,40 @@
 
 .addRow
   margin-top: 16px
+
+.modeOverlay
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  background: rgba(0,0,0,0.45)
+  display: flex
+  justify-content: center
+  align-items: center
+  z-index: 1000
+
+.modeBox
+  background: white
+  padding: 32px
+  border-radius: 8px
+  width: 500px
+  text-align: center
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2)
+
+.modeButtons
+  display: flex
+  gap: 16px
+  margin-top: 36px
+
+.modeButtons button
+  flex: 1
+  padding: 12px
+  border: none
+  border-radius: 5px
+  cursor: pointer
+  background: #4B5563
+  color: white
+
+.modeButtons button:last-child
+  background: #6B7280

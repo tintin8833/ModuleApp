@@ -6,18 +6,92 @@ import {useNavigate, useParams} from "react-router-dom";
 import TextField from "../components/TextField.jsx";
 import TextArea from "../components/TextArea.jsx";
 import SideNavigation from "../components/SideNavigation.jsx";
-import {useEffect, useState, useRef} from "react";
+import {useEffect, useState, useRef, useMemo} from "react";
 import {X, ChevronDown} from "react-feather";
 import Duplicator from "../components/Duplicator.jsx";
 import {getSyllabusByCode} from "../data/syllabiData.js";
+import layout from "../styles/QuestionCognitiveMapping.module.sass";
+import { AlertCircle, CheckCircle } from "react-feather";
+
 
 const AssessmentForm = () => {
     const navigate = useNavigate();
     const goBackHandler = () => navigate(-1);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [errors, setErrors] = useState({});
 
     const { code, assessmentId } = useParams();
     const syllabus = getSyllabusByCode(code);
     const assessmentData = syllabus?.assessments.find(a => a.id === assessmentId) || {};
+
+    const validateForm = () => {
+        let newErrors = {};
+
+        if (!method.trim()) newErrors.method = "Assessment Method is required.";
+        if (!description.trim()) newErrors.description = "Assessment Description is required.";
+
+        if (rubric) {
+            rubricRows.forEach((r, i) => {
+                if (!r.criteria.trim()) newErrors[`criteria-${i}`] = `Criteria is required: Row ${i + 1}`;
+                if (!r.maxScore || Number(r.maxScore) <= 0) newErrors[`score-${i}`] = `Max score must be greater than 0: Row ${i + 1}`;
+            });
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    // Find which CO a TLA belongs to
+    const getCOByTlaName = (syllabus, tlaName) => {
+        if (!syllabus || !tlaName) return null;
+
+        // 1. Find the topic of the TLA
+        let topicTitle = null;
+
+        for (const topic of syllabus.topics) {
+            const found = topic.tlas?.find(t => t.tlaName === tlaName);
+            if (found) {
+                topicTitle = topic.title;
+                break;
+            }
+        }
+
+        if (!topicTitle) return null;
+
+        // 2. Find which ILO contains that topic
+        const ilo = syllabus.ilos.find(ilo =>
+            ilo.topics.includes(topicTitle)
+        );
+
+        if (!ilo) return null;
+
+        // ilo.id = "CO1-ILO2" → extract "CO1"
+        return ilo.id.split("-")[0];
+    };
+
+
+// Get the 3 predefined methods for a TLA
+    const getAssessmentSetForTla = (syllabus, tlaName) => {
+        const co = getCOByTlaName(syllabus, tlaName);
+        if (!co) return [];
+        return syllabus.coAssessmentMethodSets[co] || [];
+    };
+
+    const rubricLibrary = useMemo(() => {
+        const map = {}
+
+        syllabus.assessments?.forEach(a => {
+            if (a.assessmentMethod && a.rubrics?.length > 0) {
+                map[a.assessmentMethod] = a.rubrics
+            }
+        })
+
+        return map
+    }, [syllabus])
+
+    const [showRubricPicker, setShowRubricPicker] = useState(false)
+    const [selectedRubricMethod, setSelectedRubricMethod] = useState("")
 
     // --- UPDATED LOGIC: FIND TLA DETAILS ---
     // We need to find the original TLA object inside the 'topics' array
@@ -94,16 +168,10 @@ const AssessmentForm = () => {
         setRubricRows(updated)
     }
 
-    const assessmentOptions = [
-        "Observation Report",
-        "Interview Synthesis",
-        "Research Plan Document",
-        "Persona Creation",
-        "Information Architecture Map",
-        "Evaluation Report",
-        "High-Fidelity Prototype",
-        "Usability Test Log"
-    ];
+    const predefinedSet = getAssessmentSetForTla(syllabus, assessmentData.tlaName);
+
+// only the 3 options for this TLA's CO
+    const assessmentOptions = predefinedSet.map(m => m.value);
 
     const dropdownRef = useRef(null);
     const [showOptions, setShowOptions] = useState(false);
@@ -118,6 +186,15 @@ const AssessmentForm = () => {
         document.addEventListener("pointerdown", handleClickOutside);
         return () => document.removeEventListener("pointerdown", handleClickOutside);
     }, []);
+
+    useEffect(() => {
+        // If current method matches one of the predefined ones, fill description
+        const found = predefinedSet.find(m => m.value === method);
+        if (found) {
+            setDescription(found.description);
+        }
+    }, [method]);
+
 
     const formatPercent = (num) => {
         if (!isFinite(num)) return ""
@@ -138,13 +215,34 @@ const AssessmentForm = () => {
         return Number.isInteger(raw) ? raw : raw.toFixed(2)
     }
 
+    const handleConfirmSave = () => {
+        console.log("Saving assessment:", {
+            method,
+            description,
+            rubric,
+            rubricRows
+        });
+
+        setShowConfirmModal(false);
+        navigate(-1);
+    };
+
     return (
         <SkeletonA
             header={<HeaderA role={'Instructor'} name={'NORTON, MONICA'} />}
             nav={<SideNavigation />}
             content={
                 <div className={styles.container}>
-                    <FormNavigation goBack={goBackHandler} />
+                    <FormNavigation
+                        goBack={goBackHandler}
+                        onSave={() => {
+                            if (validateForm()) {
+                                setShowConfirmModal(true);
+                            } else {
+                                setShowErrorModal(true);
+                            }
+                        }}
+                    />
                     <div className={styles['form-container']}>
 
                         <h2>Topic</h2>
@@ -187,7 +285,7 @@ const AssessmentForm = () => {
                                             setMethod(e.target.value)
                                             setShowOptions(true)
                                         }}
-                                        placeholder="Select or type…"
+                                        placeholder="Select or type"
                                     />
 
                                     <ChevronDown className={styles.dropdownArrow} size={16} />
@@ -234,7 +332,67 @@ const AssessmentForm = () => {
 
                         {rubric && (
                             <>
-                                <h2>Rubric Criteria</h2>
+                                <div className={layout.rubricHeader}>
+                                    <h2>Rubric Criteria</h2>
+
+                                    <div className={layout.rubricTools}>
+
+                                        {/* LEFT: Dropdown (only when open) */}
+                                        {showRubricPicker && (
+                                            <div className={layout.rubricDropdown}>
+                                                <div className={layout.rubricSelectWrap}>
+                                                    <select
+                                                        value={selectedRubricMethod}
+                                                        onChange={e => {
+                                                            const method = e.target.value
+                                                            setSelectedRubricMethod(method)
+
+                                                            if (rubricLibrary[method]) {
+                                                                setRubricRows(
+                                                                    rubricLibrary[method].map(r => ({
+                                                                        ...r,
+                                                                        id: Date.now() + Math.random()
+                                                                    }))
+                                                                )
+                                                            }
+                                                        }}
+                                                    >
+                                                        <option value="" disabled hidden>
+                                                            Select assessment method
+                                                        </option>
+
+                                                        {Object.keys(rubricLibrary).map(m => (
+                                                            <option key={m} value={m}>{m}</option>
+                                                        ))}
+                                                    </select>
+                                                    <ChevronDown className={layout.dropdownArrow} size={16} />
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* RIGHT: Button or X */}
+                                        {!showRubricPicker ? (
+                                            <button
+                                                className={layout.uploadButton}
+                                                onClick={() => setShowRubricPicker(true)}
+                                            >
+                                                Use existing rubric
+                                            </button>
+                                        ) : (
+                                            <button
+                                                className={layout.clearRubricBtn}
+                                                onClick={() => {
+                                                    setShowRubricPicker(false)
+                                                    setSelectedRubricMethod("")
+                                                    setRubricRows(createEmptyRubricRows(3))   // clear applied rubric
+                                                }}
+                                            >
+                                                <X className={layout.clearRubricIcon}/>
+                                            </button>
+                                        )}
+
+                                    </div>
+                                </div>
                                 <div className={styles['rubrics']}>
                                     <div className={styles['rubric-header']}>
                                         <div className={styles['rubric-cell']}>Criteria</div>
@@ -290,6 +448,58 @@ const AssessmentForm = () => {
                         )}
 
                     </div>
+                    {/* CONFIRMATION */}
+                    {showConfirmModal && (
+                        <div className={styles.modalOverlay}>
+                            <div className={styles.modal}>
+                                <div className={styles.modalHeader}>
+                                    <h3>Confirm Save</h3>
+                                </div>
+                                <div className={styles.modalBody}>
+                                    <CheckCircle size={40} color="#4CAF50" style={{ marginBottom: "1rem" }} />
+                                    <p>Are you sure you want to save this assessment?</p>
+                                </div>
+                                <div className={styles.modalActions}>
+                                    <button className={styles.cancelBtn} onClick={() => setShowConfirmModal(false)}>
+                                        No, Cancel
+                                    </button>
+                                    <button className={styles.confirmBtn} onClick={handleConfirmSave}>
+                                        Yes, Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ERROR */}
+                    {showErrorModal && (
+                        <div className={styles.modalOverlay}>
+                            <div className={styles.modal}>
+                                <div className={styles.modalHeader} style={{ borderBottomColor: "#FF5252" }}>
+                                    <h3 style={{ color: "#FF5252" }}>Validation Error</h3>
+                                    <X size={24} className={styles.closeIcon} onClick={() => setShowErrorModal(false)} />
+                                </div>
+                                <div className={styles.modalBody}>
+                                    <AlertCircle size={40} color="#FF5252" style={{ marginBottom: "1rem" }} />
+                                    <p>Please fix the following issues before saving:</p>
+                                    <ul className={styles.errorList}>
+                                        {Object.values(errors).map((err, idx) => (
+                                            <li key={idx}>{err}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className={styles.modalActions}>
+                                    <button
+                                        className={styles.confirmBtn}
+                                        style={{ backgroundColor: "#FF5252" }}
+                                        onClick={() => setShowErrorModal(false)}
+                                    >
+                                        Okay, I’ll fix it
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             }
         />
