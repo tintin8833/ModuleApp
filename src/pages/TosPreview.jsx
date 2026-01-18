@@ -7,7 +7,6 @@ const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Hum
 
     const navigate = useNavigate();
 
-    // Cognitive levels
     const cognitiveLevels = [
         'Remembering',
         'Understanding',
@@ -41,8 +40,6 @@ const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Hum
     };
 
     const aggregatedData = getAggregatedData();
-
-    // Calculate totals
     const totalHours = outcomeData.reduce((sum, co) => sum + (co.totalHours || 0), 0);
     const totalPercentage = outcomeData.reduce((sum, co) => sum + (co.totalPercentage || 0), 0);
     const totalItems = outcomeData.reduce((sum, co) => sum + (co.totalItems || 0), 0);
@@ -56,12 +53,9 @@ const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Hum
     return (
         <div className={layout.modalOverlay}>
             <div className={layout.modalContent}>
-                {/* Close Button */}
                 <button className={layout.closeButton} onClick={onClose}>×</button>
-
                 <h2 className={layout.previewTitle}>TOS Document Preview</h2>
 
-                {/* Header Fields */}
                 <div className={layout.headerFields}>
                     <div className={layout.topRow}>
                         <label>Course:</label>
@@ -96,7 +90,6 @@ const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Hum
                         />
                     </div>
                 </div>
-
                 {/* Table */}
                 <table className={`${layout.qctable} ${layout.TOSTable}`} style={{ width: '100%', marginBottom: '20px' }}>
                     <thead>
@@ -192,8 +185,6 @@ const TOSPreview = ({ isOpen, onClose, outcomeData, questions, courseName = "Hum
                     </tr>
                     </tbody>
                 </table>
-
-                {/* Export Button - Sticky at Bottom */}
                 <div className={layout.exportButtonContainer}>
                     <button
                         className={layout.export}
