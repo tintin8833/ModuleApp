@@ -14,7 +14,7 @@ const SyllabusRevisionsSections = ({status}) => {
     const selectedSection = searchParams.get('section') || 'Course Details';
 
     // syllabus code from route (ensure this is available to effects that load/save comments)
-    const { code } = useParams();
+    const { code, approver } = useParams();
 
     // Loading State
     const [isLoading, setIsLoading] = useState(false);
@@ -40,20 +40,6 @@ const SyllabusRevisionsSections = ({status}) => {
 
         return () => clearTimeout(timer);
     }, [selectedSection, code]);
-
-    // Clear all comments (global) — comments are shared across sections
-    const clearSectionComments = () => {
-        if (!confirm(`Clear all comments? This cannot be undone.`)) return
-        try {
-            localStorage.removeItem('approval_comments_v1')
-        } catch (e) {}
-        setGlobalComments([])
-    }
-
-    // Alias for clearing global comments (same as clearSectionComments)
-    const clearAllComments = () => {
-        clearSectionComments()
-    }
 
     const handleSectionChange = (e) => {
         setSearchParams({ section: e.target.value })
@@ -138,6 +124,17 @@ const SyllabusRevisionsSections = ({status}) => {
 
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
+    // Hard-coded seed data for reviewers
+    const getReviewerSeedData = (index = 0) => {
+        const reviewerSeeds = [
+            { name: 'NORTON, MONICA', role: 'Director of Libraries' },
+            { name: 'JOHNSON, DEAN', role: 'Dean' },
+            { name: 'SMITH, DR. ROBERT', role: 'Program Head' },
+            { name: 'LEE, CONSULTANT', role: 'Industry Consultant' },
+        ]
+        return reviewerSeeds[index % reviewerSeeds.length]
+    }
+
     // Reviewer role colors (use dark tones, avoid bright blue)
     const getRoleColor = (role) => {
         const colors = {
@@ -162,11 +159,6 @@ const SyllabusRevisionsSections = ({status}) => {
         // Always show references/grading when set
         if (isSelected('references')) tags.push('References')
         if (isSelected('grading')) tags.push('Grading Criteria')
-
-        // Show selected coverage flags
-        if (isSelected('assessments')) tags.push('Assessments')
-        if (isSelected('tlas')) tags.push('TLA')
-        if (isSelected('topics')) tags.push('Topic')
 
         // Also show explicit coverageType (if selected) as an additional tag
         if (comment?.coverageType) {
@@ -381,7 +373,11 @@ const SyllabusRevisionsSections = ({status}) => {
                                                     </select>
                                                 </div>
 
-                                                {/* Add Reference button removed per request */}
+                                                <Link to={'/references/form/:id'}>
+                                                    <div className={'add-button'}>
+                                                        <Plus size={16} strokeWidth={3}/> Add Reference
+                                                    </div>
+                                                </Link>
                                             </div>
 
                                             <table>
@@ -432,6 +428,11 @@ const SyllabusRevisionsSections = ({status}) => {
                                                     </div>
                                                 </div>
 
+                                                <Link to={'/topics/form/:id'}>
+                                                    <div className={'add-button'}>
+                                                        <Plus size={16} strokeWidth={3}/> Add Topic
+                                                    </div>
+                                                </Link>
                                             </div>
 
                                             <table>
@@ -638,8 +639,6 @@ const SyllabusRevisionsSections = ({status}) => {
                                 }}>
                                     {currentComments.length} {currentComments.length === 1 ? 'comment' : 'comments'}
                                 </span>
-                                <button onClick={clearSectionComments} style={{fontSize: 12, color: '#e53e3e', background: 'transparent', border: 'none', cursor: 'pointer'}}>Clear section</button>
-                                <button onClick={clearAllComments} style={{fontSize: 12, color: '#c53030', background: 'transparent', border: 'none', cursor: 'pointer'}}>Clear all</button>
                             </div>
                         </div>
                         <p style={{
@@ -723,7 +722,14 @@ const SyllabusRevisionsSections = ({status}) => {
                                                                             (() => {
                                                                                 const name = comment.reviewer && String(comment.reviewer).trim()
                                                                                 const role = comment.role && String(comment.role).trim()
-                                                                                const displayName = name || 'Unnamed Reviewer'
+                                                                                
+                                                                                // Use seed data if name or role is missing
+                                                                                const seedIndex = currentComments.indexOf(comment)
+                                                                                const seedData = getReviewerSeedData(seedIndex)
+                                                                                
+                                                                                const displayName = name || seedData.name
+                                                                                const displayRole = role || seedData.role
+                                                                                
                                                                                 return (
                                                                                     <div style={{ display: 'flex', flexDirection: 'column' }}>
   <span style={{
@@ -733,17 +739,17 @@ const SyllabusRevisionsSections = ({status}) => {
   }}>
     {displayName}
   </span>
-  {role && (
+  {displayRole && (
     <span
-      title={role}
+      title={displayRole}
       style={{
         fontSize: '12px',
-        color: getRoleColor(role) || '#718096',
+        color: getRoleColor(displayRole) || '#718096',
         marginTop: 2,
         fontWeight: 500
       }}
     >
-      {role}
+      {displayRole}
     </span>
   )}
 </div>
