@@ -10,7 +10,9 @@ const SideNavigation = ({ mode = 'instructor' }) => {
     const [searchParams, setSearchParams] = useSearchParams()
 
     // --- MERGED SELECTION LOGIC ---
-    let selected = searchParams.get('page') || 'Syllabus';
+    let defaultPage = 'Syllabus';
+    if (mode === 'ovpaa') defaultPage = 'Dashboard';
+    let selected = searchParams.get('page') || defaultPage;
 
     if (location.pathname.startsWith('/assignedtos') || location.pathname.startsWith('/tos')) {
         selected = 'TOS';
@@ -125,7 +127,7 @@ const SideNavigation = ({ mode = 'instructor' }) => {
             </div>
 
             <div className={styles['nav-list']}>
-                {mode !== 'hr-staff' && (
+                {mode !== 'hr-staff' && mode !== 'ovpaa' && (
                     <div
                         onClick={() => handlePageChange('Syllabus')}
                         className={`${styles.list} ${selected === 'Syllabus' ? styles.selected : ''}`}
@@ -154,6 +156,10 @@ const SideNavigation = ({ mode = 'instructor' }) => {
                         <div onClick={() => { navigate('/role/program-head/course-offerings?page=Course%20Offerings') }} className={`${styles.list} ${selected === 'Course Offerings' ? styles.selected : ''}`}>
                             <BookOpen size={24} /> <span className={styles.listText}>Course Offerings</span>
                         </div>
+
+                        <div onClick={() => { navigate('/role/program-head/course-assignment?page=Course%20Assignment') }} className={`${styles.list} ${selected === 'Course Assignment' ? styles.selected : ''}`}>
+                            <BookOpen size={24} /> <span className={styles.listText}>Course Assignment</span>
+                        </div>
                     </>
                 )}
 
@@ -169,10 +175,14 @@ const SideNavigation = ({ mode = 'instructor' }) => {
                     </>
                 )}
 
-                {mode === 'hr-staff' && (
+                {(mode === 'ovpaa' || mode === 'hr-staff') && (
                     <>
-                        <div onClick={() => { navigate('/role/hr-staff?page=Departments') }} className={`${styles.list} ${selected === 'Departments' ? styles.selected : ''}`}>
-                            <Users size={24} /> <span className={styles.listText}>Departments</span>
+                        <div onClick={() => { navigate('/role/ovpaa?page=Dashboard') }} className={`${styles.list} ${selected === 'Dashboard' ? styles.selected : ''}`}>
+                            <BookOpen size={24} /> <span className={styles.listText}>Dashboard</span>
+                        </div>
+
+                        <div onClick={() => { navigate('/role/ovpaa?page=Department%20List') }} className={`${styles.list} ${selected === 'Department List' ? styles.selected : ''}`}>
+                            <Users size={24} /> <span className={styles.listText}>Department List</span>
                         </div>
                     </>
                 )}
@@ -190,7 +200,7 @@ const SideNavigation = ({ mode = 'instructor' }) => {
                             <button className={styles.popupItem} onClick={() => gotoRole('/role/director-of-libraries/approval-course-table')}>Director of Libraries</button>
                             <button className={styles.popupItem} onClick={() => gotoRole('/role/industry-consultant/approval-course-table')}>Industry Consultant</button>
                             <button className={styles.popupItem} onClick={() => gotoRole('/role/dean')}>Dean</button>
-                            <button className={styles.popupItem} onClick={() => gotoRole('/role/hr-staff')}>HR staff</button>
+                            <button className={styles.popupItem} onClick={() => gotoRole('/role/ovpaa')}>OVPAA</button>
                         </div>
                     )}
                 </div>

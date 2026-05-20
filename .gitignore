@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Database dumps - keep local only
+*.sql
+
+# Temp/scratch folders
+_tmpverify/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

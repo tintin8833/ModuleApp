@@ -65,7 +65,7 @@ const TOSCoursesTable = ({}) => {
                 <table>
                     <thead>
                     <tr>
-                        <th width={150}>CODE</th>
+                        <th width={150}>COURSE NO.</th>
                         <th width={350}>COURSE NAME</th>
 
                         {selectedStatus === 'DRAFT'

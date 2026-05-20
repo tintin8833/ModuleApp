@@ -521,7 +521,7 @@ const CoursesTable = ({}) => {
                     <table>
                         <thead>
                         <tr>
-                            <th width={150}>CODE</th>
+                            <th width={150}>COURSE NO.</th>
                             <th width={350}>COURSE NAME</th>
                             {selectedStatus === 'DRAFT'
                                 ?<th width={200}>LAST UPDATED</th>
@@ -574,7 +574,7 @@ const CoursesTable = ({}) => {
                     <table>
                         <thead>
                             <tr>
-                                <th width={150}>CODE</th>
+                                <th width={150}>COURSE NO.</th>
                                 <th width={300}>COURSE NAME</th>
                                 <th width={160}>DATE SUBMITTED</th>
                                 <th className={styles.status} width={800}>STATUS</th>

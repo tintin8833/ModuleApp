@@ -1,0 +1,56 @@
+# Course Assignment Module — local stack.
+# Spins up an isolated MySQL database for this module and Adminer
+# so the DB can be inspected visually at http://localhost:8080.
+#
+# Why MySQL: matches the connector dialect used by Sequelize in
+# server/config/sequelize.js. Swap to postgres by changing the image,
+# port, and DB_DIALECT in server/.env.
+#
+# Quick start:
+#   docker compose up -d
+#   cd server && cp .env.example .env && npm install
+#   npm run db:migrate && npm run db:seed
+#   npm run dev
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: ca-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-ca_root_password}
+      MYSQL_DATABASE:      ${DB_NAME:-course_assignment}
+      MYSQL_USER:          ${DB_USER:-ca_user}
+      MYSQL_PASSWORD:      ${DB_PASSWORD:-ca_password}
+    ports:
+      # Host port 3307 → container 3306 so we don't collide with a
+      # MySQL that might already be running on the host.
+      - "3307:3306"
+    volumes:
+      - ca_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_ROOT_PASSWORD:-ca_root_password}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  adminer:
+    image: adminer:4
+    container_name: ca-adminer
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      # Visual DB browser. Login with:
+      #   System:   MySQL
+      #   Server:   db
+      #   Username: ca_user        (or root)
+      #   Password: ca_password    (or ca_root_password)
+      #   Database: course_assignment
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+      ADMINER_DESIGN: pepa-linha
+
+volumes:
+  ca_mysql_data:

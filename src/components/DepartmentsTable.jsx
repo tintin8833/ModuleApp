@@ -1,40 +1,48 @@
+import { ChevronRight } from 'react-feather';
 import styles from '../styles/CoursesTable.module.sass';
+import { statusPillStyle } from '../services/statusPolicy.js';
 
-const mockDepartments = [
-  { name: 'College of Education', code: 'COE', dean: 'Dr. Maria Santos' },
-  { name: 'College of Engineering and Architecture', code: 'CEA', dean: 'Prof. Juan Dela Cruz' },
-  { name: 'Criminal Justice Education', code: 'CJE', dean: 'Dr. Ana Reyes' },
-  { name: 'School of Business and Accountancy', code: 'SBA', dean: 'Prof. Mark Tan' },
-  { name: 'School of Computer and Information Sciences', code: 'SCIS', dean: 'Agnes Reyes' },
-  { name: 'School of Nursing and Allied Health Sciences', code: 'SNAHS', dean: 'Prof. Rosa Garcia' },
-  { name: 'School of Social and Natural Sciences', code: 'SSNS', dean: 'Dr. Miguel Santos' },
-]
-
-const DepartmentsTable = ({ departments = mockDepartments }) => {
+const DepartmentsTable = ({ departments = [], onView }) => {
   return (
-    <div className={styles['table-container']}>
+    <div className={styles['table-container']} style={{ flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column', overflowX: 'auto', overflowY: 'hidden' }}>
       <table>
-        <thead>
+        <thead style={{ position: 'sticky', top: 0, background: '#FFFFFF', zIndex: 1 }}>
           <tr>
-            <th width={400}>NAME</th>
-            <th width={200}>CODE</th>
-            <th width={250}>DEAN</th>
+            <th width={420}>NAME</th>
+            <th width={180} style={{ paddingLeft: 28 }}>CODE</th>
+            <th width={220}>DEAN</th>
+            <th width={120}>STATUS</th>
             <th className={styles.fill}></th>
           </tr>
         </thead>
         <tbody>
-          {departments.map((dept, idx) => (
-            <tr key={idx}>
-              <td width={400}>{dept.name}</td>
-              <td width={200}>{dept.code}</td>
-              <td width={250}>{dept.dean}</td>
-              <td className={styles.fill}></td>
-            </tr>
-          ))}
+          {departments.map((d) => {
+            const status = d.status || 'Active';
+            return (
+              <tr key={d.id || (d.code + '-' + d.name)}>
+                <td width={420}>{d.name}</td>
+                <td width={180} style={{ paddingLeft: 28 }}>{d.code}</td>
+                <td width={220}>{d.dean || ''}</td>
+                <td width={120}>
+                  <span style={{ ...statusPillStyle('department', status), padding: '4px 10px', borderRadius: 4, fontSize: 12, fontWeight: 600 }}>
+                    {status}
+                  </span>
+                </td>
+                <td className={styles.fill} style={{ paddingRight: 12, textAlign: 'right', whiteSpace: 'nowrap' }}>
+                  {onView && (
+                    <a href="#" onClick={(e) => { e.preventDefault(); onView(d); }} style={{ color: '#111827', display: 'inline-flex', alignItems: 'center' }}>
+                      <span style={{ marginRight: 6 }}>View</span>
+                      <ChevronRight size={16} />
+                    </a>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default DepartmentsTable
+export default DepartmentsTable;

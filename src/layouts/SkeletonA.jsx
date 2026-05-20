@@ -1,13 +1,9 @@
 import styles from '../styles/SkeletonA.module.sass'
-import {useState} from "react";
 
 const SkeletonA = ({ nav, header, content }) => {
-    // const [formVisibility, setFormVisibility] = useState(false)
-    //
-    // const handleFormVisibilityChange = (event) => {
-    //
-    // }
-
+    // The Floating Archive button is no longer mounted here. Each
+    // module page renders its own <FloatingArchiveButton moduleType=…>
+    // so the archive is strictly page-scoped (1 page = 1 archive).
     return(
         <div className={styles['main-layout']}>
             <div  className={styles.left}>
@@ -20,14 +16,6 @@ const SkeletonA = ({ nav, header, content }) => {
                 <div className={styles.down}>
                     {content}
                 </div>
-                {/*{formVisibility === true &&*/}
-                {/*    <div className={styles.popup}>*/}
-                {/*        <div className={styles.form}>*/}
-                {/*            {form}*/}
-                {/*        </div>*/}
-                {/*    </div>*/}
-                {/*}*/}
-
             </div>
         </div>
     )
