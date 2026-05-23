@@ -14,20 +14,20 @@ export default (sequelize, DataTypes) =>
         autoIncrement: true,
       },
       code: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(16),
         allowNull: false,
       },
       name: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING(100),
         allowNull: false,
       },
       program_head: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING(100),
         allowNull: true,
         comment: 'Mirrored display name of the program head (Faculty).',
       },
       status: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(16),
         allowNull: false,
         defaultValue: 'Active',
         comment: 'Active | Unlisted — Unlisted programs move to the Archive view.',

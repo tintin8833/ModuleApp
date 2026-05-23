@@ -79,7 +79,7 @@ const CoursesTable = ({}) => {
             <!DOCTYPE html>
             <html>
             <head>
-                <title>${course.code}_syllabus_report</title>
+                <title>${course.code}_learning_plan_report</title>
                 <style>
                     @page { size: A4; margin: 15mm; }
                     body { font-family: Arial, sans-serif; font-size: 10pt; color: #333; line-height: 1.4; }

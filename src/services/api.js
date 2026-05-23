@@ -13,6 +13,11 @@ async function request(path, { method = 'GET', body, headers = {}, query } = {})
     });
   }
   const opts = { method, headers: { ...headers } };
+  // Attach the auth token (if any) so protected endpoints accept the call.
+  try {
+    const token = window.localStorage.getItem('auth.token');
+    if (token && !opts.headers.Authorization) opts.headers.Authorization = 'Bearer ' + token;
+  } catch (_e) { /* localStorage unavailable — ignore */ }
   if (body instanceof FormData) {
     opts.body = body;
   } else if (body !== undefined) {
@@ -40,6 +45,30 @@ function uploadFile(path, file, periodId) {
 }
 
 const idPath = (base, id) => base + '/' + id;
+
+export const AuthAPI = {
+  login: (email, password) => request('/auth/login', { method: 'POST', body: { email, password } }),
+  me:    () => request('/auth/me'),
+};
+
+export const UsersAPI = {
+  list:   () => request('/users'),
+  create: (data) => request('/users', { method: 'POST', body: data }),
+  update: (id, patch) => request(idPath('/users', id), { method: 'PATCH', body: patch }),
+  remove: (id) => request(idPath('/users', id), { method: 'DELETE' }),
+};
+
+export const SyllabusSubmissionsAPI = {
+  list:    (periodId, departmentId) => request('/syllabus-submissions', { query: { period_id: periodId, department_id: departmentId } }),
+  summary: (periodId) => request('/syllabus-submissions/summary', { query: { period_id: periodId } }),
+  get:     (id) => request(idPath('/syllabus-submissions', id)),
+};
+
+export const TosSubmissionsAPI = {
+  list:    (periodId, departmentId) => request('/tos-submissions', { query: { period_id: periodId, department_id: departmentId } }),
+  summary: (periodId) => request('/tos-submissions/summary', { query: { period_id: periodId } }),
+  get:     (id) => request(idPath('/tos-submissions', id)),
+};
 
 export const PeriodsAPI = {
   list:   () => request('/academic-periods'),

@@ -18,6 +18,9 @@ import IndustryConsultantFactory from './industryConsultant.js';
 import ConsultantCourseFactory from './consultantCourse.js';
 import CourseAssignmentFactory from './courseAssignment.js';
 import AcademicPeriodFactory   from './academicPeriod.js';
+import UserFactory             from './user.js';
+import SyllabusSubmissionFactory from './syllabusSubmission.js';
+import TosSubmissionFactory    from './tosSubmission.js';
 
 // --- Mirror tables (data sourced from other modules) ---
 // Faculty and Department records that originate from the HR / Dean
@@ -34,6 +37,9 @@ const db = {
   IndustryConsultant: IndustryConsultantFactory(sequelize, DataTypes),
   ConsultantCourse:   ConsultantCourseFactory(sequelize, DataTypes),
   CourseAssignment:   CourseAssignmentFactory(sequelize, DataTypes),
+  User:               UserFactory(sequelize, DataTypes),
+  SyllabusSubmission: SyllabusSubmissionFactory(sequelize, DataTypes),
+  TosSubmission:      TosSubmissionFactory(sequelize, DataTypes),
   sequelize,
 };
 
@@ -85,5 +91,18 @@ db.ConsultantCourse.belongsTo(db.CourseOffering, { foreignKey: 'course_offering_
 // from the period's master lists (either may be null until matched).
 db.CourseAssignment.belongsTo(db.CourseOffering, { foreignKey: 'course_offering_id', as: 'courseOffering' });
 db.CourseAssignment.belongsTo(db.Faculty, { foreignKey: 'faculty_id', as: 'faculty' });
+
+// A User may belong to a Department (deans / instructors). Optional.
+db.User.belongsTo(db.Department, { foreignKey: 'department_id', as: 'departmentRef' });
+
+// Syllabus / TOS submissions are period-scoped and resolve to a Department.
+db.AcademicPeriod.hasMany(db.SyllabusSubmission, { foreignKey: 'period_id' });
+db.AcademicPeriod.hasMany(db.TosSubmission,      { foreignKey: 'period_id' });
+db.SyllabusSubmission.belongsTo(db.AcademicPeriod, { foreignKey: 'period_id', as: 'period' });
+db.TosSubmission.belongsTo(db.AcademicPeriod,      { foreignKey: 'period_id', as: 'period' });
+db.Department.hasMany(db.SyllabusSubmission, { foreignKey: 'department_id', as: 'syllabusSubmissions' });
+db.Department.hasMany(db.TosSubmission,      { foreignKey: 'department_id', as: 'tosSubmissions' });
+db.SyllabusSubmission.belongsTo(db.Department, { foreignKey: 'department_id', as: 'department' });
+db.TosSubmission.belongsTo(db.Department,      { foreignKey: 'department_id', as: 'department' });
 
 export default db;

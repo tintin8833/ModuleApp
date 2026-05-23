@@ -160,7 +160,7 @@ const syllabusSections = ({status}) => {
                                             <TextField
                                                 initialValue={syllabus?.revision || '0'}
                                                 disabled={true}
-                                                label="Syllabus Revision No"
+                                                label="Learning Plan Revision No"
                                             />
                                             <TextField
                                                 initialValue={syllabus?.credits || ''}

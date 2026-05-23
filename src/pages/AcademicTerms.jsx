@@ -27,7 +27,7 @@
  */
 import React from 'react';
 import { Plus, Lock, AlertTriangle, ChevronRight, ChevronDown, ChevronUp, Edit2, RefreshCw, X, Save, Calendar, Clock, FileText } from 'react-feather';
-import { PeriodsAPI } from '../services/api.js';
+import { PeriodsAPI, DepartmentsAPI, SyllabusSubmissionsAPI, TosSubmissionsAPI } from '../services/api.js';
 import { usePeriod } from '../services/period.jsx';
 import { formatSemester, formatPeriodLabel } from '../services/periodLabel.js';
 
@@ -421,7 +421,38 @@ const MockChart = ({ title, data }) => {
 // ────────────────────────────── page ──────────────────────────────
 
 const AcademicTerms = () => {
-  const { periods, refreshPeriods, setCurrentPeriodId, apiReachable } = usePeriod();
+  const { periods, currentPeriod, refreshPeriods, setCurrentPeriodId, apiReachable } = usePeriod();
+
+  // Real per-department submission counts for the selected period.
+  const [syllabusChart, setSyllabusChart] = React.useState(MOCK_SYLLABUS);
+  const [tosChart, setTosChart] = React.useState(MOCK_TOS);
+
+  React.useEffect(() => {
+    if (!currentPeriod) { setSyllabusChart(MOCK_SYLLABUS); setTosChart(MOCK_TOS); return undefined; }
+    const pid = currentPeriod.id;
+    let active = true;
+    Promise.all([
+      DepartmentsAPI.list(pid).catch(() => []),
+      SyllabusSubmissionsAPI.summary(pid).catch(() => []),
+      TosSubmissionsAPI.summary(pid).catch(() => []),
+    ]).then(([depts, sylSum, tosSum]) => {
+      if (!active) return;
+      const build = (summary) => {
+        const byId = new Map();
+        (summary || []).forEach((s) => { if (s.department_id != null) byId.set(Number(s.department_id), s.count); });
+        if (Array.isArray(depts) && depts.length) {
+          return depts.map((d) => ({ dept: d.code || d.name, count: byId.get(Number(d.id)) || 0 }));
+        }
+        if (Array.isArray(summary) && summary.length) {
+          return summary.map((s) => ({ dept: s.department_name || '—', count: s.count }));
+        }
+        return DEPARTMENTS.map((d) => ({ dept: d, count: 0 }));
+      };
+      setSyllabusChart(build(sylSum));
+      setTosChart(build(tosSum));
+    });
+    return () => { active = false; };
+  }, [currentPeriod]);
 
   const [focus, setFocus] = React.useState(null);
   const isFocused = (token) => focus === token;
@@ -1094,7 +1125,7 @@ const AcademicTerms = () => {
 
         {/* ───── Syllabus chart ───── */}
         <div style={whiteCard}>
-          <MockChart title="Submitted Syllabus" data={MOCK_SYLLABUS} />
+          <MockChart title="Submitted Learning Plan" data={syllabusChart} />
           {dimCharts && <DimOverlay />}
         </div>
 
@@ -1353,7 +1384,7 @@ const AcademicTerms = () => {
 
         {/* ───── TOS chart ───── */}
         <div style={whiteCard}>
-          <MockChart title="Table of Specification" data={MOCK_TOS} />
+          <MockChart title="Table of Specification" data={tosChart} />
           {dimCharts && <DimOverlay />}
         </div>
       </div>

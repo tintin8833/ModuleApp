@@ -74,7 +74,7 @@ const SyllabusPreview = ({ isOpen, onClose }) => {
                 {/* 4. Close Button */}
                 <button className={styles.closeButton} onClick={onClose}>×</button>
 
-                <h2 className={styles.previewTitle}>Syllabus Preview</h2>
+                <h2 className={styles.previewTitle}>Learning Plan Preview</h2>
 
                 {/* 5. Header / Navigation Bar adapted for Modal */}
                 <div className={styles.navi} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
@@ -153,7 +153,7 @@ const SyllabusPreview = ({ isOpen, onClose }) => {
 
                                     {/* Row 8: Revision */}
                                     <tr>
-                                        <th className={styles.labelCell}>Syllabus Revision No.</th>
+                                        <th className={styles.labelCell}>Learning Plan Revision No.</th>
                                         <td className={styles.valueCell}>{syllabus?.revision || '0'}</td>
                                     </tr>
 

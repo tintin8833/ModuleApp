@@ -289,7 +289,7 @@ const ApprovalSyllabusSections = ({ status = 'pending', currentRole = '', course
                   <td className={styles.valueCell}>{syllabus?.cmo || ''}</td>
                 </tr>
                 <tr>
-                  <th className={styles.labelCell}>Syllabus Revision No.</th>
+                  <th className={styles.labelCell}>Learning Plan Revision No.</th>
                   <td className={styles.valueCell}>{syllabus?.revision || '0'}</td>
                 </tr>
                 <tr>

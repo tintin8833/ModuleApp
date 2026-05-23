@@ -131,7 +131,7 @@ const CoursesTable = ({}) => {
           <!DOCTYPE html>
           <html>
           <head>
-            <title>${course.code}_syllabus_report</title>
+            <title>${course.code}_learning_plan_report</title>
             <style>
               @page {
                 size: A4;
@@ -344,7 +344,7 @@ const CoursesTable = ({}) => {
                   <td>${syllabus.cmo}</td>
                 </tr>
                 <tr>
-                  <th>Syllabus Revision No.</th>
+                  <th>Learning Plan Revision No.</th>
                   <td>${syllabus.revision}</td>
                 </tr>
                 <tr>

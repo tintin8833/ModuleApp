@@ -22,6 +22,29 @@ import { assertDbConnection, sequelize } from './config/sequelize.js';
 import { clearColumnCache } from './utils/dbHelpers.js';
 import { relaxCodeUniqueConstraints } from './utils/relaxIndexes.js';
 import { pruneDuplicateIndexes } from './utils/pruneIndexes.js';
+import { hashPassword } from './utils/auth.js';
+
+/**
+ * Ensure a login exists out of the box. Unlike periods (which are
+ * deliberately user-managed), the system is unusable without at least
+ * one admin, so we create a default one ONLY when no admin exists yet.
+ * Idempotent and non-destructive.
+ */
+async function ensureDefaultAdmin() {
+  const admins = await db.User.count({ where: { role: 'admin' } });
+  if (admins > 0) return;
+  const email = process.env.ADMIN_EMAIL || 'admin@unc.edu';
+  const password = process.env.ADMIN_PASSWORD || 'admin123';
+  await db.User.create({
+    name: 'System Administrator',
+    email,
+    role: 'admin',
+    status: 'Active',
+    password_hash: await hashPassword(password),
+  });
+  console.log('[seed] created default admin → email: ' + email + '  password: ' + password);
+  console.log('[seed] CHANGE THIS PASSWORD after first login.');
+}
 
 dotenv.config();
 
@@ -88,6 +111,9 @@ const PORT = Number(process.env.PORT || 4000);
     console.log('[db] code-unique constraints relaxed (cross-period clones can now insert).');
 
     console.log('[boot] no auto-seed (periods are user-managed).');
+
+    console.log('[boot] step 3: ensure default admin…');
+    await ensureDefaultAdmin();
   } catch (err) {
     console.error('[db] boot failed.');
     console.error('     name:    ' + (err && err.name));

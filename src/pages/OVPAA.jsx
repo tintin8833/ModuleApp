@@ -15,6 +15,7 @@ import HeaderA from '../components/HeaderA.jsx';
 import SideNavigation from '../components/SideNavigation.jsx';
 import AcademicTerms from './AcademicTerms.jsx';
 import HRStaff from './HRStaff.jsx';
+import SubmissionMonitor from '../components/SubmissionMonitor.jsx';
 
 const OVPAA = () => {
   const [searchParams] = useSearchParams();
@@ -24,6 +25,10 @@ const OVPAA = () => {
     switch (page) {
       case 'Department List':
         return <HRStaff key="department-list" />;
+      case 'Syllabus':
+        return <SubmissionMonitor key="syllabus" kind="syllabus" />;
+      case 'TOS':
+        return <SubmissionMonitor key="tos" kind="tos" />;
       case 'Dashboard':
       // Back-compat: old links may still say "Academic Term".
       case 'Academic Term':

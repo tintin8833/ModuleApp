@@ -1,0 +1,315 @@
+.wrap
+  padding: 24px 30px
+  background: #fff
+  height: 100%
+  overflow: hidden
+  display: flex
+  flex-direction: column
+  font-family: system-ui, -apple-system, sans-serif
+
+.head
+  display: flex
+  align-items: flex-end
+  justify-content: space-between
+  margin-bottom: 18px
+  flex-wrap: wrap
+  gap: 12px
+
+.title
+  margin: 0
+  font-size: 22px
+  font-weight: 800
+  color: #1e293b
+
+.sub
+  margin: 4px 0 0
+  font-size: 13px
+  color: #64748b
+
+.tools
+  display: flex
+  align-items: flex-end
+  gap: 16px
+  flex-wrap: wrap
+
+.filter
+  display: flex
+  flex-direction: column
+  gap: 4px
+
+.filterLabel
+  font-size: 11px
+  font-weight: 700
+  color: #64748b
+  text-transform: uppercase
+  letter-spacing: 0.4px
+
+.select
+  border: 1px solid #cbd5e1
+  border-radius: 8px
+  padding: 8px 12px
+  font-size: 14px
+  min-width: 220px
+  outline: none
+  background: #fff
+  cursor: pointer
+  &:focus
+    border-color: #b91c1c
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12)
+
+.banner
+  background: #fef2f2
+  border: 1px solid #fecaca
+  color: #b91c1c
+  border-radius: 8px
+  padding: 10px 12px
+  font-size: 13px
+  margin-bottom: 14px
+
+.tableWrap
+  overflow: auto
+  border: 1px solid #e2e8f0
+  border-radius: 10px
+
+.table
+  width: 100%
+  border-collapse: collapse
+  font-size: 14px
+  table-layout: auto
+  th
+    text-align: left
+    padding: 12px 16px
+    background: #f8fafc
+    color: #475569
+    font-size: 12px
+    font-weight: 700
+    letter-spacing: 0.4px
+    border-bottom: 1px solid #e2e8f0
+    white-space: nowrap
+  td
+    padding: 11px 16px
+    border-bottom: 1px solid #f1f5f9
+    color: #334155
+    vertical-align: middle
+
+// Column sizing: name/department/instructor flex; the rest shrink to fit.
+.colCode
+  white-space: nowrap
+  font-weight: 600
+
+.colDate
+  white-space: nowrap
+
+.colStatus
+  white-space: nowrap
+  width: 1%
+
+.colAction
+  white-space: nowrap
+  width: 1%
+  text-align: center
+
+.statusPill
+  display: inline-block
+  background: #dcfce7
+  color: #15803d
+  border-radius: 999px
+  padding: 3px 10px
+  font-size: 12px
+  font-weight: 600
+
+.empty
+  text-align: center
+  color: #94a3b8
+  padding: 28px
+
+.exportBtn
+  display: inline-flex
+  align-items: center
+  gap: 6px
+  background: #fff
+  border: 1px solid #b91c1c
+  color: #b91c1c
+  border-radius: 7px
+  padding: 6px 12px
+  font-size: 13px
+  font-weight: 600
+  cursor: pointer
+  &:hover
+    background: #fef2f2
+
+.viewBtn
+  display: inline-flex
+  align-items: center
+  gap: 4px
+  background: none
+  border: none
+  color: #2563eb
+  font-size: 13px
+  font-weight: 600
+  cursor: pointer
+  &:hover
+    text-decoration: underline
+
+// --- modal ---
+.overlay
+  position: fixed
+  inset: 0
+  background: rgba(15, 23, 42, 0.45)
+  display: flex
+  align-items: center
+  justify-content: center
+  z-index: 1000
+  padding: 20px
+
+.modal
+  width: 100%
+  max-width: 640px
+  background: #fff
+  border-radius: 14px
+  padding: 22px 24px
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3)
+  display: flex
+  flex-direction: column
+  max-height: 90vh
+
+.modalHead
+  display: flex
+  align-items: flex-start
+  justify-content: space-between
+  gap: 12px
+  border-bottom: 1px solid #e2e8f0
+  padding-bottom: 12px
+
+.modalKicker
+  color: #b91c1c
+  font-size: 11px
+  font-weight: 700
+  letter-spacing: 1px
+  text-transform: uppercase
+
+.modalTitle
+  margin: 2px 0 0
+  font-size: 18px
+  font-weight: 800
+  color: #1e293b
+
+.closeBtn
+  background: none
+  border: none
+  cursor: pointer
+  color: #64748b
+
+.metaGrid
+  display: grid
+  grid-template-columns: repeat(2, 1fr)
+  gap: 10px 24px
+  padding: 14px 0
+  border-bottom: 1px solid #f1f5f9
+  div
+    display: flex
+    flex-direction: column
+  span
+    font-size: 11px
+    color: #94a3b8
+    text-transform: uppercase
+    letter-spacing: 0.4px
+  b
+    font-size: 14px
+    color: #1e293b
+
+.modalBody
+  overflow: auto
+  padding: 6px 2px 2px
+
+.section
+  font-size: 14px
+  color: #b91c1c
+  margin: 16px 0 6px
+
+.para
+  font-size: 13.5px
+  line-height: 1.55
+  color: #334155
+  margin: 0
+
+.list
+  margin: 6px 0
+  padding-left: 20px
+  font-size: 13.5px
+  line-height: 1.55
+  color: #334155
+
+// NOTE: global index.css turns every <table> into a flexbox with
+// box-shadowed rows and ellipsis-clipped cells. These rules force this
+// table back to a real table so columns align under their headers.
+.miniTable
+  width: 100%
+  border-collapse: collapse
+  font-size: 13px
+  margin-top: 6px
+  display: table
+  gap: 0
+  min-width: 0
+  overflow: visible
+  thead
+    display: table-header-group
+  tbody
+    display: table-row-group
+    gap: 0
+    overflow: visible
+    padding: 0
+  tr
+    display: table-row
+    background: transparent
+    box-shadow: none
+  th, td
+    display: table-cell
+    border: 1px solid #e2e8f0
+    padding: 7px 10px
+    text-align: left
+    vertical-align: top
+    white-space: normal
+    overflow: visible
+    gap: 0
+  th
+    background: #f8fafc
+    color: #475569
+    font-size: 11.5px
+    text-transform: uppercase
+    font-weight: 600
+
+.modalActions
+  display: flex
+  justify-content: flex-end
+  gap: 10px
+  margin-top: 18px
+  padding-top: 14px
+  border-top: 1px solid #e2e8f0
+
+.cancelBtn
+  background: #f1f5f9
+  border: none
+  border-radius: 8px
+  padding: 9px 16px
+  font-size: 14px
+  font-weight: 600
+  color: #475569
+  cursor: pointer
+  &:hover
+    background: #e2e8f0
+
+.saveBtn
+  display: inline-flex
+  align-items: center
+  gap: 6px
+  background: #b91c1c
+  border: none
+  border-radius: 8px
+  padding: 9px 18px
+  font-size: 14px
+  font-weight: 700
+  color: #fff
+  cursor: pointer
+  &:hover
+    background: #991b1b

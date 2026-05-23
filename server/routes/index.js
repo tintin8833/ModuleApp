@@ -11,11 +11,19 @@ import industryConsultants from './industryConsultants.js';
 import academicPeriods   from './academicPeriods.js';
 import courseAssignments from './courseAssignments.js';
 import archive           from './archive.js';
+import auth              from './auth.js';
+import users            from './users.js';
+import syllabusSubmissions from './syllabusSubmissions.js';
+import tosSubmissions   from './tosSubmissions.js';
 
 const router = Router();
 
 router.get('/health', (_req, res) => res.json({ ok: true, ts: new Date().toISOString() }));
 
+router.use('/auth',                auth);
+router.use('/users',               users);
+router.use('/syllabus-submissions', syllabusSubmissions);
+router.use('/tos-submissions',     tosSubmissions);
 router.use('/academic-periods',    academicPeriods);
 router.use('/departments',         departments);
 router.use('/faculty',             faculty);

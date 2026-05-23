@@ -1,6 +1,11 @@
 import './App.css'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { PeriodProvider } from './services/period.jsx'
+import { AuthProvider } from './services/auth.jsx'
+import { RequireAuth, RequireRole } from './components/ProtectedRoute.jsx'
+
+import Login from "./pages/Login.jsx";
+import Admin from "./pages/Admin.jsx";
 
 import AssignedCourses from "./pages/AssignedCourses.jsx";
 import Syllabus from "./pages/Syllabus.jsx";
@@ -24,40 +29,51 @@ import OVPAA from "./pages/OVPAA.jsx";
 function App() {
   return (
     <Router>
-      <PeriodProvider>
-        <div className="appPage">
-          <Routes>
-            <Route path={'/'} element={<AssignedCourses />} />
-            <Route path={'/assignedtos'} element={<AssignedTOS />} />
+      <AuthProvider>
+        <PeriodProvider>
+          <div className="appPage">
+            <Routes>
+              {/* Public */}
+              <Route path={'/login'} element={<Login />} />
 
-            <Route path={'/courses/:code'} element={<Syllabus />} />
-            <Route path={'/revisions/:code'} element={<SyllabusRevisions />} />
+              {/* Everything below requires a logged-in user */}
+              <Route element={<RequireAuth />}>
+                <Route path={'/'} element={<AssignedCourses />} />
+                <Route path={'/assignedtos'} element={<AssignedTOS />} />
 
-            <Route path={'/references/form/:id'} element={<ReferenceForm />} />
-            <Route path={'/references/form/:code/:refId'} element={<ReferenceForm />} />
-            <Route path={'/topics/form/:id'} element={<TopicForm />} />
-            <Route path={'/topics/form/:code/:topicId'} element={<TopicForm />} />
-            <Route path={'/ilos/form/:code/:iloId'} element={<ILOForm />} />
-            <Route path={'/assessments/form/:code/:assessmentId'} element={<AssessmentForm />} />
+                <Route path={'/courses/:code'} element={<Syllabus />} />
+                <Route path={'/revisions/:code'} element={<SyllabusRevisions />} />
 
-            <Route path={'/tos/:code'} element={<TOS />} />
+                <Route path={'/references/form/:id'} element={<ReferenceForm />} />
+                <Route path={'/references/form/:code/:refId'} element={<ReferenceForm />} />
+                <Route path={'/topics/form/:id'} element={<TopicForm />} />
+                <Route path={'/topics/form/:code/:topicId'} element={<TopicForm />} />
+                <Route path={'/ilos/form/:code/:iloId'} element={<ILOForm />} />
+                <Route path={'/assessments/form/:code/:assessmentId'} element={<AssessmentForm />} />
 
-            <Route path={'/role/industry-consultant'} element={<ProgramHeadConsultant />} />
-            <Route path={'/role/program-head/industry-consultant'} element={<ProgramHeadIndustryConsultant />} />
-            <Route path={'/role/program-head/course-offerings'} element={<ProgramHeadCourseOfferings />} />
-            <Route path={'/role/program-head/course-assignment'} element={<ProgramHeadCourseAssignment />} />
-            <Route path={'/role/dean'} element={<Dean />} />
-            <Route path={'/role/ovpaa'} element={<OVPAA />} />
-            <Route path={'/role/hr-staff'} element={<OVPAA />} />
+                <Route path={'/tos/:code'} element={<TOS />} />
 
-            <Route path="/role/:approver">
-              <Route index element={<Navigate to="approval-course-table" replace />} />
-              <Route path="approval-course-table" element={<ApprovalCourses />} />
-              <Route path="courses/:courseName" element={<ApprovalSyllabus />} />
-            </Route>
-          </Routes>
-        </div>
-      </PeriodProvider>
+                {/* Admin — system account management */}
+                <Route path={'/admin'} element={<RequireRole roles={['admin']}><Admin /></RequireRole>} />
+
+                <Route path={'/role/industry-consultant'} element={<ProgramHeadConsultant />} />
+                <Route path={'/role/program-head/industry-consultant'} element={<ProgramHeadIndustryConsultant />} />
+                <Route path={'/role/program-head/course-offerings'} element={<ProgramHeadCourseOfferings />} />
+                <Route path={'/role/program-head/course-assignment'} element={<ProgramHeadCourseAssignment />} />
+                <Route path={'/role/dean'} element={<Dean />} />
+                <Route path={'/role/ovpaa'} element={<OVPAA />} />
+                <Route path={'/role/hr-staff'} element={<OVPAA />} />
+
+                <Route path="/role/:approver">
+                  <Route index element={<Navigate to="approval-course-table" replace />} />
+                  <Route path="approval-course-table" element={<ApprovalCourses />} />
+                  <Route path="courses/:courseName" element={<ApprovalSyllabus />} />
+                </Route>
+              </Route>
+            </Routes>
+          </div>
+        </PeriodProvider>
+      </AuthProvider>
     </Router>
   );
 }

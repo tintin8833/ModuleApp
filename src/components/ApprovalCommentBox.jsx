@@ -252,8 +252,8 @@ const ApprovalCommentBox = ({ show = false, onClose, onSubmit, courseOutcomes = 
       <div className={styles.modal}>
         <div className={styles.header}>
           <h3>Comments</h3>
-          <button onClick={onClose} aria-label="Return Syllabus" className={styles.returnBtn}>
-            Return Syllabus
+          <button onClick={onClose} aria-label="Return Learning Plan" className={styles.returnBtn}>
+            Return Learning Plan
           </button>
         </div>
 

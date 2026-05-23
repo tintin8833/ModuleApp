@@ -5,21 +5,18 @@ import HeaderA from "../components/HeaderA.jsx";
 import SideNavigation from "../components/SideNavigation.jsx";
 import DeanFaculty from "./DeanFaculty.jsx";
 import DeanPrograms from "./DeanPrograms.jsx";
-import ApprovalCourses from "./ApprovalCourses.jsx";
 
 const Dean = () => {
   const [searchParams] = useSearchParams();
-  const page = searchParams.get('page') || 'Syllabus';
+  const page = searchParams.get('page') || 'Faculty';
 
   const renderContent = () => {
     switch (page) {
       case 'Programs':
         return <DeanPrograms key="programs" />;
       case 'Faculty':
-        return <DeanFaculty key="faculty" />;
-      case 'Syllabus':
       default:
-        return <ApprovalCourses key="syllabus" isEmbedded={true} roleOverride="dean" />;
+        return <DeanFaculty key="faculty" />;
     }
   };
 

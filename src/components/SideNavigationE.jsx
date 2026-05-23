@@ -116,7 +116,7 @@ const SideNavigation = ({ mode = 'instructor' }) => {
                         }}
                         className={`${styles.list} ${selected === 'Syllabus' ? styles.selected : ''}`}
                     >
-                        <FileText size={24} /> Syllabus
+                        <FileText size={24} /> Learning Plan
                     </div>
                 )}
 

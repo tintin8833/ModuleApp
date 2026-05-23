@@ -1,24 +1,30 @@
 import styles from '../styles/SideNavigation.module.sass'
 import unclogo from '../assets/unclogo.png'
-import { FileText, LogOut, Users, BookOpen } from 'react-feather'
+import { FileText, LogOut, Users, BookOpen, Calendar, Grid } from 'react-feather'
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
+import { useAuth } from '../services/auth.jsx'
+import ConfirmModal from './ConfirmModal.jsx'
 
 const SideNavigation = ({ mode = 'instructor' }) => {
     const navigate = useNavigate()
     const location = useLocation()
     const [searchParams, setSearchParams] = useSearchParams()
+    const { logout } = useAuth()
 
     // --- MERGED SELECTION LOGIC ---
     let defaultPage = 'Syllabus';
     if (mode === 'ovpaa') defaultPage = 'Dashboard';
+    if (mode === 'admin') defaultPage = 'Accounts';
     let selected = searchParams.get('page') || defaultPage;
+    if (mode === 'admin') selected = 'Accounts';
 
     if (location.pathname.startsWith('/assignedtos') || location.pathname.startsWith('/tos')) {
         selected = 'TOS';
     }
 
     const [showPopup, setShowPopup] = useState(false)
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
     const logoutRef = useRef(null)
     const navRef = useRef(null)
@@ -38,7 +44,8 @@ const SideNavigation = ({ mode = 'instructor' }) => {
         }
     }
 
-    const onLogoutClick = () => setShowPopup((prev) => !prev)
+    const onLogoutClick = () => setShowLogoutConfirm(true)
+    const confirmLogout = () => { setShowLogoutConfirm(false); logout(); navigate('/login'); }
 
     const gotoRole = (path) => {
         setShowPopup(false)
@@ -127,13 +134,23 @@ const SideNavigation = ({ mode = 'instructor' }) => {
             </div>
 
             <div className={styles['nav-list']}>
-                {mode !== 'hr-staff' && mode !== 'ovpaa' && (
+                {(mode === 'instructor' || mode === 'director-of-libraries' || mode === 'industry-consultant') && (
                     <div
                         onClick={() => handlePageChange('Syllabus')}
                         className={`${styles.list} ${selected === 'Syllabus' ? styles.selected : ''}`}
                     >
                         <FileText size={24} />
-                        <span className={styles.listText}>Syllabus</span>
+                        <span className={styles.listText}>Learning Plan</span>
+                    </div>
+                )}
+
+                {mode === 'admin' && (
+                    <div
+                        onClick={() => navigate('/admin')}
+                        className={`${styles.list} ${selected === 'Accounts' ? styles.selected : ''}`}
+                    >
+                        <Users size={24} />
+                        <span className={styles.listText}>Accounts</span>
                     </div>
                 )}
 
@@ -178,12 +195,24 @@ const SideNavigation = ({ mode = 'instructor' }) => {
                 {(mode === 'ovpaa' || mode === 'hr-staff') && (
                     <>
                         <div onClick={() => { navigate('/role/ovpaa?page=Dashboard') }} className={`${styles.list} ${selected === 'Dashboard' ? styles.selected : ''}`}>
-                            <BookOpen size={24} /> <span className={styles.listText}>Dashboard</span>
+                            <Calendar size={24} /> <span className={styles.listText}>Academic Terms</span>
                         </div>
 
                         <div onClick={() => { navigate('/role/ovpaa?page=Department%20List') }} className={`${styles.list} ${selected === 'Department List' ? styles.selected : ''}`}>
-                            <Users size={24} /> <span className={styles.listText}>Department List</span>
+                            <Grid size={24} /> <span className={styles.listText}>Departments</span>
                         </div>
+
+                        {mode === 'ovpaa' && (
+                            <>
+                                <div onClick={() => { navigate('/role/ovpaa?page=TOS') }} className={`${styles.list} ${selected === 'TOS' ? styles.selected : ''}`}>
+                                    <FileText size={24} /> <span className={styles.listText}>TOS</span>
+                                </div>
+
+                                <div onClick={() => { navigate('/role/ovpaa?page=Syllabus') }} className={`${styles.list} ${selected === 'Syllabus' ? styles.selected : ''}`}>
+                                    <FileText size={24} /> <span className={styles.listText}>Learning Plan</span>
+                                </div>
+                            </>
+                        )}
                     </>
                 )}
 
@@ -191,19 +220,18 @@ const SideNavigation = ({ mode = 'instructor' }) => {
                     <div className={styles.listB} onClick={onLogoutClick}>
                         <LogOut size={24} color={'#F94545'} /> <span className={styles.listText}>Log Out</span>
                     </div>
-
-                    {showPopup && (
-                        <div className={styles.rolePopup}>
-                            <div className={styles.popupTitle}>Select role</div>
-                            <button className={styles.popupItem} onClick={() => { setShowPopup(false); navigate('/') }}>Instructor</button>
-                            <button className={styles.popupItem} onClick={() => gotoRole('/role/program-head/approval-course-table')}>Program head</button>
-                            <button className={styles.popupItem} onClick={() => gotoRole('/role/director-of-libraries/approval-course-table')}>Director of Libraries</button>
-                            <button className={styles.popupItem} onClick={() => gotoRole('/role/industry-consultant/approval-course-table')}>Industry Consultant</button>
-                            <button className={styles.popupItem} onClick={() => gotoRole('/role/dean')}>Dean</button>
-                            <button className={styles.popupItem} onClick={() => gotoRole('/role/ovpaa')}>OVPAA</button>
-                        </div>
-                    )}
                 </div>
+
+                <ConfirmModal
+                    open={showLogoutConfirm}
+                    title="Log out?"
+                    message="You will be signed out and returned to the login page."
+                    confirmLabel="Log Out"
+                    cancelLabel="Cancel"
+                    tone="destructive"
+                    onConfirm={confirmLogout}
+                    onCancel={() => setShowLogoutConfirm(false)}
+                />
             </div>
         </div>
     )
